@@ -1,124 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - {{ config('app.name') }}</title>
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-    <style>
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f3f4f6;
-        }
-        .login-form {
-            background: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-weight: 500;
-            color: #374151;
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        .btn-primary {
-            width: 100%;
-            background-color: #3b82f6;
-            color: white;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        .btn-primary:hover {
-            background-color: #2563eb;
-        }
-        .error {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .alert {
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            margin-bottom: 1rem;
-        }
-        .alert-error {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-form">
-            <h1 style="text-align: center; margin-bottom: 2rem; color: #374151; font-size: 1.5rem;">
-                Admin Login
-            </h1>
+@extends('admin.layouts.auth')
 
-            @if(session('error'))
-                <div class="alert alert-error">
-                    {{ session('error') }}
-                </div>
-            @endif
+@section('title', 'Login Admin')
 
-            <form method="POST" action="{{ route('admin.login') }}">
-                @csrf
-                
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" 
-                           id="email" 
-                           name="email" 
-                           class="form-input" 
-                           value="{{ old('email') }}" 
-                           required>
-                    @error('email')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" 
-                           id="password" 
-                           name="password" 
-                           class="form-input" 
-                           required>
-                    @error('password')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <button type="submit" class="btn-primary">
-                    Login
-                </button>
-            </form>
+@section('content')
+<div class="peers ai-s fxw-nw h-100vh">
+    <!-- Left Side - Background Image -->
+    <div class="d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv" 
+         style='background-image: url("{{ asset('adminator/assets/static/images/bg.jpg') }}")'>
+        <div class="pos-a centerXY">
+            <div class="bgc-white bdrs-50p pos-r" style="width: 120px; height: 120px;">
+                <img class="pos-a centerXY logo-auth" 
+                     src="{{ asset('adminator/assets/static/images/logo.svg') }}" 
+                     alt="{{ config('app.name') }}" 
+                     style="max-width: 60px; max-height: 60px;">
+            </div>
         </div>
     </div>
-</body>
-</html>
+
+    <!-- Right Side - Login Form -->
+    <div class="col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r" style="min-width: 320px;">
+        <div class="text-center mB-40">
+            <h4 class="fw-300 c-grey-900 mB-5">Admin Login</h4>
+            <p class="c-grey-600 mB-0">{{ config('app.name') }}</p>
+        </div>
+
+        <!-- Error Messages -->
+        @if(session('error'))
+            <div class="alert alert-danger mB-20">
+                <i class="ti-alert-triangle mR-10"></i>
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- Login Form -->
+        <form method="POST" action="{{ route('admin.login') }}">
+            @csrf
+            
+            <div class="mb-3">
+                <label class="text-normal text-dark form-label">Email Address</label>
+                <input type="email" 
+                       name="email" 
+                       class="form-control @error('email') is-invalid @enderror" 
+                       placeholder="admin@order-app.com"
+                       value="{{ old('email') }}" 
+                       required>
+                @error('email')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label class="text-normal text-dark form-label">Password</label>
+                <input type="password" 
+                       name="password" 
+                       class="form-control @error('password') is-invalid @enderror" 
+                       placeholder="Password"
+                       required>
+                @error('password')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <div class="peers ai-c jc-sb fxw-nw">
+                    <div class="peer">
+                        <div class="checkbox checkbox-circle checkbox-info peers ai-c">
+                            <input type="checkbox" 
+                                   id="remember" 
+                                   name="remember" 
+                                   class="peer"
+                                   {{ old('remember') ? 'checked' : '' }}>
+                            <label for="remember" class="peers peer-greed js-sb ai-c form-label">
+                                <span class="peer peer-greed">Remember Me</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="peer">
+                        <button type="submit" class="btn btn-primary btn-color">
+                            <i class="ti-lock mR-5"></i>
+                            Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Demo Credentials -->
+        <div class="mT-40 p-20 bgc-grey-50 bdrs-3">
+            <h6 class="c-grey-800 mB-15">🚀 Demo Credentials:</h6>
+            <div class="fsz-sm c-grey-700">
+                <strong>Email:</strong> admin@order-app.com<br>
+                <strong>Password:</strong> admin123
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mT-40">
+            <p class="fsz-sm c-grey-600">
+                © {{ date('Y') }} {{ config('app.name') }}<br>
+                <small class="c-grey-500">Rumah Bumbu & Ungkep</small>
+            </p>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    /* Custom styles for better UX */
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .alert {
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    
+    .btn-color:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+@endpush

@@ -1,149 +1,329 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - {{ config('app.name') }}</title>
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-    <style>
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-        .header {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.875rem;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .card h3 {
-            margin: 0 0 1rem 0;
-            color: #374151;
-        }
-        .card p {
-            color: #6b7280;
-            margin: 0;
-        }
-        .welcome {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .welcome h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
-        .welcome p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-        }
-    </style>
-</head>
-<body style="background-color: #f9fafb; min-height: 100vh;">
-    <div class="header">
-        <div class="container">
-            <div class="header-content">
-                <h2 style="margin: 0; color: #374151;">Admin Panel</h2>
-                <div>
-                    <span style="margin-right: 1rem; color: #6b7280;">
-                        Welcome, {{ Auth::user()->name }}
-                    </span>
-                    <form method="POST" action="{{ route('admin.logout') }}" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">Logout</button>
-                    </form>
+@extends('admin.layouts.app')
+
+@section('title', 'Dashboard')
+
+@section('content')
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <h4 class="c-grey-900 mB-20">Dashboard Overview</h4>
+                <p class="mB-0">Selamat datang di Admin Panel <strong>{{ config('app.name') }}</strong> - Rumah Bumbu & Ungkep</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row gap-20 masonry pos-r">
+        <!-- Total Products -->
+        <div class="masonry-sizer col-md-6 col-xl-3"></div>
+        <div class="masonry-item col-md-6 col-xl-3">
+            <div class="bdrs-3 p-20 bgc-white bd">
+                <div class="peers fxw-nw ai-c">
+                    <div class="peer">
+                        <div class="layers">
+                            <div class="layer w-100">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-green-50 c-green-500">
+                                            <i class="ti-package"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-15">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="fsz-xs fw-600 c-grey-800 tt-u ls-1">Total Produk</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-10">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib fw-600 fsz-lg c-grey-800">0</span>
+                                        <small class="fsz-xs c-grey-500 ml-10">items</small>
+                                    </div>
+                                </div>
+                                <span class="fsz-xs c-grey-500">Phase 3: Manajemen Produk</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="masonry-item col-md-6 col-xl-3">
+            <div class="bdrs-3 p-20 bgc-white bd">
+                <div class="peers fxw-nw ai-c">
+                    <div class="peer">
+                        <div class="layers">
+                            <div class="layer w-100">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-blue-50 c-blue-500">
+                                            <i class="ti-shopping-cart"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-15">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="fsz-xs fw-600 c-grey-800 tt-u ls-1">Total Pesanan</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-10">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib fw-600 fsz-lg c-grey-800">0</span>
+                                        <small class="fsz-xs c-grey-500 ml-10">orders</small>
+                                    </div>
+                                </div>
+                                <span class="fsz-xs c-grey-500">Phase 3: Manajemen Order</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paxel Integration -->
+        <div class="masonry-item col-md-6 col-xl-3">
+            <div class="bdrs-3 p-20 bgc-white bd">
+                <div class="peers fxw-nw ai-c">
+                    <div class="peer">
+                        <div class="layers">
+                            <div class="layer w-100">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-purple-50 c-purple-500">
+                                            <i class="ti-truck"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-15">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="fsz-xs fw-600 c-grey-800 tt-u ls-1">Integrasi Paxel</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-10">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib fw-600 fsz-lg c-orange-500">Pending</span>
+                                    </div>
+                                </div>
+                                <span class="fsz-xs c-grey-500">Phase 4: API Integration</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Notifications -->
+        <div class="masonry-item col-md-6 col-xl-3">
+            <div class="bdrs-3 p-20 bgc-white bd">
+                <div class="peers fxw-nw ai-c">
+                    <div class="peer">
+                        <div class="layers">
+                            <div class="layer w-100">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-green-50 c-green-500">
+                                            <i class="ti-comment-alt"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-15">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="fsz-xs fw-600 c-grey-800 tt-u ls-1">WhatsApp</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer w-100 mT-10">
+                                <div class="peers fxw-nw ai-c">
+                                    <div class="peer peer-greed">
+                                        <span class="d-ib fw-600 fsz-lg c-orange-500">Setup</span>
+                                    </div>
+                                </div>
+                                <span class="fsz-xs c-grey-500">Phase 5: Notifikasi</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="card welcome">
-            <h1>🎉 Setup Authentication Berhasil!</h1>
-            <p>Selamat datang di Admin Panel Order App - Rumah Bumbu & Ungkep</p>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="card">
-                <h3>📦 Manajemen Produk</h3>
-                <p>Kelola katalog produk bumbu dan ungkep</p>
-                <p><small><em>Akan tersedia di Phase 3</em></small></p>
-            </div>
-
-            <div class="card">
-                <h3>📋 Manajemen Order</h3>
-                <p>Kelola pesanan dan verifikasi pembayaran</p>
-                <p><small><em>Akan tersedia di Phase 3</em></small></p>
-            </div>
-
-            <div class="card">
-                <h3>🚚 Integrasi Paxel</h3>
-                <p>Kelola pengiriman dan tracking</p>
-                <p><small><em>Akan tersedia di Phase 4</em></small></p>
-            </div>
-
-            <div class="card">
-                <h3>💬 Notifikasi WhatsApp</h3>
-                <p>Setting notifikasi otomatis</p>
-                <p><small><em>Akan tersedia di Phase 5</em></small></p>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>📊 Status Development</h3>
-            <div style="margin-top: 1rem;">
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>✅ Phase 1:</strong> Project Setup & Foundation <span style="color: #10b981;">(Complete)</span>
-                </div>
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>⏳ Phase 2:</strong> UI/UX & Frontend Core <span style="color: #f59e0b;">(Next)</span>
-                </div>
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>⏳ Phase 3:</strong> Backend Core & Order Management
-                </div>
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>⏳ Phase 4:</strong> Integrasi Paxel API
-                </div>
-                <div>
-                    <strong>⏳ Phase 5:</strong> Notifikasi WhatsApp & Tracking
+    <!-- Welcome Card -->
+    <div class="row mT-30">
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <div class="layers">
+                    <div class="layer w-100">
+                        <div class="peers fxw-nw ai-c">
+                            <div class="peer">
+                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-blue-50 c-blue-500 fsz-lg">
+                                    🎉
+                                </span>
+                            </div>
+                            <div class="peer peer-greed pL-20">
+                                <h5 class="mB-5">Setup Authentication Berhasil!</h5>
+                                <p class="mB-0 c-grey-600">Selamat datang di Admin Panel Order App dengan tampilan Adminator yang modern.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+
+    <!-- Development Progress -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20">
+                <h4 class="c-grey-900 mB-20">📊 Progress Development</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="peers fxw-nw ai-c mB-20">
+                            <div class="peer mR-15">
+                                <span class="d-ib w-2 h-2 bdrs-50p bgc-green-500"></span>
+                            </div>
+                            <div class="peer peer-greed">
+                                <span class="fw-600 c-grey-800">Phase 1: Project Setup & Foundation</span>
+                                <div class="progress mT-10">
+                                    <div class="progress-bar bgc-green-500" role="progressbar" style="width: 100%"></div>
+                                </div>
+                                <small class="c-green-600">✅ Complete - Auth, Security, Adminator UI</small>
+                            </div>
+                        </div>
+                        
+                        <div class="peers fxw-nw ai-c mB-20">
+                            <div class="peer mR-15">
+                                <span class="d-ib w-2 h-2 bdrs-50p bgc-orange-500"></span>
+                            </div>
+                            <div class="peer peer-greed">
+                                <span class="fw-600 c-grey-800">Phase 2: UI/UX & Frontend Core</span>
+                                <div class="progress mT-10">
+                                    <div class="progress-bar bgc-orange-500" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="c-orange-600">⏳ Next - Landing, Katalog, Checkout</small>
+                            </div>
+                        </div>
+
+                        <div class="peers fxw-nw ai-c mB-20">
+                            <div class="peer mR-15">
+                                <span class="d-ib w-2 h-2 bdrs-50p bgc-grey-300"></span>
+                            </div>
+                            <div class="peer peer-greed">
+                                <span class="fw-600 c-grey-600">Phase 3: Backend Core & Order Management</span>
+                                <div class="progress mT-10">
+                                    <div class="progress-bar bgc-grey-300" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="c-grey-500">⏳ Pending - Produk, Order, Pembayaran</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="peers fxw-nw ai-c mB-20">
+                            <div class="peer mR-15">
+                                <span class="d-ib w-2 h-2 bdrs-50p bgc-grey-300"></span>
+                            </div>
+                            <div class="peer peer-greed">
+                                <span class="fw-600 c-grey-600">Phase 4: Integrasi Paxel API</span>
+                                <div class="progress mT-10">
+                                    <div class="progress-bar bgc-grey-300" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="c-grey-500">⏳ Pending - Ongkir, Order, Tracking</small>
+                            </div>
+                        </div>
+
+                        <div class="peers fxw-nw ai-c mB-20">
+                            <div class="peer mR-15">
+                                <span class="d-ib w-2 h-2 bdrs-50p bgc-grey-300"></span>
+                            </div>
+                            <div class="peer peer-greed">
+                                <span class="fw-600 c-grey-600">Phase 5: Notifikasi WhatsApp & Tracking</span>
+                                <div class="progress mT-10">
+                                    <div class="progress-bar bgc-grey-300" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="c-grey-500">⏳ Pending - WhatsApp Gateway</small>
+                            </div>
+                        </div>
+
+                        <div class="peers fxw-nw ai-c mB-20">
+                            <div class="peer mR-15">
+                                <span class="d-ib w-2 h-2 bdrs-50p bgc-grey-300"></span>
+                            </div>
+                            <div class="peer peer-greed">
+                                <span class="fw-600 c-grey-600">Phase 6-8: PWA, Testing, Deployment</span>
+                                <div class="progress mT-10">
+                                    <div class="progress-bar bgc-grey-300" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="c-grey-500">⏳ Pending - Final Stages</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mT-30">
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20">
+                <h4 class="c-grey-900 mB-20">🚀 Quick Actions</h4>
+                <div class="peers">
+                    <div class="peer mR-20">
+                        <a href="#" class="btn btn-primary">
+                            <i class="ti-package mR-5"></i>
+                            Manajemen Produk
+                        </a>
+                    </div>
+                    <div class="peer mR-20">
+                        <a href="#" class="btn btn-success">
+                            <i class="ti-shopping-cart mR-5"></i>
+                            Lihat Pesanan
+                        </a>
+                    </div>
+                    <div class="peer mR-20">
+                        <a href="#" class="btn btn-info">
+                            <i class="ti-truck mR-5"></i>
+                            Setup Paxel
+                        </a>
+                    </div>
+                    <div class="peer">
+                        <a href="#" class="btn btn-warning">
+                            <i class="ti-settings mR-5"></i>
+                            Pengaturan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    // Simple welcome animation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add some basic interactivity for demo
+        console.log('🎉 Adminator Admin Dashboard loaded successfully!');
+        console.log('📚 Dokumentasi: https://puikinsh.github.io/Adminator-admin-dashboard/');
+        console.log('🚀 Ready for Phase 2: UI/UX & Frontend Core');
+    });
+</script>
+@endpush
