@@ -145,50 +145,60 @@
                                              alt="{{ $product['name'] }}"
                                              style="height: 200px; object-fit: cover;">
                                         
-                                        @if($product['stock'] < 10)
+                                        @if($product->stock < 10 && $product->stock > 0)
                                             <span class="position-absolute top-0 end-0 badge bg-warning m-2">
                                                 Stok Terbatas
+                                            </span>
+                                        @elseif($product->stock == 0)
+                                            <span class="position-absolute top-0 end-0 badge bg-danger m-2">
+                                                Stok Habis
                                             </span>
                                         @endif
                                         
                                         <div class="position-absolute top-0 start-0 m-2">
-                                            <span class="badge bg-primary">{{ $product['category'] }}</span>
+                                            <span class="badge bg-primary">{{ $product->category }}</span>
                                         </div>
                                     </div>
 
                                     <!-- Product Info -->
                                     <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">{{ $product['name'] }}</h5>
+                                        <h5 class="card-title">{{ $product->name }}</h5>
                                         <p class="card-text text-muted flex-grow-1">
-                                            {{ \Str::limit($product['description'], 80) }}
+                                            {{ \Str::limit($product->description, 80) }}
                                         </p>
                                         
                                         <!-- Product Details -->
                                         <div class="mb-3">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="h5 text-primary mb-0">
-                                                    Rp {{ number_format($product['price'], 0, ',', '.') }}
+                                                    Rp {{ number_format($product->price, 0, ',', '.') }}
                                                 </span>
-                                                <small class="text-muted">{{ $product['weight'] }}g</small>
+                                                <small class="text-muted">{{ $product->weight }}g</small>
                                             </div>
                                             
                                             <div class="d-flex align-items-center text-muted small">
                                                 <i class="bi bi-box me-1"></i>
-                                                <span>Stok: {{ $product['stock'] }}</span>
+                                                <span>Stok: {{ $product->stock }}</span>
                                             </div>
                                         </div>
 
                                         <!-- Action Buttons -->
                                         <div class="mt-auto">
                                             <div class="d-flex gap-2">
-                                                <a href="{{ route('products.show', $product['slug']) }}" 
+                                                <a href="{{ route('products.show', $product->slug) }}" 
                                                    class="btn btn-outline-primary flex-grow-1">
                                                     <i class="bi bi-eye me-1"></i>Detail
                                                 </a>
-                                                <button class="btn btn-primary flex-grow-1" 
-                                                        onclick="addToCart({{ $product['id'] }})">
-                                                    <i class="bi bi-cart-plus me-1"></i>Keranjang
-                                                </button>
+                                                @if($product->isInStock())
+                                                    <button class="btn btn-primary flex-grow-1" 
+                                                            onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}')">
+                                                        <i class="bi bi-cart-plus me-1"></i>Keranjang
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-secondary flex-grow-1" disabled>
+                                                        <i class="bi bi-x-circle me-1"></i>Stok Habis
+                                                    </button>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -261,34 +271,19 @@
 
 @push('scripts')
 <script>
-    // Product data for demo (akan diganti dengan database di Phase 3)
-    const productData = {
-        1: { name: 'Bumbu Rendang Padang', price: 25000, description: 'Bumbu rendang khas Padang dengan rasa autentik' },
-        2: { name: 'Bumbu Gulai Ayam', price: 20000, description: 'Bumbu gulai dengan santan gurih untuk ayam' },
-        3: { name: 'Bumbu Opor Lebaran', price: 18000, description: 'Bumbu opor spesial untuk masakan lebaran' },
-        4: { name: 'Bumbu Rawon Jawa Timur', price: 22000, description: 'Bumbu rawon asli Jawa Timur dengan kluwek pilihan' },
-        5: { name: 'Ungkep Ayam Kampung', price: 85000, description: 'Ayam kampung ungkep siap masak bumbu meresap' },
-        6: { name: 'Ungkep Bebek Rica', price: 95000, description: 'Bebek ungkep bumbu rica-rica pedas dan gurih' }
-    };
+    // Product data now comes from database via Blade
 
-    // Add to cart function (temporary)
-    function addToCart(productId) {
-        const product = productData[productId] || { 
-            name: `Produk ${productId}`, 
-            price: 20000, 
-            description: 'Produk berkualitas premium'
-        };
+    // Add to cart function
+    function addToCart(productId, productName, productPrice, productDescription) {
+        alert(`Ditambahkan ke keranjang!\n${productName}\nRp ${productPrice.toLocaleString('id-ID')}`);
         
-        // For now, just show alert
-        alert(`Ditambahkan ke keranjang!\n${product.name}\nRp ${product.price.toLocaleString('id-ID')}`);
-        
-        // Add to localStorage with proper structure including description
+        // Add to localStorage with proper structure
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push({ 
             id: productId, 
-            name: product.name,
-            price: product.price,
-            description: product.description,
+            name: productName,
+            price: productPrice,
+            description: productDescription,
             quantity: 1 
         });
         localStorage.setItem('cart', JSON.stringify(cart));

@@ -115,7 +115,7 @@
                         </a>
                     </li>
                     
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
                                 <i class="c-orange-500 ti-package"></i>
@@ -126,12 +126,12 @@
                             </span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="sidebar-link" href="#">Daftar Produk</a></li>
-                            <li><a class="sidebar-link" href="#">Tambah Produk</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.products.index') }}">Daftar Produk</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.products.create') }}">Tambah Produk</a></li>
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
                                 <i class="c-teal-500 ti-shopping-cart"></i>
@@ -142,8 +142,8 @@
                             </span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="sidebar-link" href="#">Daftar Pesanan</a></li>
-                            <li><a class="sidebar-link" href="#">Verifikasi Pembayaran</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.orders.index') }}">Daftar Pesanan</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.orders.index', ['status' => 'payment_verification']) }}">Verifikasi Pembayaran</a></li>
                         </ul>
                     </li>
 

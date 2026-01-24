@@ -15,7 +15,7 @@
                 <li class="breadcrumb-item">
                     <a href="{{ route('products.index') }}" class="text-decoration-none">Produk</a>
                 </li>
-                <li class="breadcrumb-item active">{{ $product['name'] }}</li>
+                <li class="breadcrumb-item active">{{ $product->name }}</li>
             </ol>
         </nav>
 
@@ -24,9 +24,9 @@
             <div class="col-lg-6">
                 <div class="position-sticky" style="top: 2rem;">
                     <div class="card border-0 shadow">
-                        <img src="{{ $product['image'] }}" 
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 300\' fill=\'none\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'75\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'15\'/%3E%3Ctext x=\'200\' y=\'155\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'24\' font-weight=\'bold\'%3E{{ urlencode($product->name) }}%3C/text%3E%3C/svg%3E' }}" 
                              class="card-img" 
-                             alt="{{ $product['name'] }}"
+                             alt="{{ $product->name }}"
                              style="height: 400px; object-fit: cover;">
                     </div>
                     
@@ -34,7 +34,7 @@
                     <div class="d-flex gap-2 mt-3">
                         @for($i = 1; $i <= 3; $i++)
                             <div class="flex-fill">
-                                <img src="{{ $product['image'] }}" 
+                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 150 150\' fill=\'none\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f8f9fa\' rx=\'8\'/%3E%3Crect x=\'25\' y=\'40\' width=\'100\' height=\'70\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'5\'/%3E%3Ctext x=\'75\' y=\'80\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3EImg%3C/text%3E%3C/svg%3E' }}" 
                                      class="img-fluid rounded shadow-sm" 
                                      style="height: 80px; object-fit: cover; opacity: 0.7; cursor: pointer;"
                                      alt="Thumbnail {{ $i }}">
@@ -47,12 +47,12 @@
             <!-- Product Info -->
             <div class="col-lg-6">
                 <div class="mb-3">
-                    <span class="badge bg-primary fs-6">{{ $product['category'] }}</span>
+                    <span class="badge bg-primary fs-6">{{ $product->category }}</span>
                 </div>
                 
-                <h1 class="display-5 fw-bold text-dark mb-3">{{ $product['name'] }}</h1>
+                <h1 class="display-5 fw-bold text-dark mb-3">{{ $product->name }}</h1>
                 
-                <p class="lead text-muted mb-4">{{ $product['description'] }}</p>
+                <p class="lead text-muted mb-4">{{ $product->description }}</p>
                 
                 <!-- Price & Stock -->
                 <div class="bg-light rounded p-4 mb-4">
@@ -60,7 +60,7 @@
                         <div class="col-md-6">
                             <div class="d-flex align-items-baseline gap-2">
                                 <span class="display-6 fw-bold text-primary">
-                                    Rp {{ number_format($product['price'], 0, ',', '.') }}
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
                                 </span>
                                 <small class="text-muted">per pack</small>
                             </div>
@@ -69,11 +69,11 @@
                             <div class="d-flex flex-column align-items-md-end">
                                 <div class="d-flex align-items-center text-muted mb-1">
                                     <i class="bi bi-box me-2"></i>
-                                    <span>Stok: {{ $product['stock'] }} pack</span>
+                                    <span>Stok: {{ $product->stock }} pack</span>
                                 </div>
                                 <div class="d-flex align-items-center text-muted">
                                     <i class="bi bi-weight me-2"></i>
-                                    <span>Berat: {{ $product['weight'] }}g</span>
+                                    <span>Berat: {{ $product->weight }}g</span>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                                                id="quantity" 
                                                value="1" 
                                                min="1" 
-                                               max="{{ $product['stock'] }}">
+                                               max="{{ $product->stock }}">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(1)">
                                             <i class="bi bi-plus"></i>
                                         </button>
@@ -110,7 +110,7 @@
                                 <div class="col-md-4">
                                     <div class="text-muted small mb-1">Total Harga</div>
                                     <div class="h5 text-primary" id="totalPrice">
-                                        Rp {{ number_format($product['price'], 0, ',', '.') }}
+                                        Rp {{ number_format($product->price, 0, ',', '.') }}
                                     </div>
                                 </div>
                                 
@@ -132,7 +132,7 @@
                     <button class="btn btn-outline-info flex-fill" onclick="shareProduct()">
                         <i class="bi bi-share me-1"></i>Bagikan
                     </button>
-                    <a href="{{ config('constants.social_media.whatsapp') }}?text=Halo, saya tertarik dengan {{ urlencode($product['name']) }}" 
+                    <a href="{{ config('constants.social_media.whatsapp') }}?text=Halo, saya tertarik dengan {{ urlencode($product->name) }}" 
                        class="btn btn-success flex-fill">
                         <i class="bi bi-whatsapp me-1"></i>Tanya Produk
                     </a>
@@ -167,7 +167,7 @@
                         <div class="row">
                             <div class="col-lg-8">
                                 <h4 class="mb-3">Deskripsi Produk</h4>
-                                <p class="lead">{{ $product['long_description'] ?? $product['description'] }}</p>
+                                <p class="lead">{{ $product->long_description ?? $product->description }}</p>
                                 
                                 <h5 class="mt-4 mb-3">Keunggulan Produk</h5>
                                 <ul class="list-unstyled">
@@ -195,20 +195,20 @@
                                         <h6 class="fw-bold mb-3">Informasi Produk</h6>
                                         <div class="mb-2">
                                             <small class="text-muted">Berat:</small>
-                                            <span class="ms-2">{{ $product['weight'] }} gram</span>
+                                            <span class="ms-2">{{ $product->weight }} gram</span>
                                         </div>
                                         <div class="mb-2">
                                             <small class="text-muted">Kategori:</small>
-                                            <span class="ms-2">{{ $product['category'] }}</span>
+                                            <span class="ms-2">{{ $product->category }}</span>
                                         </div>
                                         <div class="mb-2">
                                             <small class="text-muted">Stok:</small>
-                                            <span class="ms-2">{{ $product['stock'] }} pack</span>
+                                            <span class="ms-2">{{ $product->stock }} pack</span>
                                         </div>
-                                        @if(isset($product['shelf_life']))
+                                        @if($product->shelf_life)
                                             <div class="mb-2">
                                                 <small class="text-muted">Masa Simpan:</small>
-                                                <span class="ms-2">{{ $product['shelf_life'] }}</span>
+                                                <span class="ms-2">{{ $product->shelf_life }}</span>
                                             </div>
                                         @endif
                                     </div>
@@ -220,9 +220,9 @@
                     <!-- Ingredients Tab -->
                     <div class="tab-pane fade" id="ingredients" role="tabpanel">
                         <h4 class="mb-3">Komposisi</h4>
-                        @if(isset($product['ingredients']))
+                        @if($product->ingredients && is_array($product->ingredients) && count($product->ingredients) > 0)
                             <div class="row">
-                                @foreach(array_chunk($product['ingredients'], 3) as $chunk)
+                                @foreach(array_chunk($product->ingredients, 3) as $chunk)
                                     <div class="col-md-4">
                                         <ul class="list-group list-group-flush">
                                             @foreach($chunk as $ingredient)
@@ -243,10 +243,10 @@
                     <!-- Usage Tab -->
                     <div class="tab-pane fade" id="usage" role="tabpanel">
                         <h4 class="mb-3">Cara Penggunaan</h4>
-                        @if(isset($product['usage']))
+                        @if($product->usage)
                             <div class="alert alert-info">
                                 <i class="bi bi-info-circle me-2"></i>
-                                <strong>Takaran:</strong> {{ $product['usage'] }}
+                                <strong>Takaran:</strong> {{ $product->usage }}
                             </div>
                         @endif
                         
@@ -279,33 +279,29 @@
         </div>
         
         <div class="row g-4">
-            <!-- Related products using real product data -->
-            @php
-                $relatedProducts = [
-                    ['id' => 2, 'name' => 'Bumbu Gulai Ayam', 'price' => 20000, 'slug' => 'bumbu-gulai-ayam'],
-                    ['id' => 3, 'name' => 'Bumbu Opor Lebaran', 'price' => 18000, 'slug' => 'bumbu-opor-lebaran'],
-                    ['id' => 4, 'name' => 'Bumbu Rawon Jawa Timur', 'price' => 22000, 'slug' => 'bumbu-rawon-jawa-timur']
-                ];
-            @endphp
-            
-            @foreach($relatedProducts as $related)
+            <!-- Related products from database -->
+            @forelse($relatedProducts as $related)
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250' fill='none'%3E%3Crect width='400' height='250' fill='%23f8f9fa'/%3E%3Crect x='50' y='50' width='300' height='150' fill='%23dc3545' fill-opacity='0.2' rx='10'/%3E%3Ctext x='200' y='125' text-anchor='middle' fill='%23dc3545' font-family='Arial' font-size='16' font-weight='bold'%3E{{ $related['name'] }}%3C/text%3E%3C/svg%3E" 
+                    <img src="{{ $related->image ? asset('storage/' . $related->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 250\' fill=\'none\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'50\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'10\'/%3E%3Ctext x=\'200\' y=\'125\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'16\' font-weight=\'bold\'%3E{{ urlencode($related->name) }}%3C/text%3E%3C/svg%3E' }}" 
                          class="card-img-top" 
-                         alt="{{ $related['name'] }}"
+                         alt="{{ $related->name }}"
                          style="height: 200px; object-fit: cover;">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $related['name'] }}</h5>
-                        <p class="card-text">Bumbu berkualitas dengan cita rasa autentik dan rempah pilihan.</p>
+                        <h5 class="card-title">{{ $related->name }}</h5>
+                        <p class="card-text">{{ \Str::limit($related->description, 80) }}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 text-primary mb-0">Rp {{ number_format($related['price'], 0, ',', '.') }}</span>
-                            <a href="{{ route('products.show', $related['slug']) }}" class="btn btn-primary btn-sm">Detail</a>
+                            <span class="h5 text-primary mb-0">Rp {{ number_format($related->price, 0, ',', '.') }}</span>
+                            <a href="{{ route('products.show', $related->slug) }}" class="btn btn-primary btn-sm">Detail</a>
                         </div>
                     </div>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="col-12">
+                <p class="text-muted text-center">Tidak ada produk terkait</p>
+            </div>
+            @endforelse
         </div>
     </div>
 </section>
@@ -313,8 +309,8 @@
 
 @push('scripts')
 <script>
-    const productPrice = {{ $product['price'] }};
-    const maxStock = {{ $product['stock'] }};
+    const productPrice = {{ $product->price }};
+    const maxStock = {{ $product->stock }};
     
     // Update quantity and total price
     function changeQuantity(change) {
@@ -350,15 +346,15 @@
         const quantity = parseInt(document.getElementById('quantity').value);
         
         // Show success feedback
-        alert(`Ditambahkan ke keranjang!\n{{ $product['name'] }}\nJumlah: ${quantity}\nTotal: Rp ${({{ $product['price'] }} * quantity).toLocaleString('id-ID')}`);
+        alert(`Ditambahkan ke keranjang!\n{{ $product->name }}\nJumlah: ${quantity}\nTotal: Rp ${({{ $product->price }} * quantity).toLocaleString('id-ID')}`);
         
         // Add to localStorage
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push({ 
-            id: {{ $product['id'] }}, 
-            name: '{{ $product['name'] }}',
-            price: {{ $product['price'] }},
-            description: '{{ $product['description'] }}',
+            id: {{ $product->id }}, 
+            name: '{{ addslashes($product->name) }}',
+            price: {{ $product->price }},
+            description: '{{ addslashes($product->description) }}',
             quantity: quantity 
         });
         localStorage.setItem('cart', JSON.stringify(cart));
@@ -389,8 +385,8 @@
     function shareProduct() {
         if (navigator.share) {
             navigator.share({
-                title: '{{ $product['name'] }}',
-                text: '{{ $product['description'] }}',
+                title: '{{ addslashes($product->name) }}',
+                text: '{{ addslashes($product->description) }}',
                 url: window.location.href
             });
         } else {

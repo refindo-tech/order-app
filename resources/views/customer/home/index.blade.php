@@ -171,38 +171,35 @@
         </div>
         
         <div class="row g-4">
-            <!-- Featured products using real product data -->
-            @php
-                $featuredProducts = [
-                    ['id' => 1, 'name' => 'Bumbu Rendang Padang', 'price' => 25000, 'description' => 'Bumbu rendang khas Padang dengan rasa autentik dan rempah pilihan'],
-                    ['id' => 2, 'name' => 'Bumbu Gulai Ayam', 'price' => 20000, 'description' => 'Bumbu gulai dengan santan gurih untuk masakan ayam yang lezat'],
-                    ['id' => 3, 'name' => 'Bumbu Opor Lebaran', 'price' => 18000, 'description' => 'Bumbu opor spesial untuk masakan opor ayam saat lebaran'],
-                    ['id' => 4, 'name' => 'Bumbu Rawon Jawa Timur', 'price' => 22000, 'description' => 'Bumbu rawon asli Jawa Timur dengan kluwek pilihan berkualitas']
-                ];
-            @endphp
-            
-            @foreach($featuredProducts as $product)
+            <!-- Featured products from database -->
+            @forelse($featuredProducts as $product)
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none'%3E%3Crect width='300' height='200' fill='%23f8f9fa'/%3E%3Crect x='50' y='50' width='200' height='100' fill='%23dc3545' fill-opacity='0.2' rx='10'/%3E%3Ctext x='150' y='105' text-anchor='middle' fill='%23dc3545' font-family='Arial' font-size='14' font-weight='bold'%3E{{ \Str::limit($product['name'], 20) }}%3C/text%3E%3C/svg%3E" 
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none'%3E%3Crect width='300' height='200' fill='%23f8f9fa'/%3E%3Crect x='50' y='50' width='200' height='100' fill='%23dc3545' fill-opacity='0.2' rx='10'/%3E%3Ctext x='150' y='105' text-anchor='middle' fill='%23dc3545' font-family='Arial' font-size='14' font-weight='bold'%3E{{ \Str::limit($product->name, 20) }}%3C/text%3E%3C/svg%3E" 
                          class="card-img-top" 
-                         alt="{{ $product['name'] }}">
+                         alt="{{ $product->name }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $product['name'] }}</h5>
-                        <p class="card-text">{{ \Str::limit($product['description'], 80) }}</p>
+                        <h5 class="card-title">{{ $product->name }}</h5>
+                        <p class="card-text">{{ \Str::limit($product->description, 80) }}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 text-primary mb-0">Rp {{ number_format($product['price'], 0, ',', '.') }}</span>
+                            <span class="h5 text-primary mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                             <small class="text-muted">Per pack</small>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">
-                        <button class="btn btn-primary w-100" onclick="addToCartFromHome({{ $product['id'] }}, '{{ $product['name'] }}', {{ $product['price'] }}, '{{ addslashes($product['description']) }}')">
-                            <i class="bi bi-cart-plus me-2"></i>Tambah ke Keranjang
-                        </button>
+                        <a href="{{ route('products.show', $product->slug) }}" class="btn btn-primary w-100">
+                            <i class="bi bi-eye me-2"></i>Lihat Detail
+                        </a>
                     </div>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle me-2"></i>Belum ada produk tersedia
+                </div>
+            </div>
+            @endforelse
         </div>
         
         <div class="text-center mt-5">
@@ -321,23 +318,6 @@
         });
     });
     
-    // Add to cart from homepage
-    function addToCartFromHome(productId, productName, productPrice, productDescription) {
-        alert(`Ditambahkan ke keranjang!\n${productName}\nRp ${productPrice.toLocaleString('id-ID')}`);
-        
-        // Add to localStorage
-        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        cart.push({ 
-            id: productId, 
-            name: productName,
-            price: productPrice,
-            description: productDescription,
-            quantity: 1 
-        });
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // Trigger cart update
-        window.dispatchEvent(new Event('cart-updated'));
-    }
+    // Note: Add to cart functionality will be handled in product detail page
 </script>
 @endpush
