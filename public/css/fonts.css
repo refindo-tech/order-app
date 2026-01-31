@@ -1,0 +1,39 @@
+/**
+ * Order App – Font
+ * Struktur: public/css/fonts.css + public/fonts/* (lihat public/fonts/README.md)
+ *
+ * Heading: Akaya Telivigala (local)
+ * Body & lainnya: Klee One (Google Fonts, di-load di layout)
+ */
+@font-face {
+    font-family: 'Akaya Telivigala';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/akaya-telivigala/AkayaTelivigala-Regular.ttf') format('truetype');
+}
+
+:root {
+    --font-heading: 'Akaya Telivigala', cursive;
+    --font-body: 'Klee One', cursive;
+}
+
+/* Heading: Akaya Telivigala */
+h1, h2, h3, h4, h5, h6,
+.section-title,
+.navbar-brand,
+.font-heading {
+    font-family: var(--font-heading);
+}
+
+/* Body & lainnya: Klee One (weight 300 agar tipis) */
+body,
+p,
+button,
+input,
+select,
+textarea,
+label,
+a {
+    font-family: var(--font-body);
+}

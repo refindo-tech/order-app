@@ -11,8 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
     
     <style>
         :root {
@@ -26,13 +26,12 @@
         }
         
         body {
-            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             color: #333;
         }
         
         .navbar-brand {
-            font-weight: 700;
+            font-weight: 400;
             font-size: 1.5rem;
         }
         
