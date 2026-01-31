@@ -6,31 +6,33 @@
 @section('content')
 <!-- Hero Section -->
 <section class="hero-section text-center">
-    <div class="container">
+    <video class="hero-section__video" autoplay muted loop playsinline aria-hidden="true">
+        <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4">
+    </video>
+    <div class="hero-section__overlay" aria-hidden="true"></div>
+    <div class="container w-100 hero-section__content">
         <div class="row align-items-center">
-            <div class="col-lg-6 text-lg-start mb-4 mb-lg-0">
+            <div class="col-lg-5">
+                <div class="position-relative">
+                    <img src="{{ asset('images/rumah-bumbu-ungkep.png') }}" alt="Rumah Bumbu & Ungkep" class="img-fluid">
+                </div>
+            </div>
+            <div class="col-lg-7 text-lg-end mb-4 mb-lg-0">
                 <h1 class="display-4 fw-bold mb-4">
-                    Rumah Bumbu & Ungkep
-                    <span class="d-block text-warning">Berkualitas Tinggi</span>
+                    Masak Enak Itu Mudah
+                    <span class="d-block text-warning">Harga Terjangkau, Rasa Juara</span>
                 </h1>
                 <p class="lead mb-4">
-                    Supplier terpercaya untuk kebutuhan bumbu dapur dan ungkep berkualitas. 
-                    Melayani pengiriman ke seluruh Indonesia dengan jaminan kualitas terbaik.
+                    Supplier terpercaya untuk kebutuhan bumbu dapur dan ungkep berkualitas.
+                    Melayani pengiriman ke seluruh Tangerang dan Luar Tangerang.
                 </p>
-                <div class="d-flex flex-column flex-sm-row gap-3">
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-end">
                     <a href="{{ route('products.index') }}" class="btn btn-light btn-lg">
                         <i class="bi bi-grid me-2"></i>Lihat Produk
                     </a>
                     <a href="#kontak" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-whatsapp me-2"></i>Hubungi Kami
                     </a>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="position-relative">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400' fill='none'%3E%3Crect width='600' height='400' fill='%23ffffff' fill-opacity='0.1' rx='20'/%3E%3Cpath d='M150 200c0-55.228 44.772-100 100-100s100 44.772 100 100-44.772 100-100 100-100-44.772-100-100z' fill='%23ffffff' fill-opacity='0.2'/%3E%3Cpath d='M200 150h100v100H200z' fill='%23ffffff' fill-opacity='0.3'/%3E%3Ctext x='300' y='210' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-size='24' font-weight='bold'%3EBumbu%3C/text%3E%3Ctext x='300' y='240' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-size='24' font-weight='bold'%3E%26 Ungkep%3C/text%3E%3C/svg%3E" 
-                         alt="Rumah Bumbu & Ungkep" 
-                         class="img-fluid rounded shadow-lg">
                 </div>
             </div>
         </div>
@@ -40,7 +42,7 @@
 <!-- Keunggulan Section -->
 <section class="py-5">
     <div class="container">
-        <div class="row text-center mb-5">
+        <div class="row text-center mb-2">
             <div class="col-lg-8 mx-auto">
                 <h2 class="section-title">Mengapa Memilih Kami?</h2>
                 <p class="section-subtitle">
@@ -93,7 +95,7 @@
                             <i class="bi bi-geo-alt text-warning" style="font-size: 2rem;"></i>
                         </div>
                         <h5 class="card-title">Jangkauan Luas</h5>
-                        <p class="card-text">Melayani pengiriman ke seluruh Indonesia dengan coverage yang luas</p>
+                        <p class="card-text">Melayani pengiriman ke Tangerang dan luar Tangerang</p>
                     </div>
                 </div>
             </div>
@@ -105,11 +107,6 @@
 <section class="py-5 bg-light" id="tentang">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 350' fill='none'%3E%3Crect width='500' height='350' fill='%23f8f9fa' rx='15'/%3E%3Crect x='50' y='50' width='400' height='250' fill='%23e9ecef' rx='10'/%3E%3Ccircle cx='150' cy='150' r='50' fill='%23dc3545' fill-opacity='0.8'/%3E%3Crect x='220' y='120' width='180' height='60' fill='%23fd7e14' fill-opacity='0.8' rx='5'/%3E%3Ctext x='250' y='225' fill='%23495057' font-family='Arial' font-size='16' font-weight='bold'%3ERumah Bumbu%3C/text%3E%3Ctext x='250' y='250' fill='%23495057' font-family='Arial' font-size='14'%3ESejak 2020%3C/text%3E%3C/svg%3E" 
-                     alt="Tentang Rumah Bumbu & Ungkep" 
-                     class="img-fluid rounded shadow">
-            </div>
             <div class="col-lg-6">
                 <h2 class="section-title">Tentang Rumah Bumbu & Ungkep</h2>
                 <p class="mb-4">
@@ -153,6 +150,9 @@
                 <a href="{{ route('products.index') }}" class="btn btn-primary btn-lg">
                     <i class="bi bi-arrow-right me-2"></i>Lihat Produk Kami
                 </a>
+            </div>
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{{ asset('images/rumah-bumbu-ungkep.png') }}" alt="Rumah Bumbu & Ungkep" class="img-fluid">
             </div>
         </div>
     </div>

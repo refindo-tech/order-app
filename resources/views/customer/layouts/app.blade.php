@@ -33,6 +33,7 @@
         .navbar-brand {
             font-weight: 400;
             font-size: 1.5rem;
+            color: var(--dark-color);
         }
         
         .btn-primary {
@@ -67,9 +68,37 @@
         }
         
         .hero-section {
+            position: relative;
+            overflow: hidden;
             background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
             color: white;
-            padding: 100px 0;
+            margin-top: -80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 76px;
+            padding-bottom: 76px;
+        }
+        .hero-section__video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .hero-section__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .hero-section__content {
+            position: relative;
+            z-index: 2;
         }
         
         .section-title {
@@ -96,8 +125,12 @@
         }
         
         .navbar {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 1rem 0;
+            z-index: 1030;
         }
         
         .footer {
@@ -141,9 +174,9 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
-            <a class="navbar-brand text-primary" href="{{ route('home') }}">
+            <a class="navbar-brand" href="{{ route('home') }}">
                 <i class="bi bi-shop me-2"></i>{{ config('app.name') }}
             </a>
             
