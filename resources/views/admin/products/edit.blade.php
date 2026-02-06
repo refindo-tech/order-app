@@ -195,7 +195,7 @@
                                     @if($product->image)
                                         <div class="mb-3">
                                             <p class="text-muted small mb-1">Gambar saat ini:</p>
-                                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="img-fluid rounded mb-2" style="max-height: 150px;">
+                                            <img src="{{ storage_url($product->image) }}" alt="{{ $product->name }}" class="img-fluid rounded mb-2" style="max-height: 150px;">
                                         </div>
                                     @endif
                                     <div class="mb-3">

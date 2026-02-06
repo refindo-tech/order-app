@@ -175,7 +175,7 @@
             @forelse($featuredProducts as $product)
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100">
-                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 300 200\' fill=\'none\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'50\' width=\'200\' height=\'100\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'10\'/%3E%3Ctext x=\'150\' y=\'105\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3ENo%20Image%3C/text%3E%3C/svg%3E' }}" 
+                    <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 300 200\' fill=\'none\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'50\' width=\'200\' height=\'100\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'10\'/%3E%3Ctext x=\'150\' y=\'105\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3ENo%20Image%3C/text%3E%3C/svg%3E' }}" 
                          class="card-img-top" 
                          alt="{{ $product->name }}"
                          style="height: 200px; object-fit: cover;">

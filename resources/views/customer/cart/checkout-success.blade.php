@@ -282,7 +282,7 @@
                                 <strong>Bukti Pembayaran yang Diupload:</strong>
                                 <div class="mt-2">
                                     @php
-                                        $filePath = asset('storage/' . $order->payment->payment_proof);
+                                        $filePath = storage_url($order->payment->payment_proof);
                                         $fileExtension = strtolower(pathinfo($order->payment->payment_proof, PATHINFO_EXTENSION));
                                     @endphp
                                     <a href="{{ $filePath }}" target="_blank" class="d-inline-block">

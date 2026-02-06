@@ -10,10 +10,9 @@ use App\Http\Controllers\Customer\TrackingController;
 use App\Http\Controllers\StorageController;
 use Illuminate\Support\Facades\Route;
 
-// Storage route - must be before other routes to catch /storage/* requests
-// This route serves files from storage/app/public dynamically without requiring symlink
-Route::get('/storage/{path}', [StorageController::class, 'serve'])
-    ->where('path', '.*') // Match any path including subdirectories
+// Media route - serves files from storage/app/public without symlink (avoids 403 on Hostinger)
+Route::get('/media/{path}', [StorageController::class, 'serve'])
+    ->where('path', '.*')
     ->name('storage.serve');
 
 // Customer Routes

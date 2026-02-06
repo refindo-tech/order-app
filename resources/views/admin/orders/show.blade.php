@@ -174,8 +174,8 @@
                     <div class="col-12 mb-3">
                         <strong>Bukti Pembayaran:</strong>
                         <div class="mT-10">
-                            <a href="{{ asset('storage/' . $order->payment->payment_proof) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $order->payment->payment_proof) }}" 
+                            <a href="{{ storage_url($order->payment->payment_proof) }}" target="_blank">
+                                <img src="{{ storage_url($order->payment->payment_proof) }}" 
                                      alt="Bukti Pembayaran" 
                                      class="img-thumbnail" 
                                      style="max-height: 200px;">

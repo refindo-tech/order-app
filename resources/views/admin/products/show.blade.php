@@ -116,7 +116,7 @@
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
                 <h5 class="c-grey-900 mB-20">Gambar Produk</h5>
                 @if($product->image)
-                    <img src="{{ asset('storage/' . $product->image) }}" 
+                    <img src="{{ storage_url($product->image) }}" 
                          alt="{{ $product->name }}" 
                          class="img-fluid rounded">
                 @else

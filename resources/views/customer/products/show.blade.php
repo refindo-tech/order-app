@@ -24,7 +24,7 @@
             <div class="col-lg-6">
                 <div class="position-sticky" style="top: 2rem;">
                     <div class="card border-0 shadow">
-                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 300\' fill=\'none\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'75\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'15\'/%3E%3Ctext x=\'200\' y=\'155\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'24\' font-weight=\'bold\'%3E{{ urlencode($product->name) }}%3C/text%3E%3C/svg%3E' }}" 
+                        <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 300\' fill=\'none\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'75\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'15\'/%3E%3Ctext x=\'200\' y=\'155\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'24\' font-weight=\'bold\'%3E{{ urlencode($product->name) }}%3C/text%3E%3C/svg%3E' }}" 
                              class="card-img" 
                              alt="{{ $product->name }}"
                              style="height: 400px; object-fit: cover;">
@@ -34,7 +34,7 @@
                     <div class="d-flex gap-2 mt-3">
                         @for($i = 1; $i <= 3; $i++)
                             <div class="flex-fill">
-                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 150 150\' fill=\'none\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f8f9fa\' rx=\'8\'/%3E%3Crect x=\'25\' y=\'40\' width=\'100\' height=\'70\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'5\'/%3E%3Ctext x=\'75\' y=\'80\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3EImg%3C/text%3E%3C/svg%3E' }}" 
+                                <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 150 150\' fill=\'none\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f8f9fa\' rx=\'8\'/%3E%3Crect x=\'25\' y=\'40\' width=\'100\' height=\'70\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'5\'/%3E%3Ctext x=\'75\' y=\'80\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3EImg%3C/text%3E%3C/svg%3E' }}" 
                                      class="img-fluid rounded shadow-sm" 
                                      style="height: 80px; object-fit: cover; opacity: 0.7; cursor: pointer;"
                                      alt="Thumbnail {{ $i }}">
@@ -272,7 +272,7 @@
             @forelse($relatedProducts as $related)
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
-                    <img src="{{ $related->image ? asset('storage/' . $related->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 250\' fill=\'none\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'50\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'10\'/%3E%3Ctext x=\'200\' y=\'125\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'16\' font-weight=\'bold\'%3E{{ urlencode($related->name) }}%3C/text%3E%3C/svg%3E' }}" 
+                    <img src="{{ $related->image ? storage_url($related->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 250\' fill=\'none\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'50\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'10\'/%3E%3Ctext x=\'200\' y=\'125\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'16\' font-weight=\'bold\'%3E{{ urlencode($related->name) }}%3C/text%3E%3C/svg%3E' }}" 
                          class="card-img-top" 
                          alt="{{ $related->name }}"
                          style="height: 200px; object-fit: cover;">
