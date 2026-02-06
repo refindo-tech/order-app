@@ -367,12 +367,12 @@
                 <div class="d-grid gap-2">
                     <a href="{{ route('cart.checkout-success', $order->order_code) }}"
                        target="_blank"
-                       class="btn btn-outline-primary btn-sm">
+                       class="btn btn-primary btn-sm">
                         <i class="ti-layout-media-center-alt mR-5"></i>Lihat Halaman Checkout Customer
                     </a>
                     <a href="{{ route('tracking.show', ['order_code' => $order->order_code]) }}"
                        target="_blank"
-                       class="btn btn-outline-info btn-sm">
+                       class="btn btn-info btn-sm">
                         <i class="ti-search mR-5"></i>Lihat Halaman Tracking Customer
                     </a>
                 </div>
