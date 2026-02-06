@@ -129,7 +129,7 @@
                     </div>
                     
                     <!-- Sort Options (for future) -->
-                    <div class="dropdown">
+                    <!-- <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-sort-down me-1"></i>Urutkan
                         </button>
@@ -138,7 +138,7 @@
                             <li><a class="dropdown-item" href="#">Harga Terendah</a></li>
                             <li><a class="dropdown-item" href="#">Harga Tertinggi</a></li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
 
                 @if($products->isNotEmpty())
