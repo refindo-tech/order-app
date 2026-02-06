@@ -29,18 +29,6 @@
                              alt="{{ $product->name }}"
                              style="height: 400px; object-fit: cover;">
                     </div>
-                    
-                    <!-- Product Gallery (for future) -->
-                    <div class="d-flex gap-2 mt-3">
-                        @for($i = 1; $i <= 3; $i++)
-                            <div class="flex-fill">
-                                <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 150 150\' fill=\'none\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f8f9fa\' rx=\'8\'/%3E%3Crect x=\'25\' y=\'40\' width=\'100\' height=\'70\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'5\'/%3E%3Ctext x=\'75\' y=\'80\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3EImg%3C/text%3E%3C/svg%3E' }}" 
-                                     class="img-fluid rounded shadow-sm" 
-                                     style="height: 80px; object-fit: cover; opacity: 0.7; cursor: pointer;"
-                                     alt="Thumbnail {{ $i }}">
-                            </div>
-                        @endfor
-                    </div>
                 </div>
             </div>
 

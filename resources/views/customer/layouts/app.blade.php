@@ -247,7 +247,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 mb-4">
-                    <div>
+                    <div class="text-center">
                         @if(file_exists(public_path(config('constants.company.logo', 'images/rumah-bumbu-ungkep.png'))))
                             <a href="{{ route('home') }}" class="d-inline-block">
                                 <img src="{{ asset(config('constants.company.logo', 'images/rumah-bumbu-ungkep.png')) }}" 
@@ -301,9 +301,9 @@
                 
                 <div class="col-lg-3 col-md-12 mb-4">
                     <h6 class="mb-3">Pengiriman</h6>
-                    <p>Kami bekerja sama dengan Paxel untuk pengiriman yang cepat dan aman ke seluruh Indonesia.</p>
+                    <p>Kami bekerja sama dengan Paxel untuk pengiriman yang cepat dan aman.</p>
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-truck fs-4 text-primary me-2"></i>
+                        <i class="bi bi-truck fs-4 text-danger me-2"></i>
                         <span>Powered by Paxel</span>
                     </div>
                 </div>
