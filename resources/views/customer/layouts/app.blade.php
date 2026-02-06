@@ -304,7 +304,7 @@
                     <p>Kami bekerja sama dengan Paxel untuk pengiriman yang cepat dan aman.</p>
                     <div class="d-flex align-items-center">
                         <i class="bi bi-truck fs-4 text-danger me-2"></i>
-                        <span>Powered by Paxel</span>
+                        <span>Paxel Delivery</span>
                     </div>
                 </div>
             </div>
