@@ -225,9 +225,9 @@
             <a href="{{ config('constants.social_media.whatsapp') }}" class="btn btn-light btn-lg">
                 <i class="bi bi-whatsapp me-2"></i>Chat WhatsApp
             </a>
-            <a href="tel:{{ config('constants.contact.phone') }}" class="btn btn-outline-light btn-lg">
+            <!-- <a href="tel:{{ config('constants.contact.phone') }}" class="btn btn-outline-light btn-lg">
                 <i class="bi bi-telephone me-2"></i>Telepon Kami
-            </a>
+            </a> -->
         </div>
     </div>
 </section>
