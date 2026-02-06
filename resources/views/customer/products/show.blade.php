@@ -307,6 +307,62 @@
 </section>
 @endsection
 
+@push('styles')
+<style>
+    /* Mobile optimizations for product detail */
+    @media (max-width: 991.98px) {
+        .position-sticky {
+            position: static !important;
+        }
+        
+        .col-lg-6:first-child {
+            margin-bottom: 2rem;
+        }
+        
+        .card-img {
+            height: auto !important;
+            max-height: 400px;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .display-5 {
+            font-size: 1.75rem;
+        }
+        
+        .lead {
+            font-size: 1rem;
+        }
+        
+        .row.g-3 > .col-md-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .d-flex.gap-2 {
+            flex-direction: column;
+        }
+        
+        .d-flex.gap-2 > * {
+            width: 100%;
+        }
+        
+        .nav-tabs {
+            flex-wrap: wrap;
+        }
+        
+        .nav-tabs .nav-item {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .nav-tabs .nav-link {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+        }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
     const productPrice = {{ $product->price }};

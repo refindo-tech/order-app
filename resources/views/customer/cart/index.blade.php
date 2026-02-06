@@ -354,13 +354,52 @@
         top: 2rem !important;
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
+        .position-sticky {
+            position: static !important;
+            margin-top: 2rem;
+        }
+        
+        .col-lg-8 {
+            order: 1;
+        }
+        
+        .col-lg-4 {
+            order: 2;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
         .cart-item .row > div {
             margin-bottom: 0.5rem;
         }
         
         .cart-item .col-md-2:last-child {
             text-align: center !important;
+        }
+        
+        .cart-item .col-md-2 {
+            margin-bottom: 0.75rem;
+        }
+        
+        .cart-item .col-md-4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .input-group-sm {
+            width: 100%;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .display-5 {
+            font-size: 1.75rem;
+        }
+        
+        .lead {
+            font-size: 1rem;
         }
     }
 </style>

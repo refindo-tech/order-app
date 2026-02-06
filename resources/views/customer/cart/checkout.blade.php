@@ -110,7 +110,7 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card position-sticky" style="top: 2rem;">
+                    <div class="card position-lg-sticky" style="top: 2rem;">
                         <div class="card-header bg-dark text-white">
                             <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Ringkasan Pesanan</h5>
                         </div>
@@ -143,6 +143,62 @@
     </div>
 </section>
 @endsection
+
+@push('styles')
+<style>
+    /* Mobile optimizations for checkout */
+    @media (max-width: 991.98px) {
+        .position-lg-sticky {
+            position: static !important;
+            margin-top: 2rem;
+        }
+        
+        .col-lg-8 {
+            order: 1;
+        }
+        
+        .col-lg-4 {
+            order: 2;
+        }
+        
+        .form-check.mb-3 {
+            padding: 0.75rem;
+        }
+        
+        .form-check-label {
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .row.g-3 > .col-md-6 {
+            margin-bottom: 1rem;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .form-control, .form-select {
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+        
+        #shipping-options-list .form-check {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        #shipping-options-list .form-check-label {
+            font-size: 0.875rem;
+        }
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>

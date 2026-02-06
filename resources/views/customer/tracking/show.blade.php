@@ -154,6 +154,59 @@
     </div>
 </section>
 
+@push('styles')
+<style>
+    /* Mobile optimizations for tracking */
+    @media (max-width: 991.98px) {
+        .col-lg-8 {
+            order: 1;
+        }
+        
+        .col-lg-4 {
+            order: 2;
+            margin-top: 2rem;
+        }
+        
+        .table {
+            font-size: 0.875rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.5rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-group .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
     function copyResi(id) {

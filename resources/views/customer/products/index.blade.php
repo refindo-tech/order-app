@@ -33,13 +33,20 @@
         <div class="row">
             <!-- Sidebar Filters -->
             <div class="col-lg-3 mb-4">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
-                            <i class="bi bi-funnel me-2"></i>Filter Produk
-                        </h5>
-                    </div>
-                    <div class="card-body">
+                <!-- Mobile Filter Toggle Button -->
+                <button class="btn btn-primary w-100 d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#filterSidebar" aria-expanded="false" aria-controls="filterSidebar">
+                    <i class="bi bi-funnel me-2"></i>Filter Produk
+                    <i class="bi bi-chevron-down ms-2"></i>
+                </button>
+                
+                <div class="collapse d-lg-block" id="filterSidebar">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white d-none d-lg-block">
+                            <h5 class="mb-0">
+                                <i class="bi bi-funnel me-2"></i>Filter Produk
+                            </h5>
+                        </div>
+                        <div class="card-body">
                         <!-- Search Form -->
                         <form method="GET" class="mb-4">
                             <div class="input-group">
@@ -83,20 +90,21 @@
                                 </a>
                             </div>
                         @endif
+                        </div>
                     </div>
-                </div>
 
-                <!-- Info Box -->
-                <div class="card mt-4">
-                    <div class="card-body text-center">
-                        <i class="bi bi-info-circle text-info" style="font-size: 2rem;"></i>
-                        <h6 class="mt-2">Butuh Bantuan?</h6>
-                        <p class="small text-muted mb-3">
-                            Tim kami siap membantu Anda memilih produk yang tepat
-                        </p>
-                        <a href="{{ config('constants.social_media.whatsapp') }}" class="btn btn-success btn-sm">
-                            <i class="bi bi-whatsapp me-1"></i>Chat WhatsApp
-                        </a>
+                    <!-- Info Box -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <i class="bi bi-info-circle text-info" style="font-size: 2rem;"></i>
+                            <h6 class="mt-2">Butuh Bantuan?</h6>
+                            <p class="small text-muted mb-3">
+                                Tim kami siap membantu Anda memilih produk yang tepat
+                            </p>
+                            <a href="{{ config('constants.social_media.whatsapp') }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-whatsapp me-1"></i>Chat WhatsApp
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -265,6 +273,44 @@
     
     .breadcrumb-item + .breadcrumb-item::before {
         content: ">";
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 991.98px) {
+        #filterSidebar {
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-card {
+            margin-bottom: 1rem;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .d-flex.justify-content-between > .dropdown {
+            width: 100%;
+        }
+        
+        .d-flex.justify-content-between > .dropdown > button {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .display-5 {
+            font-size: 2rem;
+        }
+        
+        .lead {
+            font-size: 1rem;
+        }
+        
+        .col-lg-4.col-md-6 {
+            margin-bottom: 1rem;
+        }
     }
 </style>
 @endpush

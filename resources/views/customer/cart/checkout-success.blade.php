@@ -322,6 +322,58 @@
 </section>
 @endsection
 
+@push('styles')
+<style>
+    /* Mobile optimizations for checkout success */
+    @media (max-width: 991.98px) {
+        .col-lg-8 {
+            max-width: 100%;
+        }
+        
+        .accordion-body .row.g-3 > .col-md-6 {
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .display-5 {
+            font-size: 1.75rem;
+        }
+        
+        .lead {
+            font-size: 1rem;
+        }
+        
+        .text-center .btn-lg {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .text-center .btn-lg:last-child {
+            margin-bottom: 0;
+        }
+        
+        .accordion-body .row.g-3 > .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .alert {
+            font-size: 0.875rem;
+        }
+        
+        .img-thumbnail {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 function copyToClipboard(text, button) {
