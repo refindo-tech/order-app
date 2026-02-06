@@ -107,9 +107,9 @@
 
                 <!-- Quick Actions -->
                 <div class="d-flex gap-2 mb-4">
-                    <button class="btn btn-outline-danger flex-fill" onclick="addToWishlist()">
+                    <!-- <button class="btn btn-outline-danger flex-fill" onclick="addToWishlist()">
                         <i class="bi bi-heart me-1"></i>Wishlist
-                    </button>
+                    </button> -->
                     <button class="btn btn-outline-info flex-fill" onclick="shareProduct()">
                         <i class="bi bi-share me-1"></i>Bagikan
                     </button>
@@ -408,9 +408,9 @@
     });
     
     // Wishlist function (temporary)
-    function addToWishlist() {
-        alert('Fitur wishlist akan tersedia di update mendatang!');
-    }
+    // function addToWishlist() {
+    //     alert('Fitur wishlist akan tersedia di update mendatang!');
+    // }
     
     // Share function
     function shareProduct() {
