@@ -54,7 +54,7 @@
                 
                 <p class="lead text-muted mb-4">{{ $product->description }}</p>
                 
-                <!-- Price & Stock -->
+                <!-- Price -->
                 <div class="bg-light rounded p-4 mb-4">
                     <div class="row align-items-center">
                         <div class="col-md-6">
@@ -66,15 +66,9 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-md-end">
-                            <div class="d-flex flex-column align-items-md-end">
-                                <div class="d-flex align-items-center text-muted mb-1">
-                                    <i class="bi bi-box me-2"></i>
-                                    <span>Stok: {{ $product->stock }} pack</span>
-                                </div>
-                                <div class="d-flex align-items-center text-muted">
-                                    <i class="bi bi-weight me-2"></i>
-                                    <span>Berat: {{ $product->weight }}g</span>
-                                </div>
+                            <div class="d-flex align-items-center text-muted justify-content-md-end">
+                                <i class="bi bi-weight me-2"></i>
+                                <span>Berat: {{ $product->weight }}g</span>
                             </div>
                         </div>
                     </div>
@@ -99,8 +93,7 @@
                                                class="form-control text-center" 
                                                id="quantity" 
                                                value="1" 
-                                               min="1" 
-                                               max="{{ $product->stock }}">
+                                               min="1">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(1)">
                                             <i class="bi bi-plus"></i>
                                         </button>
@@ -200,10 +193,6 @@
                                         <div class="mb-2">
                                             <small class="text-muted">Kategori:</small>
                                             <span class="ms-2">{{ $product->category }}</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <small class="text-muted">Stok:</small>
-                                            <span class="ms-2">{{ $product->stock }} pack</span>
                                         </div>
                                         @if($product->shelf_life)
                                             <div class="mb-2">
@@ -366,7 +355,6 @@
 @push('scripts')
 <script>
     const productPrice = {{ $product->price }};
-    const maxStock = {{ $product->stock }};
     
     // Update quantity and total price
     function changeQuantity(change) {
@@ -374,7 +362,7 @@
         let currentQuantity = parseInt(quantityInput.value);
         const newQuantity = currentQuantity + change;
         
-        if (newQuantity >= 1 && newQuantity <= maxStock) {
+        if (newQuantity >= 1) {
             quantityInput.value = newQuantity;
             updateTotalPrice();
         }
@@ -392,7 +380,6 @@
     document.getElementById('quantity').addEventListener('input', function() {
         const value = parseInt(this.value);
         if (value < 1) this.value = 1;
-        if (value > maxStock) this.value = maxStock;
         updateTotalPrice();
     });
     

@@ -148,20 +148,10 @@
                                 <div class="card h-100 product-card">
                                     <!-- Product Image -->
                                     <div class="position-relative">
-                                        <img src="{{ $product['image'] }}" 
+                                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 250\' fill=\'none\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'200\' y=\'125\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E' }}" 
                                              class="card-img-top" 
-                                             alt="{{ $product['name'] }}"
+                                             alt="{{ $product->name }}"
                                              style="height: 200px; object-fit: cover;">
-                                        
-                                        @if($product->stock < 10 && $product->stock > 0)
-                                            <span class="position-absolute top-0 end-0 badge bg-warning m-2">
-                                                Stok Terbatas
-                                            </span>
-                                        @elseif($product->stock == 0)
-                                            <span class="position-absolute top-0 end-0 badge bg-danger m-2">
-                                                Stok Habis
-                                            </span>
-                                        @endif
                                         
                                         <div class="position-absolute top-0 start-0 m-2">
                                             <span class="badge bg-primary">{{ $product->category }}</span>
@@ -184,10 +174,6 @@
                                                 <small class="text-muted">{{ $product->weight }}g</small>
                                             </div>
                                             
-                                            <div class="d-flex align-items-center text-muted small">
-                                                <i class="bi bi-box me-1"></i>
-                                                <span>Stok: {{ $product->stock }}</span>
-                                            </div>
                                         </div>
 
                                         <!-- Action Buttons -->
@@ -197,16 +183,10 @@
                                                    class="btn btn-outline-primary flex-grow-1">
                                                     <i class="bi bi-eye me-1"></i>Detail
                                                 </a>
-                                                @if($product->isInStock())
-                                                    <button class="btn btn-primary flex-grow-1" 
-                                                            onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}')">
-                                                        <i class="bi bi-cart-plus me-1"></i>Keranjang
-                                                    </button>
-                                                @else
-                                                    <button class="btn btn-secondary flex-grow-1" disabled>
-                                                        <i class="bi bi-x-circle me-1"></i>Stok Habis
-                                                    </button>
-                                                @endif
+                                                <button class="btn btn-primary flex-grow-1" 
+                                                        onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}')">
+                                                    <i class="bi bi-cart-plus me-1"></i>Keranjang
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

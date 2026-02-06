@@ -72,27 +72,4 @@ class Product extends Model
         return $query->where('is_active', true);
     }
 
-    /**
-     * Scope for in stock products
-     */
-    public function scopeInStock($query)
-    {
-        return $query->where('stock', '>', 0);
-    }
-
-    /**
-     * Check if product is in stock
-     */
-    public function isInStock(): bool
-    {
-        return $this->stock > 0;
-    }
-
-    /**
-     * Check if product has enough stock
-     */
-    public function hasStock(int $quantity): bool
-    {
-        return $this->stock >= $quantity;
-    }
 }

@@ -83,7 +83,6 @@
                                 <th>Nama Produk</th>
                                 <th>Kategori</th>
                                 <th>Harga</th>
-                                <th>Stok</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
@@ -105,11 +104,6 @@
                                 </td>
                                 <td>{{ $product->category }}</td>
                                 <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                                <td>
-                                    <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
-                                        {{ $product->stock }}
-                                    </span>
-                                </td>
                                 <td>
                                     @if($product->is_active)
                                         <span class="badge bg-success">Aktif</span>

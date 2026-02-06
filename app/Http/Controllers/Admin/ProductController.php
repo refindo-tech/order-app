@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -124,6 +125,30 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
+        // --- Troubleshooting: Log proses update produk ---
+        Log::channel('single')->info('[Product Update] Memulai update produk', [
+            'product_id' => $product->id,
+            'product_slug' => $product->slug,
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'is_multipart' => str_contains($request->header('Content-Type', ''), 'multipart/form-data'),
+            'php_files' => $_FILES ?? [],
+            'has_file_image' => $request->hasFile('image'),
+            'all_input_keys' => array_keys($request->all()),
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            Log::channel('single')->info('[Product Update] File image diterima', [
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'extension' => $file->getClientOriginalExtension(),
+            ]);
+        } else {
+            Log::channel('single')->warning('[Product Update] File image TIDAK diterima - hasFile(image)=false');
+        }
+
         $data = $request->validated();
 
         // Handle ingredients input (convert from comma-separated string to array)
@@ -137,8 +162,14 @@ class ProductController extends Controller
             // Delete old image
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
+                Log::channel('single')->info('[Product Update] Gambar lama dihapus', ['path' => $product->image]);
             }
             $data['image'] = $request->file('image')->store('products', 'public');
+            Log::channel('single')->info('[Product Update] Gambar baru disimpan', ['path' => $data['image']]);
+        } else {
+            Log::channel('single')->info('[Product Update] Tidak ada gambar baru - mempertahankan gambar lama', [
+                'current_image' => $product->image,
+            ]);
         }
 
         // Generate slug if not provided
@@ -158,6 +189,11 @@ class ProductController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         $product->update($data);
+
+        Log::channel('single')->info('[Product Update] Produk berhasil diperbarui', [
+            'product_id' => $product->id,
+            'image_field_value' => $product->fresh()->image,
+        ]);
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil diperbarui.');

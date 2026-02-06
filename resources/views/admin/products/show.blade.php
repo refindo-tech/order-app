@@ -65,23 +65,15 @@
                 </div>
             </div>
 
-            <!-- Pricing & Stock -->
+            <!-- Pricing -->
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                <h5 class="c-grey-900 mB-20">Harga & Stok</h5>
+                <h5 class="c-grey-900 mB-20">Harga</h5>
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <strong>Harga:</strong>
                         <p class="mT-5 h4 text-primary">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <strong>Stok:</strong>
-                        <p class="mT-5">
-                            <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }} fs-6">
-                                {{ $product->stock }} pack
-                            </span>
-                        </p>
-                    </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <strong>Berat:</strong>
                         <p class="mT-5">{{ $product->weight }} gram</p>
                     </div>

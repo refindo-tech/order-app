@@ -4,6 +4,8 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Validation\Validator;
 
 class ProductRequest extends FormRequest
 {
@@ -12,7 +14,25 @@ class ProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // Troubleshooting: Log saat request masuk ProductRequest (sebelum controller)
+        Log::channel('single')->info('[ProductRequest] Request masuk', [
+            'route' => $this->route()?->getName(),
+            'method' => $this->method(),
+            'url' => $this->fullUrl(),
+        ]);
         return Auth::check() && Auth::user()->isAdmin();
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        Log::channel('single')->warning('[ProductRequest] Validasi gagal', [
+            'route' => $this->route()?->getName(),
+            'errors' => $validator->errors()->toArray(),
+        ]);
+        parent::failedValidation($validator);
     }
 
     /**
@@ -31,7 +51,6 @@ class ProductRequest extends FormRequest
             'long_description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'category' => ['required', 'string', 'max:100'],
-            'stock' => ['required', 'integer', 'min:0'],
             'weight' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'ingredients' => ['nullable', 'array'],
@@ -52,8 +71,6 @@ class ProductRequest extends FormRequest
             'price.required' => 'Harga produk wajib diisi.',
             'price.numeric' => 'Harga harus berupa angka.',
             'price.min' => 'Harga tidak boleh negatif.',
-            'stock.required' => 'Stok produk wajib diisi.',
-            'stock.integer' => 'Stok harus berupa angka bulat.',
             'weight.required' => 'Berat produk wajib diisi.',
             'category.required' => 'Kategori produk wajib diisi.',
             'image.image' => 'File harus berupa gambar.',

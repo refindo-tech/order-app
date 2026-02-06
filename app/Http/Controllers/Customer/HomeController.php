@@ -15,7 +15,6 @@ class HomeController extends Controller
     {
         // Get featured products (first 4 active products)
         $featuredProducts = Product::active()
-            ->inStock()
             ->limit(4)
             ->get();
 
