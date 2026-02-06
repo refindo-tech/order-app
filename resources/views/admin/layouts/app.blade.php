@@ -59,6 +59,38 @@
     
     <script defer="defer" src="{{ asset('adminator/main.js') }}"></script>
     @stack('styles')
+    <style>
+        /* Custom dropdown behavior - allow multiple dropdowns open */
+        /* Force dropdown menus to be visible when parent has 'open' class */
+        .sidebar-menu .nav-item.dropdown.open .dropdown-menu,
+        .sidebar-menu .nav-item.dropdown.open > ul.dropdown-menu,
+        ul.sidebar-menu .nav-item.dropdown.open ul.dropdown-menu {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        
+        /* Default: show dropdown menus for items with 'open' class */
+        .sidebar-menu .nav-item.dropdown.open ul.dropdown-menu {
+            display: block !important;
+        }
+        
+        /* Arrow rotation for open state */
+        .sidebar-menu .nav-item.dropdown.open .arrow i {
+            transform: rotate(90deg);
+        }
+        .sidebar-menu .nav-item.dropdown .arrow i {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Hide dropdown menus that don't have 'open' class */
+        .sidebar-menu .nav-item.dropdown:not(.open) .dropdown-menu {
+            display: none !important;
+        }
+    </style>
 </head>
 <body class="app">
     <div id="loader">
@@ -116,38 +148,38 @@
                         </a>
                     </li>
                     
-                    <li class="nav-item dropdown {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.products.*') ? 'active open' : 'open' }}">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
                                 <i class="c-orange-500 ti-package"></i>
                             </span>
                             <span class="title">Produk</span>
                             <span class="arrow">
-                                <i class="ti-angle-right"></i>
+                                <i class="ti-angle-down"></i>
                             </span>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" style="display: block !important; visibility: visible !important;">
                             <li><a class="sidebar-link" href="{{ route('admin.products.index') }}">Daftar Produk</a></li>
                             <li><a class="sidebar-link" href="{{ route('admin.products.create') }}">Tambah Produk</a></li>
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.orders.*') ? 'active open' : 'open' }}">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
                                 <i class="c-teal-500 ti-shopping-cart"></i>
                             </span>
                             <span class="title">Pesanan</span>
                             <span class="arrow">
-                                <i class="ti-angle-right"></i>
+                                <i class="ti-angle-down"></i>
                             </span>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" style="display: block !important; visibility: visible !important;">
                             <li><a class="sidebar-link" href="{{ route('admin.orders.index') }}">Daftar Pesanan</a></li>
                             <li><a class="sidebar-link" href="{{ route('admin.orders.index', ['status' => 'payment_verification']) }}">Verifikasi Pembayaran</a></li>
                         </ul>
                     </li>
-
+                    <!-- 
                     <li class="nav-item">
                         <a class="sidebar-link" href="#">
                             <span class="icon-holder">
@@ -155,7 +187,7 @@
                             </span>
                             <span class="title">Pengiriman</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <!-- <li class="nav-item">
                         <a class="sidebar-link" href="#">
@@ -201,7 +233,7 @@
                     </ul>
                     
                     <ul class="nav-right">
-                        <li class="notifications dropdown">
+                        <!-- <li class="notifications dropdown">
                             <span class="counter bgc-red">3</span>
                             <a href="" class="dropdown-toggle no-after" data-bs-toggle="dropdown">
                                 <i class="ti-bell"></i>
@@ -219,7 +251,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> -->
                         
                         <li class="dropdown">
                             <a href="" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1" data-bs-toggle="dropdown">
@@ -233,7 +265,7 @@
                                 </div>
                             </a>
                             <ul class="dropdown-menu fsz-sm">
-                                <li>
+                                <!-- <li>
                                     <a href="#" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
                                         <i class="ti-user mR-10"></i>
                                         <span>Profil</span>
@@ -245,7 +277,7 @@
                                         <span>Pengaturan</span>
                                     </a>
                                 </li>
-                                <li role="separator" class="divider mY-0"></li>
+                                <li role="separator" class="divider mY-0"></li> -->
                                 <li>
                                     <a href="#" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700" 
                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -283,5 +315,74 @@
     </form>
 
     @stack('scripts')
+    <script>
+        // Custom dropdown toggle - allow multiple dropdowns open simultaneously
+        function showOpenDropdowns() {
+            document.querySelectorAll('.sidebar-menu .nav-item.dropdown.open .dropdown-menu').forEach(function(menu) {
+                menu.style.setProperty('display', 'block', 'important');
+                menu.style.setProperty('visibility', 'visible', 'important');
+                menu.style.setProperty('opacity', '1', 'important');
+            });
+        }
+        
+        function initCustomDropdowns() {
+            showOpenDropdowns();
+            
+            const dropdownToggles = document.querySelectorAll('.sidebar-menu .dropdown-toggle');
+            
+            dropdownToggles.forEach(toggle => {
+                if (!toggle.dataset.customHandler) {
+                    toggle.dataset.customHandler = 'true';
+                    
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        
+                        const dropdown = this.closest('.nav-item.dropdown');
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        const arrow = dropdown.querySelector('.arrow i');
+                        
+                        if (dropdown.classList.contains('open')) {
+                            dropdown.classList.remove('open');
+                            menu.style.setProperty('display', 'none', 'important');
+                            arrow.classList.remove('ti-angle-down');
+                            arrow.classList.add('ti-angle-right');
+                        } else {
+                            dropdown.classList.add('open');
+                            menu.style.setProperty('display', 'block', 'important');
+                            menu.style.setProperty('visibility', 'visible', 'important');
+                            arrow.classList.remove('ti-angle-right');
+                            arrow.classList.add('ti-angle-down');
+                        }
+                    }, true);
+                }
+            });
+        }
+        
+        // Show dropdowns immediately when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                showOpenDropdowns();
+                initCustomDropdowns();
+            });
+        } else {
+            showOpenDropdowns();
+            initCustomDropdowns();
+        }
+        
+        // Re-apply after load (Adminator may hide them)
+        window.addEventListener('load', function() {
+            showOpenDropdowns();
+            initCustomDropdowns();
+            // Run again after short delays to override Adminator
+            [50, 150, 350, 600].forEach(function(delay) {
+                setTimeout(showOpenDropdowns, delay);
+            });
+        });
+        
+        // Keep dropdowns visible (override Adminator if it hides them)
+        setInterval(showOpenDropdowns, 400);
+    </script>
 </body>
 </html>

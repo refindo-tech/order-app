@@ -14,188 +14,137 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row gap-20 masonry pos-r">
-        <div class="masonry-sizer col-md-6 col-xl-3"></div>
-        
-        <div class="masonry-item col-md-6 col-xl-3">
-            <div class="bdrs-3 p-20 bgc-white bd">
-                <div class="layers">
-                    <div class="layer w-100">
-                        <div class="peers fxw-nw ai-c">
-                            <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-blue-50 c-blue-500">
-                                    <i class="ti-shopping-cart"></i>
-                                </span>
-                            </div>
-                            <div class="peer peer-greed pL-20">
-                                <h6 class="mB-5">Total Pesanan</h6>
-                                <h3 class="m-0">{{ $stats['total'] }}</h3>
-                            </div>
-                        </div>
-                    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="bgc-white bd bdrs-3 p-20 h-100 d-flex align-items-center">
+                <span class="d-inline-flex lh-0 fw-600 bdrs-10em p-3 bgc-blue-50 c-blue-500 me-3">
+                    <i class="ti-shopping-cart fs-5"></i>
+                </span>
+                <div>
+                    <div class="text-muted small">Total Pesanan</div>
+                    <div class="h4 mb-0 fw-600">{{ $stats['total'] }}</div>
                 </div>
             </div>
         </div>
-
-        <div class="masonry-item col-md-6 col-xl-3">
-            <div class="bdrs-3 p-20 bgc-white bd">
-                <div class="layers">
-                    <div class="layer w-100">
-                        <div class="peers fxw-nw ai-c">
-                            <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-orange-50 c-orange-500">
-                                    <i class="ti-time"></i>
-                                </span>
-                            </div>
-                            <div class="peer peer-greed pL-20">
-                                <h6 class="mB-5">Menunggu Pembayaran</h6>
-                                <h3 class="m-0">{{ $stats['pending_payment'] }}</h3>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="bgc-white bd bdrs-3 p-20 h-100 d-flex align-items-center">
+                <span class="d-inline-flex lh-0 fw-600 bdrs-10em p-3 bgc-orange-50 c-orange-500 me-3">
+                    <i class="ti-time fs-5"></i>
+                </span>
+                <div>
+                    <div class="text-muted small">Menunggu Pembayaran</div>
+                    <div class="h4 mb-0 fw-600">{{ $stats['pending_payment'] }}</div>
                 </div>
             </div>
         </div>
-
-        <div class="masonry-item col-md-6 col-xl-3">
-            <div class="bdrs-3 p-20 bgc-white bd">
-                <div class="layers">
-                    <div class="layer w-100">
-                        <div class="peers fxw-nw ai-c">
-                            <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-yellow-50 c-yellow-500">
-                                    <i class="ti-check-box"></i>
-                                </span>
-                            </div>
-                            <div class="peer peer-greed pL-20">
-                                <h6 class="mB-5">Verifikasi Pembayaran</h6>
-                                <h3 class="m-0">{{ $stats['payment_verification'] }}</h3>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="bgc-white bd bdrs-3 p-20 h-100 d-flex align-items-center">
+                <span class="d-inline-flex lh-0 fw-600 bdrs-10em p-3 bgc-yellow-50 c-yellow-500 me-3">
+                    <i class="ti-check-box fs-5"></i>
+                </span>
+                <div>
+                    <div class="text-muted small">Verifikasi Pembayaran</div>
+                    <div class="h4 mb-0 fw-600">{{ $stats['payment_verification'] }}</div>
                 </div>
             </div>
         </div>
-
-        <div class="masonry-item col-md-6 col-xl-3">
-            <div class="bdrs-3 p-20 bgc-white bd">
-                <div class="layers">
-                    <div class="layer w-100">
-                        <div class="peers fxw-nw ai-c">
-                            <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-green-50 c-green-500">
-                                    <i class="ti-truck"></i>
-                                </span>
-                            </div>
-                            <div class="peer peer-greed pL-20">
-                                <h6 class="mB-5">Sedang Dikirim</h6>
-                                <h3 class="m-0">{{ $stats['shipped'] }}</h3>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="bgc-white bd bdrs-3 p-20 h-100 d-flex align-items-center">
+                <span class="d-inline-flex lh-0 fw-600 bdrs-10em p-3 bgc-green-50 c-green-500 me-3">
+                    <i class="ti-truck fs-5"></i>
+                </span>
+                <div>
+                    <div class="text-muted small">Sedang Dikirim</div>
+                    <div class="h4 mb-0 fw-600">{{ $stats['shipped'] }}</div>
                 </div>
             </div>
         </div>
-
-        <div class="masonry-item col-md-6 col-xl-3">
-            <div class="bdrs-3 p-20 bgc-white bd">
-                <div class="layers">
-                    <div class="layer w-100">
-                        <div class="peers fxw-nw ai-c">
-                            <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-purple-50 c-purple-500">
-                                    <i class="ti-receipt"></i>
-                                </span>
-                            </div>
-                            <div class="peer peer-greed pL-20">
-                                <h6 class="mB-5">Sudah Ada Resi</h6>
-                                <h3 class="m-0">{{ $stats['has_waybill'] }}</h3>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="bgc-white bd bdrs-3 p-20 h-100 d-flex align-items-center">
+                <span class="d-inline-flex lh-0 fw-600 bdrs-10em p-3 bgc-purple-50 c-purple-500 me-3">
+                    <i class="ti-receipt fs-5"></i>
+                </span>
+                <div>
+                    <div class="text-muted small">Sudah Ada Resi</div>
+                    <div class="h4 mb-0 fw-600">{{ $stats['has_waybill'] }}</div>
                 </div>
             </div>
         </div>
-
-        <div class="masonry-item col-md-6 col-xl-3">
-            <div class="bdrs-3 p-20 bgc-white bd">
-                <div class="layers">
-                    <div class="layer w-100">
-                        <div class="peers fxw-nw ai-c">
-                            <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-red-50 c-red-500">
-                                    <i class="ti-alert"></i>
-                                </span>
-                            </div>
-                            <div class="peer peer-greed pL-20">
-                                <h6 class="mB-5">Perlu Resi</h6>
-                                <h3 class="m-0">{{ $stats['no_waybill'] }}</h3>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="bgc-white bd bdrs-3 p-20 h-100 d-flex align-items-center">
+                <span class="d-inline-flex lh-0 fw-600 bdrs-10em p-3 bgc-red-50 c-red-500 me-3">
+                    <i class="ti-alert fs-5"></i>
+                </span>
+                <div>
+                    <div class="text-muted small">Perlu Resi</div>
+                    <div class="h4 mb-0 fw-600">{{ $stats['no_waybill'] }}</div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
-                    <div class="col-md-3">
-                        <input type="text" 
-                               name="search" 
-                               class="form-control" 
-                               placeholder="Cari order code, nama, telepon, atau resi..." 
-                               value="{{ $currentSearch }}">
-                    </div>
-                    <div class="col-md-2">
-                        <select name="status" class="form-control">
-                            <option value="">Semua Status</option>
-                            <option value="pending_payment" {{ $currentStatus === 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                            <option value="payment_verification" {{ $currentStatus === 'payment_verification' ? 'selected' : '' }}>Verifikasi Pembayaran</option>
-                            <option value="payment_confirmed" {{ $currentStatus === 'payment_confirmed' ? 'selected' : '' }}>Pembayaran Diterima</option>
-                            <option value="processing" {{ $currentStatus === 'processing' ? 'selected' : '' }}>Sedang Diproses</option>
-                            <option value="shipped" {{ $currentStatus === 'shipped' ? 'selected' : '' }}>Sedang Dikirim</option>
-                            <option value="delivered" {{ $currentStatus === 'delivered' ? 'selected' : '' }}>Selesai</option>
-                            <option value="cancelled" {{ $currentStatus === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select name="paxel_status" class="form-control">
-                            <option value="">Semua Paxel</option>
-                            <option value="has_waybill" {{ $currentPaxelStatus === 'has_waybill' ? 'selected' : '' }}>Sudah Ada Resi</option>
-                            <option value="no_waybill" {{ $currentPaxelStatus === 'no_waybill' ? 'selected' : '' }}>Belum Ada Resi</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" 
-                               name="date_from" 
-                               class="form-control" 
-                               placeholder="Dari Tanggal"
-                               value="{{ $dateFrom }}">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" 
-                               name="date_to" 
-                               class="form-control" 
-                               placeholder="Sampai Tanggal"
-                               value="{{ $dateTo }}">
-                    </div>
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-primary w-100" title="Filter">
-                            <i class="ti-search"></i>
-                        </button>
-                    </div>
-                    <div class="col-md-1">
-                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary w-100" title="Reset">
-                            <i class="ti-reload"></i>
-                        </a>
-                    </div>
-                </form>
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <h6 class="c-grey-900 mB-15">Filter Pesanan</h6>
+        <form method="GET" action="{{ route('admin.orders.index') }}">
+            <!-- Baris filter: field pencarian & filter -->
+            <div class="row g-3 align-items-end mB-15">
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <label class="form-label small text-muted mb-1">Cari</label>
+                    <input type="text"
+                           name="search"
+                           class="form-control form-control-sm"
+                           placeholder="Order code, nama, telepon, resi..."
+                           value="{{ $currentSearch }}">
+                </div>
+                <div class="col-6 col-sm-4 col-lg-2">
+                    <label class="form-label small text-muted mb-1">Status</label>
+                    <select name="status" class="form-control form-control-sm">
+                        <option value="">Semua Status</option>
+                        <option value="pending_payment" {{ $currentStatus === 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                        <option value="payment_verification" {{ $currentStatus === 'payment_verification' ? 'selected' : '' }}>Verifikasi Pembayaran</option>
+                        <option value="payment_confirmed" {{ $currentStatus === 'payment_confirmed' ? 'selected' : '' }}>Pembayaran Diterima</option>
+                        <option value="processing" {{ $currentStatus === 'processing' ? 'selected' : '' }}>Sedang Diproses</option>
+                        <option value="shipped" {{ $currentStatus === 'shipped' ? 'selected' : '' }}>Sedang Dikirim</option>
+                        <option value="delivered" {{ $currentStatus === 'delivered' ? 'selected' : '' }}>Selesai</option>
+                        <option value="cancelled" {{ $currentStatus === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                    </select>
+                </div>
+                <div class="col-6 col-sm-4 col-lg-2">
+                    <label class="form-label small text-muted mb-1">Resi Paxel</label>
+                    <select name="paxel_status" class="form-control form-control-sm">
+                        <option value="">Semua</option>
+                        <option value="has_waybill" {{ $currentPaxelStatus === 'has_waybill' ? 'selected' : '' }}>Sudah Ada Resi</option>
+                        <option value="no_waybill" {{ $currentPaxelStatus === 'no_waybill' ? 'selected' : '' }}>Belum Ada Resi</option>
+                    </select>
+                </div>
+                <div class="col-6 col-sm-4 col-lg-2">
+                    <label class="form-label small text-muted mb-1">Dari Tanggal</label>
+                    <input type="date" name="date_from" class="form-control form-control-sm" value="{{ $dateFrom }}">
+                </div>
+                <div class="col-6 col-sm-4 col-lg-2">
+                    <label class="form-label small text-muted mb-1">Sampai Tanggal</label>
+                    <input type="date" name="date_to" class="form-control form-control-sm" value="{{ $dateTo }}">
+                </div>
             </div>
-        </div>
+            <!-- Baris tombol aksi -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2 align-items-center pt-1">
+                        <div class="px-1 py-1">
+                            <button type="submit" class="btn btn-primary btn-sm px-3 py-2" title="Terapkan filter">
+                                <i class="ti-search mR-5"></i>Terapkan Filter
+                            </button>
+                        </div>
+                        <div class="px-1 py-1">
+                            <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary btn-sm px-3 py-2" title="Reset filter">
+                                <i class="ti-reload mR-5"></i>Reset Filter
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- Success Message -->

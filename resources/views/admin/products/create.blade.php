@@ -34,8 +34,8 @@
                         <div class="col-md-8">
                             <!-- Basic Information -->
                             <div class="card mb-3">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">Informasi Dasar</h5>
+                                <div class="card-header bg-primary">
+                                    <h5 class="mb-0 text-white">Informasi Dasar</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
@@ -87,8 +87,8 @@
 
                             <!-- Pricing -->
                             <div class="card mb-3">
-                                <div class="card-header bg-success text-white">
-                                    <h5 class="mb-0">Harga</h5>
+                                <div class="card-header bg-success">
+                                    <h5 class="mb-0 text-white">Harga</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -142,8 +142,8 @@
 
                             <!-- Additional Information -->
                             <div class="card mb-3">
-                                <div class="card-header bg-info text-white">
-                                    <h5 class="mb-0">Informasi Tambahan</h5>
+                                <div class="card-header bg-info">
+                                    <h5 class="mb-0 text-white">Informasi Tambahan</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
@@ -210,8 +210,8 @@
 
                             <!-- Status -->
                             <div class="card mb-3">
-                                <div class="card-header bg-secondary text-white">
-                                    <h5 class="mb-0">Status</h5>
+                                <div class="card-header bg-secondary">
+                                    <h5 class="mb-0 text-white">Status</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-check form-switch">
