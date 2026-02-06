@@ -212,12 +212,12 @@
                         </a>
                     </li>
                     <li class="nav-item me-3">
-                        <a class="nav-link" href="#tentang">
+                        <a class="nav-link" href="{{ route('home') }}#tentang">
                             <i class="bi bi-info-circle me-1"></i>Tentang
                         </a>
                     </li>
                     <li class="nav-item me-3">
-                        <a class="nav-link" href="#kontak">
+                        <a class="nav-link" href="{{ route('home') }}#kontak">
                             <i class="bi bi-telephone me-1"></i>Kontak
                         </a>
                     </li>

@@ -323,6 +323,22 @@
         });
     });
     
+    // Handle hash in URL when page loads (e.g., when navigating from other pages)
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash) {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                // Small delay to ensure page is fully rendered
+                setTimeout(() => {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            }
+        }
+    });
+    
     // Note: Add to cart functionality will be handled in product detail page
 </script>
 @endpush
