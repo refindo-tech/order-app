@@ -7,7 +7,14 @@ use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\ProductController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\TrackingController;
+use App\Http\Controllers\StorageController;
 use Illuminate\Support\Facades\Route;
+
+// Storage route - must be before other routes to catch /storage/* requests
+// This route serves files from storage/app/public dynamically without requiring symlink
+Route::get('/storage/{path}', [StorageController::class, 'serve'])
+    ->where('path', '.*') // Match any path including subdirectories
+    ->name('storage.serve');
 
 // Customer Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
