@@ -157,7 +157,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="sidebar-link" href="#">
                             <span class="icon-holder">
                                 <i class="c-green-500 ti-comment-alt"></i>
@@ -173,7 +173,7 @@
                             </span>
                             <span class="title">Pengaturan</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>
@@ -269,10 +269,10 @@
             <!-- ### $App Screen Footer ### -->
             <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
                 <span>&copy; {{ date('Y') }} {{ config('app.name') }}. 
-                <span class="hidden-xs-down">Powered by 
+                <!-- <span class="hidden-xs-down">Powered by 
                     <a href="https://laravel.com" target="_blank" title="Laravel">Laravel</a> & 
                     <a href="https://github.com/puikinsh/Adminator-admin-dashboard" target="_blank" title="Adminator">Adminator</a>
-                </span>
+                </span> -->
             </footer>
         </div>
     </div>

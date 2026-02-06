@@ -211,9 +211,9 @@
 </section>
 
 <!-- Kontak Section -->
-<section class="py-5 bg-primary text-white" id="kontak">
+<section class="py-5 bg-danger text-white" id="kontak">
     <div class="container">
-        <div class="row text-center mb-5">
+        <div class="row text-center">
             <div class="col-lg-8 mx-auto">
                 <h2 class="section-title">Hubungi Kami</h2>
                 <p class="section-subtitle text-white-50">
@@ -228,15 +228,7 @@
                     <i class="bi bi-geo-alt" style="font-size: 2rem;"></i>
                 </div>
                 <h5>Alamat</h5>
-                <p class="mb-0">{{ config('constants.contact.address.street') }}<br>{{ config('constants.contact.address.country') }}</p>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 text-center">
-                <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                    <i class="bi bi-telephone" style="font-size: 2rem;"></i>
-                </div>
-                <h5>Telepon</h5>
-                <p class="mb-0">{{ config('constants.contact.phone') }}</p>
+                <p class="mb-0">{{ config('constants.contact.address.street') }}, {{ config('constants.contact.address.city') }}</p>
             </div>
             
             <div class="col-lg-3 col-md-6 text-center">
@@ -247,6 +239,18 @@
                 <p class="mb-0">
                     <a href="{{ config('constants.social_media.whatsapp') }}" class="text-white text-decoration-none">
                         {{ config('constants.contact.phone') }}
+                    </a>
+                </p>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-bag" style="font-size: 2rem;"></i>
+                </div>
+                <h5>Shopee</h5>
+                <p class="mb-0">
+                    <a href="{{ config('constants.social_media.facebook') }}" target="_blank" class="text-white text-decoration-none">
+                        Rumah Bumbu dan Ungkep
                     </a>
                 </p>
             </div>
@@ -264,8 +268,8 @@
             <div class="col-lg-8 mx-auto text-center">
                 <div class="card bg-white bg-opacity-10 border-0">
                     <div class="card-body p-4">
-                        <h4 class="mb-3">Siap Berbelanja?</h4>
-                        <p class="mb-4">Jelajahi koleksi lengkap produk bumbu dan ungkep berkualitas kami</p>
+                        <h4 class="mb-3 text-white">Siap Berbelanja?</h4>
+                        <p class="mb-4 text-white">Jelajahi koleksi lengkap produk bumbu dan ungkep berkualitas kami</p>
                         <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
                             <a href="{{ route('products.index') }}" class="btn btn-light btn-lg">
                                 <i class="bi bi-shop me-2"></i>Mulai Belanja
@@ -282,7 +286,7 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 bg-light">
+<!-- <section class="py-5 bg-light">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -299,7 +303,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 @endsection
 
 @push('scripts')

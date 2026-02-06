@@ -135,27 +135,6 @@
     </div>
 </section>
 
-<!-- Phase 3 Notice -->
-<section class="py-5 bg-warning bg-opacity-10">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="alert alert-warning border-0" role="alert">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-info-circle-fill me-3" style="font-size: 1.5rem;"></i>
-                        <div>
-                            <h5 class="alert-heading mb-1">🚧 Fitur dalam Pengembangan</h5>
-                            <p class="mb-0">
-                                <strong>Keranjang belanja</strong> saat ini menggunakan localStorage (demo).
-                                Fitur lengkap termasuk checkout, ongkir Paxel, dan upload bukti pembayaran akan tersedia di <strong>Phase 3</strong>.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 @endsection
 
 @push('scripts')
@@ -336,8 +315,7 @@
         }
         
         proceedToCheckout() {
-            // For Phase 2, show alert
-            alert('🚧 Fitur checkout akan tersedia di Phase 3!\n\nYang akan tersedia:\n• Checkout dengan alamat pengiriman\n• Perhitungan ongkir Paxel otomatis\n• Upload bukti pembayaran\n• Tracking pesanan');
+            window.location.href = '{{ route("cart.checkout") }}';
         }
         
         clearCart() {

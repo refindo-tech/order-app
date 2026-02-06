@@ -28,7 +28,7 @@ class SecureHeaders
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " .
             "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; " .
             "img-src 'self' data:; " .
-            "connect-src 'self' https://cdn.jsdelivr.net;"
+            "connect-src 'self' https://cdn.jsdelivr.net https://emsifa.github.io;"
         );
 
         // Remove server identification

@@ -36,6 +36,21 @@
             color: var(--dark-color);
         }
         
+        .navbar-nav .nav-item {
+            margin-right: 0.75rem;
+        }
+        
+        .navbar-nav .nav-item:last-child {
+            margin-right: 0;
+        }
+        
+        @media (max-width: 991px) {
+            .navbar-nav .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
@@ -186,24 +201,29 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
                             <i class="bi bi-house me-1"></i>Beranda
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
                             <i class="bi bi-grid me-1"></i>Produk
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         <a class="nav-link" href="#tentang">
                             <i class="bi bi-info-circle me-1"></i>Tentang
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         <a class="nav-link" href="#kontak">
                             <i class="bi bi-telephone me-1"></i>Kontak
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link {{ request()->routeIs('tracking.*') ? 'active' : '' }}" href="{{ route('tracking.index') }}">
+                            <i class="bi bi-search me-1"></i>Cek Pesanan
                         </a>
                     </li>
                     <li class="nav-item">
@@ -226,26 +246,35 @@
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <h5 class="text-primary mb-3">
-                        <i class="bi bi-shop me-2"></i>{{ config('app.name') }}
-                    </h5>
-                    <p>{{ config('constants.company.description') }}</p>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-light"><i class="bi bi-facebook fs-5"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-instagram fs-5"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-whatsapp fs-5"></i></a>
+                <div class="col-lg-3 mb-4">
+                    <div>
+                        @if(file_exists(public_path(config('constants.company.logo', 'images/rumah-bumbu-ungkep.png'))))
+                            <a href="{{ route('home') }}" class="d-inline-block">
+                                <img src="{{ asset(config('constants.company.logo', 'images/rumah-bumbu-ungkep.png')) }}" 
+                                     alt="{{ config('constants.company.full_name') }}" 
+                                     class="img-fluid" 
+                                     style="width: 75%;">
+                            </a>
+                        @else
+                            <h5 class="text-primary mb-0">
+                                <i class="bi bi-shop me-2"></i>{{ config('constants.company.full_name') }}
+                            </h5>
+                        @endif
                     </div>
                 </div>
-                
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="mb-3">Menu</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('home') }}" class="text-light text-decoration-none">Beranda</a></li>
-                        <li class="mb-2"><a href="{{ route('products.index') }}" class="text-light text-decoration-none">Produk</a></li>
-                        <li class="mb-2"><a href="#tentang" class="text-light text-decoration-none">Tentang</a></li>
-                        <li class="mb-2"><a href="#kontak" class="text-light text-decoration-none">Kontak</a></li>
-                    </ul>
+                <div class="col-lg-3 mb-4">
+                    <h6 class="mb-3">Tentang Kami</h6>
+                    <p class="text-white-50">{{ config('constants.company.description') }}</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ config('constants.social_media.facebook') }}" target="_blank" rel="noopener" class="text-light" aria-label="Shopee">
+                            <i class="bi bi-bag fs-5"></i>
+                        </a>
+                        <a href="{{ config('constants.social_media.instagram') }}" target="_blank" rel="noopener" class="text-light" aria-label="Instagram">
+                            <i class="bi bi-instagram fs-5"></i></a>
+                        <a href="{{ config('constants.social_media.whatsapp') }}" target="_blank" rel="noopener" class="text-light" aria-label="WhatsApp">
+                            <i class="bi bi-whatsapp fs-5"></i>
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -253,7 +282,7 @@
                     <ul class="list-unstyled">
                         <li class="mb-2">
                             <i class="bi bi-geo-alt me-2"></i>
-                            {{ config('constants.contact.address.city') }}, {{ config('constants.contact.address.country') }}
+                            {{ config('constants.contact.address.street') }}, {{ config('constants.contact.address.city') }}
                         </li>
                         <li class="mb-2">
                             <i class="bi bi-telephone me-2"></i>
@@ -287,9 +316,7 @@
                     <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <small class="text-muted">
-                        Built with <i class="bi bi-heart-fill text-danger"></i> using Laravel & Bootstrap
-                    </small>
+                    
                 </div>
             </div>
         </div>

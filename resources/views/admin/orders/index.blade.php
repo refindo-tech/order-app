@@ -96,6 +96,46 @@
                 </div>
             </div>
         </div>
+
+        <div class="masonry-item col-md-6 col-xl-3">
+            <div class="bdrs-3 p-20 bgc-white bd">
+                <div class="layers">
+                    <div class="layer w-100">
+                        <div class="peers fxw-nw ai-c">
+                            <div class="peer">
+                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-purple-50 c-purple-500">
+                                    <i class="ti-receipt"></i>
+                                </span>
+                            </div>
+                            <div class="peer peer-greed pL-20">
+                                <h6 class="mB-5">Sudah Ada Resi</h6>
+                                <h3 class="m-0">{{ $stats['has_waybill'] }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="masonry-item col-md-6 col-xl-3">
+            <div class="bdrs-3 p-20 bgc-white bd">
+                <div class="layers">
+                    <div class="layer w-100">
+                        <div class="peers fxw-nw ai-c">
+                            <div class="peer">
+                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-red-50 c-red-500">
+                                    <i class="ti-alert"></i>
+                                </span>
+                            </div>
+                            <div class="peer peer-greed pL-20">
+                                <h6 class="mB-5">Perlu Resi</h6>
+                                <h3 class="m-0">{{ $stats['no_waybill'] }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Filters -->
@@ -103,14 +143,14 @@
         <div class="col-md-12">
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
                 <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <input type="text" 
                                name="search" 
                                class="form-control" 
-                               placeholder="Cari order code, nama, atau telepon..." 
+                               placeholder="Cari order code, nama, telepon, atau resi..." 
                                value="{{ $currentSearch }}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select name="status" class="form-control">
                             <option value="">Semua Status</option>
                             <option value="pending_payment" {{ $currentStatus === 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
@@ -122,14 +162,35 @@
                             <option value="cancelled" {{ $currentStatus === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="ti-search me-2"></i>Filter
-                        </button>
+                    <div class="col-md-2">
+                        <select name="paxel_status" class="form-control">
+                            <option value="">Semua Paxel</option>
+                            <option value="has_waybill" {{ $currentPaxelStatus === 'has_waybill' ? 'selected' : '' }}>Sudah Ada Resi</option>
+                            <option value="no_waybill" {{ $currentPaxelStatus === 'no_waybill' ? 'selected' : '' }}>Belum Ada Resi</option>
+                        </select>
                     </div>
                     <div class="col-md-2">
-                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary w-100">
-                            <i class="ti-reload me-2"></i>Reset
+                        <input type="date" 
+                               name="date_from" 
+                               class="form-control" 
+                               placeholder="Dari Tanggal"
+                               value="{{ $dateFrom }}">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" 
+                               name="date_to" 
+                               class="form-control" 
+                               placeholder="Sampai Tanggal"
+                               value="{{ $dateTo }}">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary w-100" title="Filter">
+                            <i class="ti-search"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-1">
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary w-100" title="Reset">
+                            <i class="ti-reload"></i>
                         </a>
                     </div>
                 </form>
@@ -195,6 +256,11 @@
                                     <span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">
                                         {{ $order->status_label }}
                                     </span>
+                                    @if($order->paxel_waybill)
+                                        <br><small class="text-muted">
+                                            <i class="ti-receipt"></i> Resi: {{ substr($order->paxel_waybill, 0, 10) }}...
+                                        </small>
+                                    @endif
                                 </td>
                                 <td>
                                     <small>{{ $order->created_at->format('d M Y H:i') }}</small>

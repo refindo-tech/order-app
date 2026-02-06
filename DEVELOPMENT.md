@@ -135,10 +135,18 @@ Variabel penting:
 - `DB_*` – koneksi database
 - `SESSION_DRIVER` – default `database`
 
-Placeholder untuk fase berikutnya (belum wajib diisi):
+Placeholder untuk fase berikutnya:
 
-- `PAXEL_*` – API Paxel (Phase 4)
-- `WHATSAPP_*` – API WhatsApp (Phase 5)
+- **Phase 4 – Paxel:** `PAXEL_API_URL`, `PAXEL_API_KEY`, `PAXEL_API_SECRET`, `PAXEL_ORIGIN_*`
+- **Phase 5 – WhatsApp:** `WHATSAPP_API_URL`, `WHATSAPP_API_KEY`
+
+### Webhook Paxel
+
+Untuk menerima update status dari Paxel, daftarkan URL webhook di dashboard Paxel:
+
+```
+https://yourdomain.com/api/paxel/webhook
+```
 
 ---
 
@@ -149,7 +157,7 @@ Mengacu pada `Business App Document/dev-roadmap.md`:
 - **Phase 1:** Setup project, env, DB, auth Admin
 - **Phase 2:** UI/UX, katalog, cart, checkout
 - **Phase 3:** Manajemen produk & order, upload bukti pembayaran
-- **Phase 4:** Integrasi Paxel (ongkir, order, resi)
+- **Phase 4:** Integrasi Paxel (ongkir, create shipment, resi, webhook, tracking) ✅
 - **Phase 5:** Notifikasi WhatsApp & tracking
 - **Phase 6:** PWA
 - **Phase 7–8:** Testing & deployment
