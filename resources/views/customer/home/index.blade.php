@@ -225,35 +225,33 @@
         
         <div class="row g-4">
             <div class="col-lg-3 col-md-6 text-center">
-                <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                    <i class="bi bi-geo-alt" style="font-size: 2rem;"></i>
-                </div>
-                <h5>Alamat</h5>
-                <p class="mb-0">{{ config('constants.contact.address.street') }}, {{ config('constants.contact.address.city') }}</p>
+                <a href="https://maps.app.goo.gl/c6dDXWCGuvG74nu89" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
+                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-geo-alt" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5>Alamat</h5>
+                    <p class="mb-0">{{ config('constants.contact.address.street') }}, {{ config('constants.contact.address.city') }}</p>
+                </a>
             </div>
             
             <div class="col-lg-3 col-md-6 text-center">
-                <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                    <i class="bi bi-whatsapp" style="font-size: 2rem;"></i>
-                </div>
-                <h5>WhatsApp</h5>
-                <p class="mb-0">
-                    <a href="{{ config('constants.social_media.whatsapp') }}" class="text-white text-decoration-none">
-                        {{ config('constants.contact.phone') }}
-                    </a>
-                </p>
+                <a href="{{ config('constants.social_media.whatsapp') }}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
+                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-whatsapp" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5>WhatsApp</h5>
+                    <p class="mb-0">{{ config('constants.contact.phone') }}</p>
+                </a>
             </div>
             
             <div class="col-lg-3 col-md-6 text-center">
-                <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                    <i class="bi bi-bag" style="font-size: 2rem;"></i>
-                </div>
-                <h5>Shopee</h5>
-                <p class="mb-0">
-                    <a href="{{ config('constants.social_media.facebook') }}" target="_blank" class="text-white text-decoration-none">
-                        Rumah Bumbu dan Ungkep
-                    </a>
-                </p>
+                <a href="{{ config('constants.social_media.facebook') }}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
+                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-bag" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5>Shopee</h5>
+                    <p class="mb-0">Rumah Bumbu dan Ungkep</p>
+                </a>
             </div>
             
             <div class="col-lg-3 col-md-6 text-center">
