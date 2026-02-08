@@ -88,23 +88,6 @@
                 </div>
             </div>
         </form>
-
-        <!-- Demo Credentials -->
-        <div class="mT-40 p-20 bgc-grey-50 bdrs-3">
-            <h6 class="c-grey-800 mB-15">🚀 Demo Credentials:</h6>
-            <div class="fsz-sm c-grey-700">
-                <strong>Email:</strong> admin@order-app.com<br>
-                <strong>Password:</strong> admin123
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="text-center mT-40">
-            <p class="fsz-sm c-grey-600">
-                © {{ date('Y') }} {{ config('app.name') }}<br>
-                <small class="c-grey-500">Rumah Bumbu & Ungkep</small>
-            </p>
-        </div>
     </div>
 </div>
 @endsection
