@@ -7,6 +7,14 @@
     <title>@yield('title', 'Beranda') - {{ config('app.name') }}</title>
     <meta name="description" content="@yield('description', config('constants.company.full_name') . ' - ' . config('constants.company.tagline'))">
     
+    <!-- PWA -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#dc3545">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Rumah Bumbu">
+    <link rel="apple-touch-icon" href="{{ asset('images/rumah-bumbu-ungkep.png') }}">
+    
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -237,6 +245,18 @@
         </div>
     </nav>
 
+    <!-- Toast: PWA install success (hidden by default) -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 pb-5">
+        <div id="pwa-install-success-toast" class="toast align-items-center border-0 bg-success text-white" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>Aplikasi berhasil dipasang. Anda bisa membukanya dari layar utama.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main>
         @yield('content')
@@ -313,10 +333,15 @@
             
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                    <button type="button" id="pwa-install-btn" class="btn btn-outline-light btn-sm" aria-label="Pasang aplikasi">
+                        <i class="bi bi-phone me-1"></i>Pasang ke Layar Utama
+                    </button>
+                    <a href="{{ route('admin.login') }}" class="btn btn-outline-light btn-sm me-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Portal Admin
+                    </a>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    
+                    <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
                 </div>
             </div>
         </div>
@@ -361,6 +386,53 @@
         // Listen for cart updates
         window.addEventListener('storage', updateCartCount);
         window.addEventListener('cart-updated', updateCartCount);
+    </script>
+    
+    <!-- PWA: Install / Add to Home Screen button -->
+    <script>
+        (function() {
+            var installBtn = document.getElementById('pwa-install-btn');
+            if (!installBtn) return;
+            var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (standalone) {
+                installBtn.classList.add('d-none');
+                return;
+            }
+            var deferredPrompt;
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                deferredPrompt = e;
+            });
+            installBtn.addEventListener('click', function() {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+                } else {
+                    alert('Untuk menambah ke layar utama: buka menu Bagikan (↑) lalu pilih "Tambahkan ke Layar Utama".');
+                }
+            });
+            window.addEventListener('appinstalled', function() {
+                deferredPrompt = null;
+                var toastEl = document.getElementById('pwa-install-success-toast');
+                if (toastEl && typeof bootstrap !== 'undefined') {
+                    var toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+                    toast.show();
+                } else {
+                    alert('Aplikasi berhasil dipasang. Anda bisa membukanya dari layar utama.');
+                }
+            });
+        })();
+    </script>
+    
+    <!-- PWA: Register Service Worker (HTTPS or localhost only) -->
+    <script>
+        if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('{{ asset('sw.js') }}', { scope: '/' })
+                    .then(function(reg) { console.log('PWA: Service Worker registered', reg.scope); })
+                    .catch(function(err) { console.warn('PWA: Service Worker registration failed', err); });
+            });
+        }
     </script>
     
     @stack('scripts')

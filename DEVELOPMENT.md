@@ -148,16 +148,24 @@ Untuk menerima update status dari Paxel, daftarkan URL webhook di dashboard Paxe
 https://yourdomain.com/api/paxel/webhook
 ```
 
+### PWA (Phase 6)
+
+- **Manifest:** `public/manifest.json` — nama, theme color, icons, start_url.
+- **Service worker:** `public/sw.js` — network-first, cache fallback; halaman offline untuk navigasi.
+- **Layout customer:** manifest link, meta theme-color, apple-touch-icon, dan registrasi SW.
+- **Testing:** Service worker hanya aktif di **HTTPS** atau **localhost**. Untuk "Add to Home Screen", tes di Chrome DevTools → Application → Manifest / Service Workers.
+- **Icons (opsional):** Untuk pengalaman install terbaik, sediakan ikon 192×192 dan 512×512 di `public/images/` dan sesuaikan `manifest.json`.
+
 ---
 
 ## Roadmap
 
 Mengacu pada `Business App Document/dev-roadmap.md`:
 
-- **Phase 1:** Setup project, env, DB, auth Admin
-- **Phase 2:** UI/UX, katalog, cart, checkout
-- **Phase 3:** Manajemen produk & order, upload bukti pembayaran
+- **Phase 1:** Setup project, env, DB, auth Admin ✅
+- **Phase 2:** UI/UX, katalog, cart, checkout ✅
+- **Phase 3:** Manajemen produk & order, upload bukti pembayaran ✅
 - **Phase 4:** Integrasi Paxel (ongkir, create shipment, resi, webhook, tracking) ✅
-- **Phase 5:** Notifikasi WhatsApp & tracking
-- **Phase 6:** PWA
+- **Phase 5:** Notifikasi WhatsApp *(dilewati)* & halaman tracking ✅
+- **Phase 6:** PWA (manifest, service worker, Add to Home Screen) ✅
 - **Phase 7–8:** Testing & deployment

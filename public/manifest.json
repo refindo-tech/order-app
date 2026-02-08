@@ -1,0 +1,26 @@
+{
+    "name": "Rumah Bumbu & Ungkep",
+    "short_name": "Rumah Bumbu",
+    "description": "Supplier bumbu dan ungkep berkualitas - pemesanan online",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#ffffff",
+    "theme_color": "#dc3545",
+    "lang": "id",
+    "icons": [
+        {
+            "src": "/images/rumah-bumbu-ungkep.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/rumah-bumbu-ungkep.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
