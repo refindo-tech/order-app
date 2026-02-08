@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Beranda') - {{ config('app.name') }}</title>
     <meta name="description" content="@yield('description', config('constants.company.full_name') . ' - ' . config('constants.company.tagline'))">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     
     <!-- PWA -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">

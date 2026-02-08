@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Login') - {{ config('app.name') }}</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
     <style>
