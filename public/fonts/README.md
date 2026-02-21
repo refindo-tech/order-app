@@ -10,7 +10,7 @@ public/
 │   └── fonts.css          # @font-face + variabel (--font-heading, --font-body)
 └── fonts/
     ├── README.md          # File ini
-    └── akaya-telivigala/  # Heading (h1–h6)
+    └── akaya-telivigala/  # (tidak dipakai; semuanya pakai Fredoka)
             ├── AkayaTelivigala-Regular.ttf
             └── OFL.txt    # Lisensi (SIL Open Font License)
 ```
@@ -19,8 +19,7 @@ public/
 
 | Pemakaian | Font | Sumber |
 |-----------|------|--------|
-| **Heading** (h1–h6, .section-title, .font-heading) | Akaya Telivigala | Local: `fonts/akaya-telivigala/` |
-| **Body & lainnya** (body, p, tombol, input, link, dll.) | Klee One | Google Fonts (di-load di layout) |
+| **Semua teks** (heading, body, tombol, input, link, dll.) | Fredoka | Google Fonts (di-load di layout) |
 
 ## Menambah font lokal
 
@@ -31,5 +30,5 @@ public/
 
 ## Lisensi
 
-- **Akaya Telivigala**: SIL Open Font License (OFL). Lihat `akaya-telivigala/OFL.txt`.
-- **Klee One**: Google Fonts (OFL). Di-load dari Google; tidak disimpan di repo.
+- **Fredoka**: Google Fonts (OFL). Di-load dari Google; tidak disimpan di repo.
+- **Akaya Telivigala**: SIL Open Font License (OFL). Lihat `akaya-telivigala/OFL.txt`. (Tidak dipakai saat ini.)

@@ -20,7 +20,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
     
     <style>
@@ -99,7 +99,7 @@
             overflow: hidden;
             background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
             color: white;
-            margin-top: -80px;
+            margin-top: -100px;
             min-height: 100vh;
             display: flex;
             align-items: center;
