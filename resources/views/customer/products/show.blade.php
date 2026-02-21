@@ -163,121 +163,130 @@
             </div>
         </div>
 
-        <!-- Product Tabs -->
+        <!-- Product Accordion -->
         <div class="row mt-5">
             <div class="col-12">
-                <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button">
-                            <i class="bi bi-info-circle me-2"></i>Deskripsi
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="ingredients-tab" data-bs-toggle="tab" data-bs-target="#ingredients" type="button">
-                            <i class="bi bi-list-ul me-2"></i>Komposisi
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="usage-tab" data-bs-toggle="tab" data-bs-target="#usage" type="button">
-                            <i class="bi bi-book me-2"></i>Cara Pakai
-                        </button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content py-4" id="productTabsContent">
-                    <!-- Description Tab -->
-                    <div class="tab-pane fade show active" id="description" role="tabpanel">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <h4 class="mb-3">Deskripsi Produk</h4>
-                                <div class="lead" style="white-space: pre-line;">{{ $product->long_description ?? $product->description }}</div>
-                                
-                                <h5 class="mt-4 mb-3">Keunggulan Produk</h5>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                        Terbuat dari rempah-rempah pilihan berkualitas tinggi
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                        Proses pengolahan higienis dan terjamin
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                        Cita rasa autentik dan tahan lama
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                        Kemasan praktis dan mudah disimpan
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h6 class="fw-bold mb-3">Informasi Produk</h6>
-                                        <div class="mb-2">
-                                            <small class="text-muted">Berat:</small>
-                                            <span class="ms-2">{{ $product->weight }} gram</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <small class="text-muted">Kategori:</small>
-                                            <span class="ms-2">{{ $product->category }}</span>
-                                        </div>
-                                        @if($product->shelf_life)
-                                            <div class="mb-2">
-                                                <small class="text-muted">Masa Simpan:</small>
-                                                <span class="ms-2">{{ $product->shelf_life }}</span>
+                <div class="accordion" id="productAccordion">
+                    <!-- Deskripsi -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingDescription">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                                <i class="bi bi-info-circle me-2"></i>Deskripsi
+                            </button>
+                        </h2>
+                        <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h4 class="mb-3">Deskripsi Produk</h4>
+                                        <div class="lead" style="white-space: pre-line;">{{ $product->long_description ?? $product->description }}</div>
+                                        
+                                        <h5 class="mt-4 mb-3">Keunggulan Produk</h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                Terbuat dari rempah-rempah pilihan berkualitas tinggi
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                Proses pengolahan higienis dan terjamin
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                Cita rasa autentik dan tahan lama
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                Kemasan praktis dan mudah disimpan
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="fw-bold mb-3">Informasi Produk</h6>
+                                                <div class="mb-2">
+                                                    <small class="text-muted">Berat:</small>
+                                                    <span class="ms-2">{{ $product->weight }} gram</span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <small class="text-muted">Kategori:</small>
+                                                    <span class="ms-2">{{ $product->category }}</span>
+                                                </div>
+                                                @if($product->shelf_life)
+                                                    <div class="mb-2">
+                                                        <small class="text-muted">Masa Simpan:</small>
+                                                        <span class="ms-2">{{ $product->shelf_life }}</span>
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Ingredients Tab -->
-                    <div class="tab-pane fade" id="ingredients" role="tabpanel">
-                        <h4 class="mb-3">Komposisi</h4>
-                        @if($product->ingredients && is_array($product->ingredients) && count($product->ingredients) > 0)
-                            <div class="row">
-                                @foreach(array_chunk($product->ingredients, 3) as $chunk)
-                                    <div class="col-md-4">
-                                        <ul class="list-group list-group-flush">
-                                            @foreach($chunk as $ingredient)
-                                                <li class="list-group-item d-flex align-items-center">
-                                                    <i class="bi bi-dot text-primary me-2" style="font-size: 1.5rem;"></i>
-                                                    {{ $ingredient }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
+
+                    <!-- Komposisi -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingIngredients">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIngredients" aria-expanded="true" aria-controls="collapseIngredients">
+                                <i class="bi bi-list-ul me-2"></i>Komposisi
+                            </button>
+                        </h2>
+                        <div id="collapseIngredients" class="accordion-collapse collapse show" aria-labelledby="headingIngredients">
+                            <div class="accordion-body">
+                                <h4 class="mb-3">Komposisi</h4>
+                                @if($product->ingredients && is_array($product->ingredients) && count($product->ingredients) > 0)
+                                    <div class="row">
+                                        @foreach(array_chunk($product->ingredients, 3) as $chunk)
+                                            <div class="col-md-4">
+                                                <ul class="list-group list-group-flush">
+                                                    @foreach($chunk as $ingredient)
+                                                        <li class="list-group-item d-flex align-items-center">
+                                                            <i class="bi bi-dot text-primary me-2" style="font-size: 1.5rem;"></i>
+                                                            {{ $ingredient }}
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                @endforeach
+                                @else
+                                    <p class="text-muted">Informasi komposisi akan segera tersedia.</p>
+                                @endif
                             </div>
-                        @else
-                            <p class="text-muted">Informasi komposisi akan segera tersedia.</p>
-                        @endif
+                        </div>
                     </div>
-                    
-                    <!-- Usage Tab -->
-                    <div class="tab-pane fade" id="usage" role="tabpanel">
-                        <h4 class="mb-3">Cara Penggunaan</h4>
-                        @if($product->usage)
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle me-2"></i>
-                                <strong>Takaran:</strong> {{ $product->usage }}
-                            </div>
-                        @endif
-                        
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <ol class="list-group list-group-numbered">
-                                    <li class="list-group-item">Siapkan bahan utama sesuai kebutuhan</li>
-                                    <li class="list-group-item">Tumis bumbu hingga harum dengan sedikit minyak</li>
-                                    <li class="list-group-item">Masukkan bahan utama dan aduk rata</li>
-                                    <li class="list-group-item">Tambahkan air secukupnya dan masak hingga matang</li>
-                                    <li class="list-group-item">Koreksi rasa dan sajikan selagi hangat</li>
-                                </ol>
+
+                    <!-- Cara Pakai -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingUsage">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsage" aria-expanded="true" aria-controls="collapseUsage">
+                                <i class="bi bi-book me-2"></i>Cara Pakai
+                            </button>
+                        </h2>
+                        <div id="collapseUsage" class="accordion-collapse collapse show" aria-labelledby="headingUsage">
+                            <div class="accordion-body">
+                                <h4 class="mb-3">Cara Penggunaan</h4>
+                                @php
+                                    $usageSteps = $product->usage
+                                        ? array_filter(array_map('trim', explode(';', $product->usage)))
+                                        : [];
+                                @endphp
+                                @if(count($usageSteps) > 0)
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <ol class="list-group list-group-numbered">
+                                                @foreach($usageSteps as $step)
+                                                    <li class="list-group-item">{{ $step }}</li>
+                                                @endforeach
+                                            </ol>
+                                        </div>
+                                    </div>
+                                @else
+                                    <p class="text-muted">Informasi cara penggunaan akan segera tersedia.</p>
+                                @endif
                             </div>
                         </div>
                     </div>

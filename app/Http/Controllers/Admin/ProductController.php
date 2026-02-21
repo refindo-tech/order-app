@@ -68,9 +68,9 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        // Handle ingredients input (convert from comma-separated string to array)
+        // Handle ingredients input (convert from semicolon-separated string to array)
         if ($request->has('ingredients_input') && $request->ingredients_input) {
-            $ingredients = array_map('trim', explode(',', $request->ingredients_input));
+            $ingredients = array_map('trim', explode(';', $request->ingredients_input));
             $data['ingredients'] = array_filter($ingredients);
         }
 
@@ -162,9 +162,9 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        // Handle ingredients input (convert from comma-separated string to array)
+        // Handle ingredients input (convert from semicolon-separated string to array)
         if ($request->has('ingredients_input') && $request->ingredients_input) {
-            $ingredients = array_map('trim', explode(',', $request->ingredients_input));
+            $ingredients = array_map('trim', explode(';', $request->ingredients_input));
             $data['ingredients'] = array_filter($ingredients);
         }
 

@@ -166,18 +166,18 @@
                                         <input type="text"
                                                name="ingredients_input"
                                                class="form-control"
-                                               value="{{ old('ingredients_input', is_array($product->ingredients) ? implode(', ', $product->ingredients) : $product->ingredients) }}"
-                                               placeholder="Contoh: Cabai merah, Bawang merah, Bawang putih">
-                                        <small class="text-muted">Akan dikonversi menjadi array</small>
+                                               value="{{ old('ingredients_input', is_array($product->ingredients) ? implode('; ', $product->ingredients) : $product->ingredients) }}"
+                                               placeholder="Contoh: Cabai merah; Bawang merah; Bawang putih">
+                                        <small class="text-muted">Pisahkan tiap komposisi dengan titik koma (;)</small>
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label">Cara Pakai</label>
-                                        <input type="text"
-                                               name="usage"
-                                               class="form-control @error('usage') is-invalid @enderror"
-                                               value="{{ old('usage', $product->usage) }}"
-                                               placeholder="Contoh: 1 pack untuk 1 kg daging sapi">
+                                        <textarea name="usage"
+                                                  rows="4"
+                                                  class="form-control @error('usage') is-invalid @enderror"
+                                                  placeholder="Pisahkan tiap langkah dengan titik koma (;)">{{ old('usage', $product->usage) }}</textarea>
+                                        <small class="text-muted">Pisahkan tiap langkah dengan titik koma (;)</small>
                                         @error('usage')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
