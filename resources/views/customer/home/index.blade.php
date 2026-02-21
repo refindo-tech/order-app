@@ -204,6 +204,63 @@
     </div>
 </section>
 
+<!-- Card Instruksi Pemesanan -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-3">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title">Cara Pemesanan</h2>
+                <p class="section-subtitle">
+                    Pesan dengan 3 langkah mudah, cepat, dan aman
+                </p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body py-4">
+                <div class="row align-items-stretch g-0 flex-md-nowrap">
+                    <!-- Step 1: Masuk Keranjang -->
+                    <div class="col-12 col-md-4 d-flex">
+                        <div class="d-flex flex-column flex-grow-1 text-center px-3 py-2">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">1</span>
+                            </div>
+                            <h6 class="fw-semibold text-dark mb-1">Masuk Keranjang</h6>
+                            <p class="small text-muted mb-0">Tambahkan produk ke keranjang belanja dari halaman produk yang Anda inginkan.</p>
+                        </div>
+                    </div>
+                    <div class="col-auto d-none d-md-flex align-items-center text-muted">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                    <!-- Step 2: Checkout -->
+                    <div class="col-12 col-md-4 d-flex">
+                        <div class="d-flex flex-column flex-grow-1 text-center px-3 py-2">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">2</span>
+                            </div>
+                            <h6 class="fw-semibold text-dark mb-1">Checkout</h6>
+                            <p class="small text-muted mb-0">Lengkapi data pemesan dan alamat pengiriman untuk melanjutkan pesanan.</p>
+                        </div>
+                    </div>
+                    <div class="col-auto d-none d-md-flex align-items-center text-muted">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                    <!-- Step 3: Bayar -->
+                    <div class="col-12 col-md-4 d-flex">
+                        <div class="d-flex flex-column flex-grow-1 text-center px-3 py-2">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">3</span>
+                            </div>
+                            <h6 class="fw-semibold text-dark mb-1">Bayar</h6>
+                            <p class="small text-muted mb-0">Lakukan pembayaran sesuai metode yang dipilih untuk menyelesaikan pesanan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Kontak Section -->
 <section class="py-5 bg-danger text-white" id="kontak">
     <div class="container">

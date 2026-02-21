@@ -5,13 +5,57 @@
 @section('content')
 <section class="bg-light py-4">
     <div class="container">
-        <h1 class="display-5 fw-bold text-dark">Checkout</h1>
+        <h1 class="display-5 fw-bold text-dark">2. Checkout</h1>
         <p class="lead text-muted">Lengkapi data pengiriman untuk menyelesaikan pesanan</p>
     </div>
 </section>
 
 <section class="py-5">
     <div class="container">
+        <!-- Card Instruksi -->
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-body py-4">
+                <div class="row align-items-stretch g-0 flex-md-nowrap">
+                    <!-- Step 1: Masuk Keranjang -->
+                    <a href="{{ route('cart.index') }}" class="col-12 col-md-4 d-flex text-decoration-none text-dark rounded" style="transition: background 0.2s;">
+                        <div class="d-flex flex-column flex-grow-1 text-center px-3 py-2">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">1</span>
+                            </div>
+                            <h6 class="fw-semibold text-dark mb-1">Masuk Keranjang</h6>
+                            <p class="small text-muted mb-0">Tambahkan produk ke keranjang belanja dari halaman produk yang Anda inginkan.</p>
+                        </div>
+                    </a>
+                    <div class="col-auto d-none d-md-flex align-items-center text-muted">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                    <!-- Step 2: Checkout -->
+                    <div class="col-12 col-md-4 d-flex">
+                        <div class="d-flex flex-column flex-grow-1 text-center px-3 py-2">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px;">
+                                <span class="fw-bold">2</span>
+                            </div>
+                            <h6 class="fw-semibold text-dark mb-1">Checkout</h6>
+                            <p class="small text-muted mb-0">Lengkapi data pemesan dan alamat pengiriman untuk melanjutkan pesanan.</p>
+                        </div>
+                    </div>
+                    <div class="col-auto d-none d-md-flex align-items-center text-muted">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                    <!-- Step 3: Bayar -->
+                    <div class="col-12 col-md-4 d-flex">
+                        <div class="d-flex flex-column flex-grow-1 text-center px-3 py-2">
+                            <div class="rounded-circle border border-2 border-success d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px;">
+                                <span class="fw-bold text-success">3</span>
+                            </div>
+                            <h6 class="fw-semibold text-dark mb-1">Bayar</h6>
+                            <p class="small text-muted mb-0">Lakukan pembayaran sesuai metode yang dipilih untuk menyelesaikan pesanan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="empty-cart-alert" class="alert alert-warning d-none">
             <i class="bi bi-cart-x me-2"></i>Keranjang kosong. <a href="{{ route('products.index') }}">Mulai belanja</a>
         </div>
@@ -110,7 +154,7 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card position-lg-sticky" style="top: 2rem;">
+                    <div class="card position-lg-sticky">
                         <div class="card-header bg-dark text-white">
                             <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Ringkasan Pesanan</h5>
                         </div>
@@ -133,7 +177,7 @@
                                 <span id="summary-total" class="text-primary">Rp 0</span>
                             </div>
                             <button type="submit" id="btn-submit-order" class="btn btn-primary w-100 mt-4" disabled>
-                                <i class="bi bi-check-circle me-2"></i>Buat Pesanan
+                                <i class="bi bi-check-circle me-2"></i>Lanjut Bayar
                             </button>
                         </div>
                     </div>
