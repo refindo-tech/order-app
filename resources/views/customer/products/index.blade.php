@@ -142,50 +142,49 @@
                 </div>
 
                 @if($products->isNotEmpty())
-                    <div class="row g-4">
+                    <div class="row g-2 g-md-4 product-grid-row">
                         @foreach($products as $product)
-                            <div class="col-lg-4 col-md-6">
-                                <div class="card h-100 product-card">
+                            <div class="col-6 col-md-6 col-lg-4">
+                                <div class="card h-100 product-card position-relative">
+                                    <a href="{{ route('products.show', $product->slug) }}" class="product-card-link stretched-link" aria-label="Lihat detail {{ $product->name }}"></a>
                                     <!-- Product Image -->
-                                    <div class="position-relative">
+                                    <div class="position-relative product-card-img-wrap">
                                         <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 250\' fill=\'none\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'200\' y=\'125\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E' }}" 
-                                             class="card-img-top" 
-                                             alt="{{ $product->name }}"
-                                             style="height: 200px; object-fit: cover;">
+                                             class="card-img-top product-card-img" 
+                                             alt="{{ $product->name }}">
                                         
-                                        <div class="position-absolute top-0 start-0 m-2">
+                                        <div class="position-absolute top-0 start-0 product-card-badge">
                                             <span class="badge bg-primary">{{ $product->category }}</span>
                                         </div>
                                     </div>
 
                                     <!-- Product Info -->
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">{{ $product->name }}</h5>
-                                        <p class="card-text text-muted flex-grow-1">
+                                    <div class="card-body d-flex flex-column product-card-body">
+                                        <h5 class="card-title product-card-title">{{ $product->name }}</h5>
+                                        <p class="card-text text-muted flex-grow-1 product-card-desc">
                                             {{ \Str::limit($product->description, 80) }}
                                         </p>
                                         
                                         <!-- Product Details -->
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span class="h5 text-primary mb-0">
+                                        <div class="mb-2 mb-md-3 product-card-details">
+                                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                                                <span class="product-card-price text-primary">
                                                     Rp {{ number_format($product->price, 0, ',', '.') }}
                                                 </span>
-                                                <small class="text-muted">{{ $product->weight }}g</small>
+                                                <small class="text-muted product-card-weight d-none d-md-inline">{{ $product->weight }}g</small>
                                             </div>
-                                            
                                         </div>
 
                                         <!-- Action Buttons -->
-                                        <div class="mt-auto">
-                                            <div class="d-flex gap-2">
+                                        <div class="mt-auto product-card-actions-wrap position-relative">
+                                            <div class="d-flex gap-1 gap-md-2 product-card-actions">
                                                 <a href="{{ route('products.show', $product->slug) }}" 
-                                                   class="btn btn-outline-primary flex-grow-1">
-                                                    <i class="bi bi-eye me-1"></i>Detail
+                                                   class="btn btn-outline-primary btn-sm flex-grow-1 product-card-btn">
+                                                    <i class="bi bi-eye product-card-btn-icon me-2"></i><span class="product-card-btn-text">Detail</span>
                                                 </a>
-                                                <button class="btn btn-primary flex-grow-1" 
+                                                <button type="button" class="btn btn-primary btn-sm flex-grow-1 product-card-btn" 
                                                         onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}')">
-                                                    <i class="bi bi-cart-plus me-1"></i>Keranjang
+                                                    <i class="bi bi-cart-plus product-card-btn-icon me-2"></i><span class="product-card-btn-text">Keranjang</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -241,6 +240,15 @@
         box-shadow: 0 2px 15px rgba(0,0,0,0.08);
     }
     
+    /* Seluruh card bisa diklik ke halaman detail; tombol tetap di atas */
+    .product-card-link {
+        z-index: 1;
+    }
+    
+    .product-card-actions-wrap {
+        z-index: 2;
+    }
+    
     .product-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -253,6 +261,20 @@
     
     .breadcrumb-item + .breadcrumb-item::before {
         content: ">";
+    }
+    
+    /* Tombol: ikon dan teks selalu satu baris (kiri-kanan) */
+    .product-card-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        white-space: nowrap;
+        gap: 0.35rem;
+    }
+    
+    .product-card-actions .btn .product-card-btn-icon {
+        flex-shrink: 0;
     }
     
     /* Mobile optimizations */
@@ -287,9 +309,97 @@
         .lead {
             font-size: 1rem;
         }
+    }
+    
+    /* Mobile: 2 kolom, card lebih kecil */
+    @media (max-width: 767.98px) {
+        .product-grid-row {
+            gap: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
         
-        .col-lg-4.col-md-6 {
-            margin-bottom: 1rem;
+        .product-grid-row > [class*="col-"] {
+            flex: 0 0 calc(50% - 0.25rem) !important;
+            max-width: calc(50% - 0.25rem) !important;
+        }
+        
+        .product-card {
+            font-size: 0.7rem;
+        }
+        
+        .product-card-img-wrap {
+            overflow: hidden;
+        }
+        
+        .product-card-img {
+            height: 140px;
+            object-fit: cover;
+        }
+        
+        .product-card-badge .badge {
+            font-size: 0.55rem;
+            padding: 0.15em 0.35em;
+        }
+        
+        .product-card-body {
+            padding: 0.35rem 0.5rem;
+        }
+        
+        .product-card-title {
+            font-size: 0.7rem;
+            line-height: 1.15;
+            margin-bottom: 0.2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-card-desc {
+            display: none;
+        }
+        
+        .product-card-details {
+            margin-bottom: 0.1rem !important;
+        }
+        
+        .product-card-body .mt-auto {
+            margin-top: 0.25rem !important;
+        }
+        
+        .product-card-price {
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .product-card-weight {
+            font-size: 0.6rem;
+        }
+        
+        .product-card-actions .btn {
+            padding: 0.2rem 0.3rem;
+            font-size: 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-card-btn-text {
+            display: none;
+        }
+        
+        .product-card-actions .btn .product-card-btn-icon {
+            margin: 0 !important;
+            font-size: 0.8rem;
+        }
+    }
+    
+    /* Tablet ke atas: tampilan normal */
+    @media (min-width: 768px) {
+        .product-card-img {
+            height: 200px;
+            object-fit: cover;
         }
     }
 </style>
