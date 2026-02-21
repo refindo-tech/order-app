@@ -13,13 +13,11 @@
     <div class="container w-100 hero-section__content">
         <div class="row align-items-center">
             <div class="align-items-center text-lg-center mb-4 mb-lg-0">
-            <h1 class="display-4 fw-bold mb-4">
-                Masak Enak Itu Mudah
-                <span class="d-block text-warning">Harga Terjangkau, Rasa Juara</span>
+            <h1 class="display-4 fw-bold">
+                <span id="hero-title" class="d-block text-warning" style="white-space: pre-line;">{{ $heroTitle }}</span>
             </h1>
-                <p class="lead mb-4">
-                    Supplier terpercaya untuk kebutuhan bumbu dapur dan ungkep berkualitas.
-                    Melayani pengiriman ke seluruh Tangerang dan Luar Tangerang.
+                <p id="hero-description" class="lead mb-4" style="white-space: pre-line;">
+                    {{ $heroDescription }}
                 </p>
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-center justify-content-sm-center">
                     <a href="{{ route('products.index') }}" class="btn btn-light btn-lg">

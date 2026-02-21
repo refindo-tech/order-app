@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\HeroBanner;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -18,10 +19,14 @@ class HomeController extends Controller
             ->limit(4)
             ->get();
 
+        $banner = HeroBanner::current();
+
         return view('customer.home.index', [
             'pageTitle' => 'Beranda',
             'pageDescription' => 'Rumah Bumbu & Ungkep - Supplier bumbu dan ungkep berkualitas untuk kebutuhan dapur Anda.',
             'featuredProducts' => $featuredProducts,
+            'heroTitle' => $banner->hero_title,
+            'heroDescription' => $banner->hero_description ?? '',
         ]);
     }
 

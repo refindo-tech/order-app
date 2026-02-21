@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Customer\HomeController;
@@ -43,6 +44,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+        
+        // Banner (hero title & description)
+        Route::get('banner', [BannerController::class, 'edit'])->name('banner.edit');
+        Route::put('banner', [BannerController::class, 'update'])->name('banner.update');
         
         // Products Management
         Route::resource('products', AdminProductController::class);

@@ -54,6 +54,9 @@
         }
         
         @media (max-width: 991px) {
+            .navbar-brand {
+                font-size: 1rem;
+            }
             .navbar-nav .nav-item {
                 margin-right: 0;
                 margin-bottom: 0.5rem;
@@ -200,8 +203,9 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <i class="bi bi-shop me-2"></i>{{ config('app.name') }}
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
+                <img src="{{ asset('/images/rumah-bumbu-ungkep.png') }}" alt="" width="auto" height="60" class="me-2">
+                {{ config('app.name') }}
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

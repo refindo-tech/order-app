@@ -180,6 +180,15 @@
                             <li><a class="sidebar-link" href="{{ route('admin.orders.index', ['status' => 'payment_verification']) }}">Verifikasi Pembayaran</a></li>
                         </ul>
                     </li>
+
+                    <li class="nav-item {{ request()->routeIs('admin.banner.*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('admin.banner.edit') }}">
+                            <span class="icon-holder">
+                                <i class="c-amber-500 ti-layout-media-overlay"></i>
+                            </span>
+                            <span class="title">Banner</span>
+                        </a>
+                    </li>
                     <!-- 
                     <li class="nav-item">
                         <a class="sidebar-link" href="#">
