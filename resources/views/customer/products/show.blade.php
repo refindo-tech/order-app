@@ -81,6 +81,13 @@
                 <div class="bg-light rounded p-4 mb-4">
                     <div class="row align-items-center">
                         <div class="col-md-6">
+                            @if($product->normal_price)
+                                <div class="mb-1">
+                                    <span class="text-muted text-decoration-line-through fs-5">
+                                        Rp {{ number_format($product->normal_price, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                            @endif
                             <div class="d-flex align-items-baseline gap-2">
                                 <span class="display-6 fw-bold text-primary">
                                     Rp {{ number_format($product->price, 0, ',', '.') }}

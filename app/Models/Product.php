@@ -16,6 +16,7 @@ class Product extends Model
         'description',
         'long_description',
         'price',
+        'normal_price',
         'category',
         'stock',
         'weight',
@@ -28,6 +29,7 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'normal_price' => 'decimal:2',
         'stock' => 'integer',
         'weight' => 'integer',
         'ingredients' => 'array',

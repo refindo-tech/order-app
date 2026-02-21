@@ -107,6 +107,20 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
+                                            <label class="form-label">Harga Normal (Rp)</label>
+                                            <input type="number"
+                                                   name="normal_price"
+                                                   class="form-control @error('normal_price') is-invalid @enderror"
+                                                   value="{{ old('normal_price') }}"
+                                                   min="0"
+                                                   step="100"
+                                                   placeholder="Opsional, untuk tampilan coret di customer">
+                                            @error('normal_price')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
                                             <label class="form-label">Berat (gram) <span class="text-danger">*</span></label>
                                             <input type="number" 
                                                    name="weight" 

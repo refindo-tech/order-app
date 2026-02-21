@@ -50,6 +50,7 @@ class ProductRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:500'],
             'long_description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
+            'normal_price' => ['nullable', 'numeric', 'min:0'],
             'category' => ['required', 'string', 'max:100'],
             'weight' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
