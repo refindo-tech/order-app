@@ -53,6 +53,12 @@ class ProductRequest extends FormRequest
             'category' => ['required', 'string', 'max:100'],
             'weight' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'media' => ['nullable', 'array', 'max:4'],
+            'media.*' => ['file', 'mimes:jpeg,png,jpg,gif,webp,mp4,webm,ogg,mov', 'max:15360'], // max 15MB for video
+            'remove_media' => ['nullable', 'array'],
+            'remove_media.*' => ['integer', 'exists:product_media,id'],
+            'media_order' => ['nullable', 'array'],
+            'media_order.*' => ['integer', 'exists:product_media,id'],
             'ingredients' => ['nullable', 'array'],
             'ingredients.*' => ['string', 'max:100'],
             'usage' => ['nullable', 'string', 'max:255'],
@@ -76,6 +82,9 @@ class ProductRequest extends FormRequest
             'image.image' => 'File harus berupa gambar.',
             'image.mimes' => 'Format gambar harus: jpeg, png, jpg, gif, atau webp.',
             'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'media.max' => 'Maksimal 4 foto/video.',
+            'media.*.mimes' => 'Format harus: jpeg, png, jpg, gif, webp (gambar) atau mp4, webm, ogg (video).',
+            'media.*.max' => 'Ukuran file maksimal 15MB.',
         ];
     }
 }

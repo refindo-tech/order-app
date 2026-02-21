@@ -26,7 +26,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="bgc-white bd bdrs-3 p-20">
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="productFormCreate" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="row">
@@ -185,25 +185,35 @@
 
                         <!-- Right Column -->
                         <div class="col-md-4">
-                            <!-- Image Upload -->
+                            <!-- Kelola Foto/Video (maks. 4) -->
                             <div class="card mb-3">
-                                <div class="card-header bg-warning text-dark">
-                                    <h5 class="mb-0">Gambar Produk</h5>
+                                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Kelola Foto/Video</h5>
+                                    <span id="mediaCount" class="badge bg-dark">0/4</span>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-3">
-                                        <input type="file" 
-                                               name="image" 
-                                               class="form-control @error('image') is-invalid @enderror" 
-                                               accept="image/*"
-                                               onchange="previewImage(this)">
-                                        @error('image')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                    <div id="mediaPreview" class="row g-2 mb-3">
+                                        <div id="mediaPreviewEmpty" class="col-12 text-center py-4 bg-light rounded border text-muted small">
+                                            Belum ada file. Klik "Tambah Foto/Video" untuk menambah.
+                                        </div>
                                     </div>
-
-                                    <div id="imagePreview" class="text-center" style="display: none;">
-                                        <img id="preview" src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
+                                    <div class="mb-0">
+                                        <input type="file"
+                                               name="media[]"
+                                               id="mediaInput"
+                                               class="d-none @error('media') is-invalid @enderror @error('media.*') is-invalid @enderror"
+                                               accept="image/*,video/mp4,video/webm,video/ogg,video/quicktime"
+                                               multiple>
+                                        <button type="button" class="btn btn-warning w-100" id="btnAddMedia">
+                                            <i class="ti-plus me-2"></i>Tambah Foto/Video
+                                        </button>
+                                        @error('media')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                        @error('media.*')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted d-block mt-1">Format: gambar (JPG, PNG, GIF, WebP) atau video (MP4, WebM). Maksimal 4 file. Gunakan tombol ↑ dan ↓ di bawah untuk mengatur urutan tampilan.</small>
                                     </div>
                                 </div>
                             </div>
@@ -251,22 +261,169 @@
 
 @push('scripts')
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('preview');
-        const previewDiv = document.getElementById('imagePreview');
-        
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                previewDiv.style.display = 'block';
-            }
-            
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            previewDiv.style.display = 'none';
+    (function() {
+        var selectedMediaFiles = [];
+        var input = document.getElementById('mediaInput');
+        var container = document.getElementById('mediaPreview');
+        var emptyEl = document.getElementById('mediaPreviewEmpty');
+        var countBadge = document.getElementById('mediaCount');
+
+        function setInputFromArray() {
+            if (!input) return;
+            var dt = new DataTransfer();
+            for (var i = 0; i < selectedMediaFiles.length; i++) dt.items.add(selectedMediaFiles[i]);
+            input.files = dt.files;
         }
-    }
+
+        function renderPreview() {
+            if (!container) return;
+            if (selectedMediaFiles.length === 0) {
+                if (emptyEl) { emptyEl.style.display = ''; emptyEl.textContent = 'Belum ada file. Klik "Tambah Foto/Video Lain" untuk menambah.'; }
+                container.querySelectorAll('.media-preview-item').forEach(function(el) { el.remove(); });
+                if (countBadge) countBadge.textContent = '0/4';
+                return;
+            }
+            if (emptyEl) emptyEl.style.display = 'none';
+            container.querySelectorAll('.media-preview-item').forEach(function(el) { el.remove(); });
+            if (countBadge) countBadge.textContent = selectedMediaFiles.length + '/4';
+            var n = selectedMediaFiles.length;
+            selectedMediaFiles.forEach(function(file, i) {
+                var col = document.createElement('div');
+                col.className = 'col-6 media-preview-item';
+                var wrap = document.createElement('div');
+                wrap.className = 'rounded border overflow-hidden bg-dark position-relative';
+                wrap.style.maxHeight = '160px';
+                if (file.type.startsWith('video/')) {
+                    var video = document.createElement('video');
+                    video.src = URL.createObjectURL(file);
+                    video.controls = true;
+                    video.muted = true;
+                    video.className = 'img-fluid w-100';
+                    video.style.maxHeight = '140px'; video.style.objectFit = 'cover';
+                    wrap.appendChild(video);
+                } else {
+                    var img = document.createElement('img');
+                    img.className = 'img-fluid w-100';
+                    img.style.maxHeight = '140px'; img.style.objectFit = 'cover';
+                    img.alt = 'Preview ' + (i + 1);
+                    var reader = new FileReader();
+                    reader.onload = (function(idx) { return function(e) { img.src = e.target.result; }; })(i);
+                    reader.readAsDataURL(file);
+                    wrap.appendChild(img);
+                }
+                var ctrls = document.createElement('div');
+                ctrls.className = 'position-absolute top-0 start-0 d-flex gap-1 m-1';
+                ctrls.style.zIndex = '5';
+                var btnDel = document.createElement('button');
+                btnDel.type = 'button';
+                btnDel.className = 'btn btn-danger py-2 px-2';
+                btnDel.style.minWidth = '36px';
+                btnDel.style.fontSize = '1.1rem';
+                btnDel.title = 'Hapus';
+                btnDel.innerHTML = '&times;';
+                btnDel.onclick = (function(idx) { return function() { removeAt(idx); }; })(i);
+                var btnUp = document.createElement('button');
+                btnUp.type = 'button';
+                btnUp.className = 'btn btn-light py-2 px-2';
+                btnUp.style.minWidth = '36px';
+                btnUp.style.fontSize = '1.1rem';
+                btnUp.title = 'Pindah ke atas';
+                btnUp.innerHTML = '&uarr;';
+                btnUp.onclick = (function(idx) { return function() { moveUp(idx); }; })(i);
+                var btnDown = document.createElement('button');
+                btnDown.type = 'button';
+                btnDown.className = 'btn btn-light py-2 px-2';
+                btnDown.style.minWidth = '36px';
+                btnDown.style.fontSize = '1.1rem';
+                btnDown.title = 'Pindah ke bawah';
+                btnDown.innerHTML = '&darr;';
+                btnDown.onclick = (function(idx) { return function() { moveDown(idx); }; })(i);
+                ctrls.appendChild(btnDel);
+                ctrls.appendChild(btnUp);
+                ctrls.appendChild(btnDown);
+                wrap.appendChild(ctrls);
+                var badge = document.createElement('span');
+                badge.className = 'position-absolute top-0 end-0 badge bg-secondary m-1';
+                badge.textContent = (i + 1) + '/' + n;
+                wrap.appendChild(badge);
+                col.appendChild(wrap);
+                container.appendChild(col);
+            });
+        }
+
+        function removeAt(index) {
+            if (index < 0 || index >= selectedMediaFiles.length) return;
+            selectedMediaFiles.splice(index, 1);
+            setInputFromArray();
+            renderPreview();
+        }
+
+        function moveUp(index) {
+            if (index <= 0) return;
+            var t = selectedMediaFiles[index];
+            selectedMediaFiles[index] = selectedMediaFiles[index - 1];
+            selectedMediaFiles[index - 1] = t;
+            setInputFromArray();
+            renderPreview();
+        }
+
+        function moveDown(index) {
+            if (index >= selectedMediaFiles.length - 1) return;
+            var t = selectedMediaFiles[index];
+            selectedMediaFiles[index] = selectedMediaFiles[index + 1];
+            selectedMediaFiles[index + 1] = t;
+            setInputFromArray();
+            renderPreview();
+        }
+
+        function onInputChange() {
+            if (!input.files || input.files.length === 0) return;
+            var newFiles = Array.from(input.files);
+            selectedMediaFiles = selectedMediaFiles.concat(newFiles).slice(0, 4);
+            setInputFromArray();
+            renderPreview();
+            input.value = '';
+        }
+
+        document.getElementById('btnAddMedia').addEventListener('click', function() {
+            if (selectedMediaFiles.length >= 4) { alert('Maksimal 4 file.'); return; }
+            input.click();
+        });
+        input.addEventListener('change', onInputChange);
+
+        var form = input.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!form.reportValidity()) return;
+                var formData = new FormData();
+                for (var i = 0; i < form.elements.length; i++) {
+                    var el = form.elements[i];
+                    if (!el.name || el.name === 'media[]') continue;
+                    if (el.type === 'file') continue;
+                    if (el.type === 'checkbox' && !el.checked) continue;
+                    if (el.type === 'radio' && !el.checked) continue;
+                    formData.append(el.name, el.value);
+                }
+                selectedMediaFiles.forEach(function(f) { formData.append('media[]', f); });
+                var submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...'; }
+                fetch(form.action, { method: 'POST', body: formData, credentials: 'same-origin', redirect: 'follow' })
+                    .then(function(r) {
+                        if (r.redirected) { window.location = r.url; return; }
+                        if (r.status === 422) return r.json().then(function(data) {
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="ti-save me-2"></i>Simpan Produk'; }
+                            var msg = (data.errors && Object.values(data.errors).flat()) ? Object.values(data.errors).flat().join('\n') : 'Validasi gagal';
+                            alert(msg);
+                        });
+                        return r.text().then(function(html) { document.open(); document.write(html); document.close(); });
+                    })
+                    .catch(function(err) {
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="ti-save me-2"></i>Simpan Produk'; }
+                        alert('Gagal menyimpan: ' + (err && err.message ? err.message : 'Unknown error'));
+                    });
+            });
+        }
+    })();
 </script>
 @endpush

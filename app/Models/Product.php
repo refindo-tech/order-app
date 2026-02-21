@@ -65,6 +65,27 @@ class Product extends Model
     }
 
     /**
+     * Product media (images/videos), up to 4, ordered by sort_order.
+     */
+    public function media()
+    {
+        return $this->hasMany(ProductMedia::class)->orderBy('sort_order');
+    }
+
+    /**
+     * First image path for thumbnail/backward compatibility (product.image or first media image).
+     */
+    public function getPrimaryImageAttribute(): ?string
+    {
+        if ($this->image) {
+            return $this->image;
+        }
+        $first = $this->media()->where('type', 'image')->first();
+
+        return $first ? $first->path : null;
+    }
+
+    /**
      * Scope for active products
      */
     public function scopeActive($query)

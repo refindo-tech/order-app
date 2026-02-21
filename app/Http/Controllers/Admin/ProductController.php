@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
+use App\Models\ProductMedia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -73,9 +74,15 @@ class ProductController extends Controller
             $data['ingredients'] = array_filter($ingredients);
         }
 
-        // Handle image upload
+        // Single image (backward compat) or first of media
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
+        } elseif ($request->hasFile('media')) {
+            $files = $request->file('media');
+            $firstImage = collect($files)->first(fn ($f) => str_starts_with($f->getMimeType(), 'image/'));
+            if ($firstImage) {
+                $data['image'] = $firstImage->store('products', 'public');
+            }
         }
 
         // Generate slug if not provided
@@ -94,9 +101,37 @@ class ProductController extends Controller
         // Set default values
         $data['is_active'] = $request->has('is_active');
 
-        Product::create($data);
+        // Remove media keys from $data so we don't mass-assign
+        unset($data['media'], $data['remove_media']);
 
-        return redirect()->route('admin.products.index')
+        $product = Product::create($data);
+
+        // Store multiple media (up to 4)
+        if ($request->hasFile('media')) {
+            $sortOrder = 0;
+            foreach ($request->file('media') as $file) {
+                $path = $file->store('products', 'public');
+                $type = str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'video';
+                $product->media()->create([
+                    'path' => $path,
+                    'type' => $type,
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
+            // Sync primary image from first image media
+            $firstImageMedia = $product->media()->where('type', 'image')->first();
+            if ($firstImageMedia && !$product->image) {
+                $product->update(['image' => $firstImageMedia->path]);
+            }
+        } elseif ($request->hasFile('image')) {
+            $product->media()->create([
+                'path' => $product->image,
+                'type' => 'image',
+                'sort_order' => 0,
+            ]);
+        }
+
+        return redirect()->route('admin.products.show', $product)
             ->with('success', 'Produk berhasil ditambahkan.');
     }
 
@@ -125,30 +160,6 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
-        // --- Troubleshooting: Log proses update produk ---
-        Log::channel('single')->info('[Product Update] Memulai update produk', [
-            'product_id' => $product->id,
-            'product_slug' => $product->slug,
-            'request_method' => $request->method(),
-            'content_type' => $request->header('Content-Type'),
-            'is_multipart' => str_contains($request->header('Content-Type', ''), 'multipart/form-data'),
-            'php_files' => $_FILES ?? [],
-            'has_file_image' => $request->hasFile('image'),
-            'all_input_keys' => array_keys($request->all()),
-        ]);
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            Log::channel('single')->info('[Product Update] File image diterima', [
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'size' => $file->getSize(),
-                'extension' => $file->getClientOriginalExtension(),
-            ]);
-        } else {
-            Log::channel('single')->warning('[Product Update] File image TIDAK diterima - hasFile(image)=false');
-        }
-
         $data = $request->validated();
 
         // Handle ingredients input (convert from comma-separated string to array)
@@ -157,20 +168,60 @@ class ProductController extends Controller
             $data['ingredients'] = array_filter($ingredients);
         }
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            // Delete old image
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-                Log::channel('single')->info('[Product Update] Gambar lama dihapus', ['path' => $product->image]);
+        // Remove media: delete selected product_media and their files
+        $removeIds = $request->input('remove_media', []);
+        if (!empty($removeIds)) {
+            $toRemove = $product->media()->whereIn('id', $removeIds)->get();
+            foreach ($toRemove as $m) {
+                Storage::disk('public')->delete($m->path);
+                $m->delete();
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
-            Log::channel('single')->info('[Product Update] Gambar baru disimpan', ['path' => $data['image']]);
-        } else {
-            Log::channel('single')->info('[Product Update] Tidak ada gambar baru - mempertahankan gambar lama', [
-                'current_image' => $product->image,
+        }
+
+        // Apply new order for existing (kept) media
+        $mediaOrder = $request->input('media_order', []);
+        foreach ($mediaOrder as $pos => $id) {
+            ProductMedia::where('id', $id)->where('product_id', $product->id)->update(['sort_order' => $pos]);
+        }
+
+        // Single image: add as new media (image type)
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $maxOrder = (int) $product->media()->max('sort_order');
+            $product->media()->create([
+                'path' => $path,
+                'type' => 'image',
+                'sort_order' => $maxOrder + 1,
             ]);
         }
+
+        // New media files: total media must stay <= 4 (currentCount already reflects removals)
+        $currentCount = $product->media()->count();
+        $newFiles = $request->file('media', []);
+        $sortOrderStart = !empty($mediaOrder) ? count($mediaOrder) : $currentCount;
+        if (!empty($newFiles)) {
+            $maxNew = max(0, 4 - $currentCount);
+            $added = 0;
+            foreach ($newFiles as $file) {
+                if ($added >= $maxNew) {
+                    break;
+                }
+                $path = $file->store('products', 'public');
+                $type = str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'video';
+                $product->media()->create([
+                    'path' => $path,
+                    'type' => $type,
+                    'sort_order' => $sortOrderStart + $added,
+                ]);
+                $added++;
+            }
+        }
+
+        // Sync primary image from first image in media (for listing/backward compat)
+        $firstImage = $product->media()->where('type', 'image')->orderBy('sort_order')->first();
+        $data['image'] = $firstImage ? $firstImage->path : null;
+
+        unset($data['media'], $data['remove_media'], $data['media_order']);
 
         // Generate slug if not provided
         if (empty($data['slug'])) {
@@ -195,7 +246,7 @@ class ProductController extends Controller
             'image_field_value' => $product->fresh()->image,
         ]);
 
-        return redirect()->route('admin.products.index')
+        return redirect()->route('admin.products.show', $product)
             ->with('success', 'Produk berhasil diperbarui.');
     }
 
@@ -229,12 +280,14 @@ class ProductController extends Controller
     public function forceDelete($id)
     {
         $product = Product::withTrashed()->findOrFail($id);
-        
-        // Delete image
+
+        foreach ($product->media as $m) {
+            Storage::disk('public')->delete($m->path);
+        }
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
-        
+
         $product->forceDelete();
 
         return redirect()->route('admin.products.index')

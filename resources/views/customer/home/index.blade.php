@@ -12,21 +12,16 @@
     <div class="hero-section__overlay" aria-hidden="true"></div>
     <div class="container w-100 hero-section__content">
         <div class="row align-items-center">
-            <div class="col-lg-5">
-                <div class="position-relative">
-                    <img src="{{ asset('images/rumah-bumbu-ungkep.png') }}" alt="Rumah Bumbu & Ungkep" class="img-fluid">
-                </div>
-            </div>
-            <div class="col-lg-7 text-lg-end mb-4 mb-lg-0">
-                <h1 class="display-4 fw-bold mb-4">
-                    Masak Enak Itu Mudah
-                    <span class="d-block text-warning">Harga Terjangkau, Rasa Juara</span>
-                </h1>
+            <div class="align-items-center text-lg-center mb-4 mb-lg-0">
+            <h1 class="display-4 fw-bold mb-4">
+                Masak Enak Itu Mudah
+                <span class="d-block text-warning">Harga Terjangkau, Rasa Juara</span>
+            </h1>
                 <p class="lead mb-4">
                     Supplier terpercaya untuk kebutuhan bumbu dapur dan ungkep berkualitas.
                     Melayani pengiriman ke seluruh Tangerang dan Luar Tangerang.
                 </p>
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-end justify-content-sm-center">
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-center justify-content-sm-center">
                     <a href="{{ route('products.index') }}" class="btn btn-light btn-lg">
                         <i class="bi bi-grid me-2"></i>Lihat Produk
                     </a>

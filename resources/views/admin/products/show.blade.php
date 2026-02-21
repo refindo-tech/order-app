@@ -112,12 +112,26 @@
 
         <!-- Sidebar -->
         <div class="col-md-4">
-            <!-- Product Image -->
+            <!-- Product Media (Foto/Video) -->
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                <h5 class="c-grey-900 mB-20">Gambar Produk</h5>
-                @if($product->image)
-                    <img src="{{ storage_url($product->image) }}" 
-                         alt="{{ $product->name }}" 
+                <h5 class="c-grey-900 mB-20">Foto/Video Produk</h5>
+                @if($product->media->isNotEmpty())
+                    <div class="row g-2">
+                        @foreach($product->media as $m)
+                            <div class="col-6">
+                                @if($m->isImage())
+                                    <img src="{{ storage_url($m->path) }}"
+                                         alt="{{ $product->name }}"
+                                         class="img-fluid rounded border">
+                                @else
+                                    <video src="{{ storage_url($m->path) }}" controls class="img-fluid rounded border" style="max-height: 200px;"></video>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @elseif($product->image)
+                    <img src="{{ storage_url($product->image) }}"
+                         alt="{{ $product->name }}"
                          class="img-fluid rounded">
                 @else
                     <div class="text-center p-4 bg-light rounded">

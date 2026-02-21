@@ -20,14 +20,49 @@
         </nav>
 
         <div class="row g-5">
-            <!-- Product Image -->
+            <!-- Product Media (Foto/Video) -->
             <div class="col-lg-6">
                 <div class="position-sticky" style="top: 2rem;">
-                    <div class="card border-0 shadow">
-                        <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 300\' fill=\'none\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'75\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'15\'/%3E%3Ctext x=\'200\' y=\'155\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'24\' font-weight=\'bold\'%3E' . e(urlencode($product->name)) . '%3C/text%3E%3C/svg%3E' }}" 
-                             class="card-img" 
-                             alt="{{ $product->name }}"
-                             style="height: 400px; object-fit: cover;">
+                    @php
+                        $mainMedia = $product->media->first();
+                        $primaryUrl = $product->primary_image ? storage_url($product->primary_image) : null;
+                        $placeholder = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 300\' fill=\'none\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'75\' width=\'300\' height=\'150\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'15\'/%3E%3Ctext x=\'200\' y=\'155\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'24\' font-weight=\'bold\'%3E' . e(urlencode($product->name)) . '%3C/text%3E%3C/svg%3E';
+                    @endphp
+                    <div class="card border-0 shadow position-relative">
+                        <div id="productMainMedia" class="position-relative product-media-clickable" style="height: 450px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;">
+                            @if($product->media->isNotEmpty())
+                                @foreach($product->media as $idx => $m)
+                                    <div class="product-media-item {{ $idx === 0 ? '' : 'd-none' }}" data-index="{{ $idx }}" data-src="{{ storage_url($m->path) }}" data-type="{{ $m->isImage() ? 'image' : 'video' }}">
+                                        @if($m->isImage())
+                                            <img src="{{ storage_url($m->path) }}" alt="{{ $product->name }}" class="w-100" style="height: 450px; object-fit: cover;">
+                                        @else
+                                            <video src="{{ storage_url($m->path) }}" controls class="w-100" style="height: 450px; object-fit: contain;"></video>
+                                        @endif
+                                    </div>
+                                @endforeach
+                                <button type="button" class="btn product-media-nav-btn product-media-prev position-absolute start-0 top-50 translate-middle-y ms-2 rounded-circle p-2" style="z-index: 10; width: 44px; height: 44px;" title="Sebelumnya" aria-label="Sebelumnya">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                                <button type="button" class="btn product-media-nav-btn product-media-next position-absolute end-0 top-50 translate-middle-y me-2 rounded-circle p-2" style="z-index: 10; width: 44px; height: 44px;" title="Berikutnya" aria-label="Berikutnya">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            @else
+                                <img src="{{ $primaryUrl ?? $placeholder }}" class="card-img single-product-img" alt="{{ $product->name }}" style="height: 450px; object-fit: cover;" data-src="{{ $primaryUrl ?? '' }}">
+                            @endif
+                        </div>
+                        @if($product->media->count() > 1)
+                            <div class="card-body p-2 d-none d-md-flex flex-wrap gap-2">
+                                @foreach($product->media as $idx => $m)
+                                    <button type="button" class="btn btn-outline-secondary p-0 border rounded overflow-hidden product-media-thumb {{ $idx === 0 ? 'active' : '' }}" data-index="{{ $idx }}" style="width: 60px; height: 60px;">
+                                        @if($m->isImage())
+                                            <img src="{{ storage_url($m->path) }}" alt="" class="w-100 h-100" style="object-fit: cover;">
+                                        @else
+                                            <span class="d-flex align-items-center justify-content-center w-100 h-100"><i class="bi bi-play-circle"></i></span>
+                                        @endif
+                                    </button>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -148,7 +183,7 @@
                         <div class="row">
                             <div class="col-lg-8">
                                 <h4 class="mb-3">Deskripsi Produk</h4>
-                                <p class="lead">{{ $product->long_description ?? $product->description }}</p>
+                                <div class="lead" style="white-space: pre-line;">{{ $product->long_description ?? $product->description }}</div>
                                 
                                 <h5 class="mt-4 mb-3">Keunggulan Produk</h5>
                                 <ul class="list-unstyled">
@@ -281,11 +316,71 @@
             @endforelse
         </div>
     </div>
+
+    <!-- Lightbox popup (di luar kolom agar selalu di atas) -->
+    <div id="productMediaLightbox" class="product-media-lightbox" role="dialog" aria-modal="true" aria-label="Tampilan besar foto/video" style="display: none;">
+        <div class="product-media-lightbox-backdrop"></div>
+        <button type="button" class="product-media-lightbox-close product-media-lightbox-btn btn position-absolute top-0 end-0 m-3 rounded-circle shadow" style="z-index: 10002; width: 48px; height: 48px;" title="Tutup" aria-label="Tutup">
+            <i class="bi bi-x-lg fs-4"></i>
+        </button>
+        <div class="product-media-lightbox-content position-relative d-flex align-items-center justify-content-center w-100 h-100 p-2 p-md-4" style="z-index: 10001;">
+            <button type="button" class="product-media-lightbox-prev product-media-lightbox-btn btn position-absolute start-0 top-50 translate-middle-y rounded-circle shadow ms-2" style="z-index: 10002; width: 48px; height: 48px;" title="Sebelumnya"><i class="bi bi-chevron-left"></i></button>
+            <div class="product-media-lightbox-media w-100 h-100 d-flex align-items-center justify-content-center" style="z-index: 1;"></div>
+            <button type="button" class="product-media-lightbox-next product-media-lightbox-btn btn position-absolute end-0 top-50 translate-middle-y rounded-circle shadow me-2" style="z-index: 10002; width: 48px; height: 48px;" title="Berikutnya"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>
 </section>
 @endsection
 
 @push('styles')
 <style>
+    .product-media-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.92);
+    }
+    .product-media-lightbox-backdrop {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+    }
+    .product-media-lightbox-media {
+        width: 100%;
+    }
+    .product-media-lightbox-media img,
+    .product-media-lightbox-media video {
+        width: 100%;
+        max-height: 100vh;
+        object-fit: contain;
+        border-radius: 4px;
+    }
+    .product-media-lightbox-media video {
+        background: #000;
+    }
+    .product-media-lightbox-btn {
+        background: rgba(255, 255, 255, 0.25) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #fff;
+    }
+    .product-media-lightbox-btn:hover {
+        background: rgba(255, 255, 255, 0.4) !important;
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+    .product-media-nav-btn {
+        background: rgba(255, 255, 255, 0.3) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #333;
+    }
+    .product-media-nav-btn:hover {
+        background: rgba(255, 255, 255, 0.6) !important;
+        border-color: rgba(0, 0, 0, 0.15);
+        color: #333;
+    }
     /* Mobile optimizations for product detail */
     @media (max-width: 991.98px) {
         .position-sticky {
@@ -343,7 +438,130 @@
 @push('scripts')
 <script>
     const productPrice = {{ $product->price }};
-    
+
+    // Product media gallery: show item by index
+    function showProductMediaIndex(idx) {
+        document.querySelectorAll('.product-media-item').forEach(function(el) {
+            el.classList.toggle('d-none', el.getAttribute('data-index') !== String(idx));
+        });
+        document.querySelectorAll('.product-media-thumb').forEach(function(b) {
+            b.classList.remove('active');
+            if (b.getAttribute('data-index') === String(idx)) b.classList.add('active');
+        });
+    }
+    var productMediaCount = document.querySelectorAll('.product-media-item').length;
+    document.querySelectorAll('.product-media-thumb').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            showProductMediaIndex(this.getAttribute('data-index'));
+        });
+    });
+    var prevBtn = document.querySelector('.product-media-prev');
+    var nextBtn = document.querySelector('.product-media-next');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            var current = document.querySelector('.product-media-item:not(.d-none)');
+            if (!current) return;
+            var idx = parseInt(current.getAttribute('data-index'), 10);
+            var prev = idx <= 0 ? productMediaCount - 1 : idx - 1;
+            showProductMediaIndex(prev);
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            var current = document.querySelector('.product-media-item:not(.d-none)');
+            if (!current) return;
+            var idx = parseInt(current.getAttribute('data-index'), 10);
+            var next = idx >= productMediaCount - 1 ? 0 : idx + 1;
+            showProductMediaIndex(next);
+        });
+    }
+
+    // Lightbox popup: build media list from DOM
+    var productMediaList = [];
+    var items = document.querySelectorAll('.product-media-item');
+    if (items.length) {
+        items.forEach(function(el) {
+            productMediaList.push({ src: el.getAttribute('data-src'), type: el.getAttribute('data-type') || 'image' });
+        });
+    } else {
+        var singleImg = document.querySelector('.single-product-img');
+        if (singleImg && singleImg.getAttribute('data-src')) {
+            productMediaList.push({ src: singleImg.getAttribute('data-src'), type: 'image' });
+        }
+    }
+    var lightbox = document.getElementById('productMediaLightbox');
+    var lightboxMedia = lightbox ? lightbox.querySelector('.product-media-lightbox-media') : null;
+    var lightboxBackdrop = lightbox ? lightbox.querySelector('.product-media-lightbox-backdrop') : null;
+    var lightboxClose = lightbox ? lightbox.querySelector('.product-media-lightbox-close') : null;
+    var lightboxPrev = lightbox ? lightbox.querySelector('.product-media-lightbox-prev') : null;
+    var lightboxNext = lightbox ? lightbox.querySelector('.product-media-lightbox-next') : null;
+    var lightboxCurrentIndex = 0;
+
+    function openLightbox(index) {
+        if (!lightbox || !lightboxMedia || productMediaList.length === 0) return;
+        lightboxCurrentIndex = Math.max(0, Math.min(index, productMediaList.length - 1));
+        var item = productMediaList[lightboxCurrentIndex];
+        lightboxMedia.innerHTML = '';
+        if (item.type === 'video') {
+            var video = document.createElement('video');
+            video.src = item.src;
+            video.controls = true;
+            video.className = 'w-100 h-100';
+            lightboxMedia.appendChild(video);
+        } else {
+            var img = document.createElement('img');
+            img.src = item.src;
+            img.alt = 'Tampilan besar';
+            img.className = 'w-100 h-100';
+            lightboxMedia.appendChild(img);
+        }
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        if (lightboxPrev) lightboxPrev.style.display = productMediaList.length > 1 ? '' : 'none';
+        if (lightboxNext) lightboxNext.style.display = productMediaList.length > 1 ? '' : 'none';
+    }
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.style.display = 'none';
+        document.body.style.overflow = '';
+        if (lightboxMedia) {
+            var v = lightboxMedia.querySelector('video');
+            if (v) v.pause();
+        }
+    }
+    function lightboxShowPrev() {
+        if (productMediaList.length <= 1) return;
+        lightboxCurrentIndex = lightboxCurrentIndex <= 0 ? productMediaList.length - 1 : lightboxCurrentIndex - 1;
+        openLightbox(lightboxCurrentIndex);
+    }
+    function lightboxShowNext() {
+        if (productMediaList.length <= 1) return;
+        lightboxCurrentIndex = lightboxCurrentIndex >= productMediaList.length - 1 ? 0 : lightboxCurrentIndex + 1;
+        openLightbox(lightboxCurrentIndex);
+    }
+
+    var clickableArea = document.querySelector('.product-media-clickable');
+    if (clickableArea) {
+        clickableArea.addEventListener('click', function(e) {
+            if (e.target.closest('.product-media-prev') || e.target.closest('.product-media-next')) return;
+            var idx = 0;
+            var visible = document.querySelector('.product-media-item:not(.d-none)');
+            if (visible) idx = parseInt(visible.getAttribute('data-index'), 10);
+            else if (document.querySelector('.single-product-img')) idx = 0;
+            openLightbox(idx);
+        });
+    }
+    if (lightboxBackdrop) lightboxBackdrop.addEventListener('click', closeLightbox);
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxPrev) lightboxPrev.addEventListener('click', function(e) { e.stopPropagation(); lightboxShowPrev(); });
+    if (lightboxNext) lightboxNext.addEventListener('click', function(e) { e.stopPropagation(); lightboxShowNext(); });
+    document.addEventListener('keydown', function(e) {
+        if (!lightbox || lightbox.style.display !== 'flex') return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') lightboxShowPrev();
+        if (e.key === 'ArrowRight') lightboxShowNext();
+    });
+
     // Update quantity and total price
     function changeQuantity(change) {
         const quantityInput = document.getElementById('quantity');
