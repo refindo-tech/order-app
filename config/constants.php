@@ -11,8 +11,8 @@ return [
     ],
 
     'contact' => [
-        'phone' => '082297754535',
-        'whatsapp' => '6282297754535',
+        'phone' => '085129964902',
+        'whatsapp' => '6285129964902',
         'email' => 'info@rumahbumbu.com',
         'address' => [
             'street' => 'Rajeg Gardenia, Blk. D5, Rajeg Mulya, Kec. Rajeg',
@@ -43,7 +43,7 @@ return [
     'social_media' => [
         'facebook' => 'https://shopee.co.id/rumah_bumbu_ungkep?entryPoint=ShopByPDP',
         'instagram' => 'https://www.instagram.com/rumahbumbu.ungkep/',
-        'whatsapp' => 'https://wa.me/6282297754535',
+        'whatsapp' => 'https://wa.me/6285129964902',
     ],
 
     'payment' => [
@@ -70,25 +70,25 @@ return [
         'ewallets' => [
             [
                 'name' => 'DANA',
-                'account_number' => '082297754535',
+                'account_number' => '085129964902',
                 'account_name' => 'Rumah Bumbu & Ungkep',
                 'icon' => 'bi-wallet2',
             ],
             [
                 'name' => 'OVO',
-                'account_number' => '082297754535',
+                'account_number' => '085129964902',
                 'account_name' => 'Rumah Bumbu & Ungkep',
                 'icon' => 'bi-wallet2',
             ],
             [
                 'name' => 'GoPay',
-                'account_number' => '082297754535',
+                'account_number' => '085129964902',
                 'account_name' => 'Rumah Bumbu & Ungkep',
                 'icon' => 'bi-wallet2',
             ],
             [
                 'name' => 'ShopeePay',
-                'account_number' => '082297754535',
+                'account_number' => '085129964902',
                 'account_name' => 'Rumah Bumbu & Ungkep',
                 'icon' => 'bi-wallet2',
             ],

@@ -86,7 +86,7 @@ return [
 
     'origin' => [
         'name' => env('PAXEL_ORIGIN_NAME', 'Rumah Bumbu & Ungkep'),
-        'phone' => env('PAXEL_ORIGIN_PHONE', '6282297754535'),
+        'phone' => env('PAXEL_ORIGIN_PHONE', '6285129964902'),
         'email' => env('PAXEL_ORIGIN_EMAIL', 'info@rumahbumbu.com'),
         'address' => env('PAXEL_ORIGIN_ADDRESS', 'Rajeg Gardenia, Blk. D5, Rajeg Mulya'),
         'province' => env('PAXEL_ORIGIN_PROVINCE', 'Banten'),

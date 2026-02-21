@@ -268,48 +268,56 @@
             <div class="col-lg-8 mx-auto">
                 <h2 class="section-title">Hubungi Kami</h2>
                 <p class="section-subtitle text-white-50">
-                    Tim kami siap membantu Anda dengan pelayanan terbaik
+                    Kami siap membantu Anda
                 </p>
             </div>
         </div>
         
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6 text-center">
-                <a href="https://maps.app.goo.gl/c6dDXWCGuvG74nu89" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
-                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <i class="bi bi-geo-alt" style="font-size: 2rem;"></i>
-                    </div>
-                    <h5>Alamat</h5>
-                    <p class="mb-0">{{ config('constants.contact.address.street') }}, {{ config('constants.contact.address.city') }}</p>
-                </a>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 text-center">
+        <div class="row g-4 row-cols-2 row-cols-md-3 row-cols-lg-5">
+            <div class="col text-center">
                 <a href="{{ config('constants.social_media.whatsapp') }}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
                     <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                         <i class="bi bi-whatsapp" style="font-size: 2rem;"></i>
                     </div>
-                    <h5>WhatsApp</h5>
-                    <p class="mb-0">{{ config('constants.contact.phone') }}</p>
+                    <!-- <h5>WhatsApp</h5>
+                    <p class="mb-0">{{ config('constants.contact.phone') }}</p> -->
                 </a>
             </div>
-            
-            <div class="col-lg-3 col-md-6 text-center">
+            <div class="col text-center">
+                <a href="https://maps.app.goo.gl/c6dDXWCGuvG74nu89" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
+                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-geo-alt" style="font-size: 2rem;"></i>
+                    </div>
+                    <!-- <h5>Alamat</h5>
+                    <p class="mb-0">{{ config('constants.contact.address.street') }}, {{ config('constants.contact.address.city') }}</p> -->
+                </a>
+            </div>
+            <div class="col text-center">
+                <a href="https://www.instagram.com/rumahbumbu.ungkep/" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
+                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-instagram" style="font-size: 2rem;"></i>
+                    </div>
+                    <!-- <h5>Instagram</h5>
+                    <p class="mb-0">@rumahbumbu.ungkep</p> -->
+                </a>
+            </div>
+            <div class="col text-center">
+                <a href="https://www.tiktok.com/@rumahbumbu.id" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
+                    <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-tiktok" style="font-size: 2rem;"></i>
+                    </div>
+                    <!-- <h5>TikTok</h5>
+                    <p class="mb-0">@rumahbumbu.id</p> -->
+                </a>
+            </div>
+            <div class="col text-center">
                 <a href="{{ config('constants.social_media.facebook') }}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
                     <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                         <i class="bi bi-bag" style="font-size: 2rem;"></i>
                     </div>
-                    <h5>Shopee</h5>
-                    <p class="mb-0">Rumah Bumbu dan Ungkep</p>
+                    <!-- <h5>Shopee</h5>
+                    <p class="mb-0">Rumah Bumbu dan Ungkep</p> -->
                 </a>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 text-center">
-                <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                    <i class="bi bi-clock" style="font-size: 2rem;"></i>
-                </div>
-                <h5>Jam Operasional</h5>
-                <p class="mb-0">{{ config('constants.contact.business_hours') }}</p>
             </div>
         </div>
         
