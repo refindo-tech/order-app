@@ -27,6 +27,16 @@ return [
         'provider' => 'Paxel',
         'estimated_delivery' => '1-3 hari kerja',
         'coverage' => 'Seluruh Indonesia',
+        // Ambil di Tempat - alamat toko untuk pickup
+        'pickup' => [
+            'enabled' => true,
+            'label' => 'Ambil di Tempat',
+            'address' => 'Rajeg Gardenia, Blk. D5, Rajeg Mulya, Kec. Rajeg',
+            'city' => 'Kabupaten Tangerang',
+            'province' => 'Banten',
+            'zip_code' => '15540',
+            'phone' => '085129964902',
+        ],
         // Paxel origin - override via PAXEL_ORIGIN_* in .env
         'origin' => [
             'address' => 'Rajeg Gardenia, Blk. D5, Rajeg Mulya',

@@ -75,9 +75,26 @@
                                 </div>
                             @endif
                         @else
-                            <p class="text-muted mb-0">
-                                Pesanan belum dikirim. Resi akan tersedia setelah admin mengirim ke Paxel.
-                            </p>
+                            @if($order->isPickup())
+                                @php $pickup = config('constants.shipping.pickup', []); @endphp
+                                <div class="alert alert-info mb-0">
+                                    <strong><i class="bi bi-shop me-2"></i>Ambil di Tempat</strong>
+                                    <p class="mb-1 mt-2">Pesanan dapat diambil di lokasi kami. Silakan hubungi kami untuk konfirmasi waktu pengambilan.</p>
+                                    @if(!empty($pickup['address']))
+                                        <p class="mb-0 small">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            {{ $pickup['address'] }}{{ !empty($pickup['city']) ? ', ' . $pickup['city'] : '' }}{{ !empty($pickup['province']) ? ', ' . $pickup['province'] : '' }}
+                                        </p>
+                                        @if(!empty($pickup['phone']))
+                                            <p class="mb-0 small mt-1"><i class="bi bi-telephone me-1"></i> {{ $pickup['phone'] }}</p>
+                                        @endif
+                                    @endif
+                                </div>
+                            @else
+                                <p class="text-muted mb-0">
+                                    Pesanan belum dikirim. Resi akan tersedia setelah admin mengirim ke Paxel.
+                                </p>
+                            @endif
                         @endif
                     </div>
                 </div>

@@ -21,6 +21,7 @@ class Order extends Model
         'shipping_province',
         'shipping_district',
         'shipping_village',
+        'shipping_method',
         'subtotal',
         'shipping_cost',
         'total',
@@ -102,5 +103,21 @@ class Order extends Model
     public function canBeShipped(): bool
     {
         return $this->status === 'payment_confirmed';
+    }
+
+    /**
+     * Check if order is pickup (Ambil di Tempat)
+     */
+    public function isPickup(): bool
+    {
+        return ($this->shipping_method ?? 'delivery') === 'pickup';
+    }
+
+    /**
+     * Check if order uses Paxel delivery (needs waybill)
+     */
+    public function isPaxelDelivery(): bool
+    {
+        return !$this->isPickup();
     }
 }

@@ -205,7 +205,9 @@
                                     <span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">
                                         {{ $order->status_label }}
                                     </span>
-                                    @if($order->paxel_waybill)
+                                    @if($order->isPickup())
+                                        <br><span class="badge bg-secondary mt-1">Ambil di Tempat</span>
+                                    @elseif($order->paxel_waybill)
                                         <br><small class="text-muted">
                                             <i class="ti-receipt"></i> Resi: {{ substr($order->paxel_waybill, 0, 10) }}...
                                         </small>

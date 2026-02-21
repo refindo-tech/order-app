@@ -74,21 +74,36 @@ class CartController extends Controller
      */
     private function processCheckout(Request $request)
     {
-        $request->validate([
+        $shippingMethod = $request->input('shipping_method', 'delivery');
+        $isPickup = $shippingMethod === 'pickup';
+
+        $rules = [
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'customer_email' => 'nullable|email|max:255',
-            'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:100',
-            'shipping_postal_code' => 'nullable|string|max:10',
-            'shipping_province' => 'required|string|max:100',
-            'shipping_district' => 'nullable|string|max:100',
-            'shipping_village' => 'nullable|string|max:100',
             'shipping_cost' => 'nullable|numeric|min:0',
             'paxel_service_type' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
             'cart_data' => 'required|json',
-        ]);
+        ];
+
+        if ($isPickup) {
+            $rules['shipping_address'] = 'nullable|string|max:500';
+            $rules['shipping_city'] = 'nullable|string|max:100';
+            $rules['shipping_postal_code'] = 'nullable|string|max:10';
+            $rules['shipping_province'] = 'nullable|string|max:100';
+            $rules['shipping_district'] = 'nullable|string|max:100';
+            $rules['shipping_village'] = 'nullable|string|max:100';
+        } else {
+            $rules['shipping_address'] = 'required|string|max:500';
+            $rules['shipping_city'] = 'required|string|max:100';
+            $rules['shipping_postal_code'] = 'nullable|string|max:10';
+            $rules['shipping_province'] = 'required|string|max:100';
+            $rules['shipping_district'] = 'nullable|string|max:100';
+            $rules['shipping_village'] = 'nullable|string|max:100';
+        }
+
+        $request->validate($rules);
 
         $cartData = json_decode($request->cart_data, true);
 
@@ -103,25 +118,54 @@ class CartController extends Controller
             return ($item['price'] ?? 0) * ($item['quantity'] ?? 0);
         });
 
-        $shippingCost = $request->shipping_cost ?? 0;
+        $shippingCost = $isPickup ? 0 : (float) ($request->shipping_cost ?? 0);
         $total = $subtotal + $shippingCost;
+
+        if ($isPickup) {
+            $pickup = config('constants.shipping.pickup', []);
+            $shippingAddress = 'Ambil di Tempat - ' . (config('constants.company.full_name', 'Toko'));
+            if (! empty($pickup['address'])) {
+                $shippingAddress .= ', ' . $pickup['address'];
+                if (! empty($pickup['city'])) {
+                    $shippingAddress .= ', ' . $pickup['city'];
+                }
+                if (! empty($pickup['province'])) {
+                    $shippingAddress .= ', ' . $pickup['province'];
+                }
+            }
+            $shippingCity = $pickup['city'] ?? null;
+            $shippingPostalCode = $pickup['zip_code'] ?? null;
+            $shippingProvince = $pickup['province'] ?? null;
+            $shippingDistrict = null;
+            $shippingVillage = null;
+            $paxelServiceType = null;
+        } else {
+            $shippingAddress = $request->shipping_address;
+            $shippingCity = $request->shipping_city;
+            $shippingPostalCode = $request->shipping_postal_code;
+            $shippingProvince = $request->shipping_province;
+            $shippingDistrict = $request->shipping_district;
+            $shippingVillage = $request->shipping_village;
+            $paxelServiceType = $request->paxel_service_type;
+        }
 
         // Create order
         $order = \App\Models\Order::create([
             'customer_name' => $request->customer_name,
             'customer_phone' => $request->customer_phone,
             'customer_email' => $request->customer_email,
-            'shipping_address' => $request->shipping_address,
-            'shipping_city' => $request->shipping_city,
-            'shipping_postal_code' => $request->shipping_postal_code,
-            'shipping_province' => $request->shipping_province,
-            'shipping_district' => $request->shipping_district,
-            'shipping_village' => $request->shipping_village,
+            'shipping_address' => $shippingAddress,
+            'shipping_city' => $shippingCity,
+            'shipping_postal_code' => $shippingPostalCode,
+            'shipping_province' => $shippingProvince,
+            'shipping_district' => $shippingDistrict,
+            'shipping_village' => $shippingVillage,
+            'shipping_method' => $shippingMethod,
             'subtotal' => $subtotal,
             'shipping_cost' => $shippingCost,
             'total' => $total,
             'status' => 'pending_payment',
-            'paxel_service_type' => $request->paxel_service_type,
+            'paxel_service_type' => $paxelServiceType,
             'notes' => $request->notes,
         ]);
 

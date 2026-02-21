@@ -127,7 +127,12 @@
 
             <!-- Shipping Information -->
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                <h5 class="c-grey-900 mB-20">Alamat Pengiriman</h5>
+                <h5 class="c-grey-900 mB-20">
+                    @if($order->isPickup())
+                        <span class="badge bg-info me-2">Ambil di Tempat</span>
+                    @endif
+                    {{ $order->isPickup() ? 'Lokasi Pengambilan' : 'Alamat Pengiriman' }}
+                </h5>
                 <p>{{ $order->shipping_address }}</p>
                 @if($order->shipping_city || $order->shipping_postal_code || $order->shipping_province)
                     <p class="text-muted">
@@ -136,6 +141,9 @@
                             <br>{{ $order->shipping_province }}
                         @endif
                     </p>
+                @endif
+                @if($order->isPickup() && config('constants.shipping.pickup.phone'))
+                    <p class="text-muted mb-0"><i class="ti-mobile me-1"></i> {{ config('constants.shipping.pickup.phone') }}</p>
                 @endif
             </div>
 
@@ -286,8 +294,8 @@
                 </form>
             </div>
 
-            <!-- Kirim ke Paxel -->
-            @if($order->canBeShipped() && !$order->paxel_waybill)
+            <!-- Kirim ke Paxel (hanya untuk pesanan dikirim, bukan ambil di tempat) -->
+            @if($order->canBeShipped() && !$order->paxel_waybill && $order->isPaxelDelivery())
             <div class="bgc-white bd bdrs-3 p-20 mB-20">
                 <h5 class="c-grey-900 mB-20">Integrasi Paxel</h5>
                 @if(session('paxel_error'))

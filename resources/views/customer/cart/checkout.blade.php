@@ -64,7 +64,8 @@
             @csrf
             <input type="hidden" name="cart_data" id="cart-data-input">
             <input type="hidden" name="shipping_cost" id="shipping-cost-input" value="0">
-            <input type="hidden" name="paxel_service_type" id="paxel-service-type-input" value="REGULAR">
+            <input type="hidden" name="paxel_service_type" id="paxel-service-type-input" value="">
+            <input type="hidden" name="shipping_method" id="shipping-method-input" value="delivery">
 
             <div class="row">
                 <div class="col-lg-8">
@@ -92,26 +93,55 @@
                         </div>
                     </div>
 
+                    @php $pickupConfig = config('constants.shipping.pickup', []); @endphp
+                    @if(!empty($pickupConfig['enabled']))
                     <div class="card mb-4">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Metode Pengiriman</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check mb-3 p-3 border rounded">
+                                <input class="form-check-input shipping-method-radio" type="radio" name="shipping_method_ui" id="method-delivery" value="delivery" checked>
+                                <label class="form-check-label w-100" for="method-delivery">
+                                    <strong><i class="bi bi-truck me-1"></i>Dikirim (Paxel)</strong>
+                                    <p class="small text-muted mb-0 mt-1">Pesanan dikirim ke alamat Anda via Paxel. Isi alamat lalu cek ongkir.</p>
+                                </label>
+                            </div>
+                            <div class="form-check mb-0 p-3 border rounded">
+                                <input class="form-check-input shipping-method-radio" type="radio" name="shipping_method_ui" id="method-pickup" value="pickup">
+                                <label class="form-check-label w-100" for="method-pickup">
+                                    <strong><i class="bi bi-shop me-1"></i>Ambil di Tempat</strong>
+                                    <p class="small text-muted mb-0 mt-1">Ambil pesanan sendiri di toko. Tanpa ongkir.</p>
+                                    @if(!empty($pickupConfig['address']))
+                                    <p class="small mb-0 mt-1"><i class="bi bi-geo me-1"></i>{{ $pickupConfig['address'] }}, {{ $pickupConfig['city'] ?? '' }}</p>
+                                    @endif
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div id="delivery-fields-wrap">
+                    <div class="card mb-4" id="card-address">
                         <div class="card-header bg-success text-white">
                             <h5 class="mb-0"><i class="bi bi-truck me-2"></i>Alamat Pengiriman</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
-                                <textarea name="shipping_address" class="form-control" rows="2" required placeholder="Jalan, nomor rumah, RT/RW"></textarea>
+                                <textarea name="shipping_address" id="input-shipping-address" class="form-control" rows="2" placeholder="Jalan, nomor rumah, RT/RW"></textarea>
                                 @error('shipping_address')<small class="text-danger">{{ $message }}</small>@enderror
                             </div>
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Provinsi <span class="text-danger">*</span></label>
-                                    <select name="shipping_province" id="shipping-province" class="form-select" required>
+                                    <select name="shipping_province" id="shipping-province" class="form-select">
                                         <option value="">Pilih Provinsi</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Kota/Kabupaten <span class="text-danger">*</span></label>
-                                    <select name="shipping_city" id="shipping-city" class="form-select" required disabled>
+                                    <select name="shipping_city" id="shipping-city" class="form-select" disabled>
                                         <option value="">Pilih Kota/Kabupaten</option>
                                     </select>
                                 </div>
@@ -145,6 +175,7 @@
                             <p class="text-muted small">Isi alamat pengiriman lalu klik "Cek Ongkir"</p>
                             <div id="shipping-options-list"></div>
                         </div>
+                    </div>
                     </div>
 
                     <div class="mb-4">
@@ -271,14 +302,51 @@ document.addEventListener('DOMContentLoaded', function() {
     const ongkirLoading = document.getElementById('ongkir-loading');
     const shippingOptionsList = document.getElementById('shipping-options-list');
     const btnSubmit = document.getElementById('btn-submit-order');
+    const shippingMethodInput = document.getElementById('shipping-method-input');
+    const deliveryFieldsWrap = document.getElementById('delivery-fields-wrap');
+    const inputShippingAddress = document.getElementById('input-shipping-address');
+    const shippingProvince = document.getElementById('shipping-province');
+    const shippingCity = document.getElementById('shipping-city');
 
     let selectedShipping = { price: 0, service_type: 'REGULAR' };
+
+    function isPickupMode() {
+        const radio = document.querySelector('input[name="shipping_method_ui"]:checked');
+        return radio && radio.value === 'pickup';
+    }
+
+    function applyShippingMethodUI() {
+        const pickup = isPickupMode();
+        shippingMethodInput.value = pickup ? 'pickup' : 'delivery';
+        if (deliveryFieldsWrap) {
+            deliveryFieldsWrap.style.display = pickup ? 'none' : 'block';
+        }
+        if (inputShippingAddress) {
+            inputShippingAddress.required = !pickup;
+        }
+        if (shippingProvince) shippingProvince.required = !pickup;
+        if (shippingCity) shippingCity.required = !pickup;
+        if (pickup) {
+            selectedShipping = { price: 0, service_type: '' };
+            shippingCostInput.value = '0';
+            paxelServiceInput.value = '';
+            btnSubmit.disabled = false;
+        } else {
+            btnSubmit.disabled = true;
+        }
+        renderSummary();
+    }
+
+    document.querySelectorAll('.shipping-method-radio').forEach(function(radio) {
+        radio.addEventListener('change', applyShippingMethodUI);
+    });
 
     if (cartItems.length === 0) {
         emptyAlert.classList.remove('d-none');
     } else {
         form.classList.remove('d-none');
         cartDataInput.value = JSON.stringify(cartItems);
+        applyShippingMethodUI();
         renderSummary();
         loadProvinces();
     }
@@ -455,9 +523,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    form.addEventListener('submit', function() {
-        if (!selectedShipping && parseInt(shippingCostInput.value) === 0) {
+    form.addEventListener('submit', function(e) {
+        if (isPickupMode()) {
+            btnSubmit.disabled = true;
+            return;
+        }
+        if (!selectedShipping && parseInt(shippingCostInput.value, 10) === 0) {
             if (!confirm('Anda belum memilih pengiriman. Lanjutkan dengan ongkir Rp 0?')) {
+                e.preventDefault();
                 return false;
             }
         }

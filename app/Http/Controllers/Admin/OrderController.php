@@ -209,6 +209,11 @@ class OrderController extends Controller
      */
     public function createPaxelShipment(PaxelService $paxelService, Order $order)
     {
+        if ($order->isPickup()) {
+            return redirect()->back()
+                ->with('error', 'Pesanan ini adalah Ambil di Tempat. Tidak perlu dikirim via Paxel.');
+        }
+
         Log::info('[Paxel Shipment] Start creating shipment', [
             'order_id' => $order->id,
             'order_code' => $order->order_code,
