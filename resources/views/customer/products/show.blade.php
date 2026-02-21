@@ -332,8 +332,14 @@
         </button>
         <div class="product-media-lightbox-content position-relative d-flex align-items-center justify-content-center w-100 h-100 p-2 p-md-4" style="z-index: 10001;">
             <button type="button" class="product-media-lightbox-prev product-media-lightbox-btn btn position-absolute start-0 top-50 translate-middle-y rounded-circle shadow ms-2" style="z-index: 10002; width: 48px; height: 48px;" title="Sebelumnya"><i class="bi bi-chevron-left"></i></button>
-            <div class="product-media-lightbox-media w-100 h-100 d-flex align-items-center justify-content-center" style="z-index: 1;"></div>
+            <div class="product-media-lightbox-media w-100 h-100 d-flex align-items-center justify-content-center overflow-hidden" style="z-index: 1;"></div>
             <button type="button" class="product-media-lightbox-next product-media-lightbox-btn btn position-absolute end-0 top-50 translate-middle-y rounded-circle shadow me-2" style="z-index: 10002; width: 48px; height: 48px;" title="Berikutnya"><i class="bi bi-chevron-right"></i></button>
+            <!-- Zoom controls (hanya untuk gambar) -->
+            <div class="product-media-lightbox-zoom-controls position-absolute bottom-0 start-50 translate-middle-x d-flex align-items-center gap-1 rounded-pill shadow p-1 bg-dark bg-opacity-50" style="z-index: 10002; display: none !important;">
+                <button type="button" class="product-media-lightbox-zoom-out product-media-lightbox-btn btn rounded-circle p-0" style="width: 40px; height: 40px;" title="Perkecil" aria-label="Perkecil"><i class="bi bi-dash-lg"></i></button>
+                <button type="button" class="product-media-lightbox-zoom-reset product-media-lightbox-btn btn rounded-circle p-0 small" style="width: 40px; height: 40px;" title="Reset zoom" aria-label="Reset">1:1</button>
+                <button type="button" class="product-media-lightbox-zoom-in product-media-lightbox-btn btn rounded-circle p-0" style="width: 40px; height: 40px;" title="Perbesar" aria-label="Perbesar"><i class="bi bi-plus-lg"></i></button>
+            </div>
         </div>
     </div>
 </section>
@@ -357,6 +363,29 @@
     }
     .product-media-lightbox-media {
         width: 100%;
+        touch-action: none;
+    }
+    .product-media-lightbox-zoom-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transform-origin: center center;
+        transition: transform 0.2s ease-out;
+        cursor: grab;
+        user-select: none;
+    }
+    .product-media-lightbox-zoom-wrap.dragging {
+        cursor: grabbing;
+    }
+    .product-media-lightbox-zoom-wrap img,
+    .product-media-lightbox-zoom-wrap video {
+        max-width: 100%;
+        max-height: 100vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 4px;
+        pointer-events: none;
     }
     .product-media-lightbox-media img,
     .product-media-lightbox-media video {
@@ -367,6 +396,9 @@
     }
     .product-media-lightbox-media video {
         background: #000;
+    }
+    .product-media-lightbox-zoom-controls.show {
+        display: flex !important;
     }
     .product-media-lightbox-btn {
         background: rgba(255, 255, 255, 0.25) !important;
@@ -502,13 +534,48 @@
     var lightboxClose = lightbox ? lightbox.querySelector('.product-media-lightbox-close') : null;
     var lightboxPrev = lightbox ? lightbox.querySelector('.product-media-lightbox-prev') : null;
     var lightboxNext = lightbox ? lightbox.querySelector('.product-media-lightbox-next') : null;
+    var lightboxZoomControls = lightbox ? lightbox.querySelector('.product-media-lightbox-zoom-controls') : null;
+    var lightboxZoomIn = lightbox ? lightbox.querySelector('.product-media-lightbox-zoom-in') : null;
+    var lightboxZoomOut = lightbox ? lightbox.querySelector('.product-media-lightbox-zoom-out') : null;
+    var lightboxZoomReset = lightbox ? lightbox.querySelector('.product-media-lightbox-zoom-reset') : null;
     var lightboxCurrentIndex = 0;
+
+    var lightboxZoom = { scale: 1, x: 0, y: 0 };
+    var lightboxZoomWrap = null;
+    var lightboxDrag = { active: false, startX: 0, startY: 0, startTx: 0, startTy: 0 };
+
+    function applyLightboxZoom() {
+        if (!lightboxZoomWrap) return;
+        var t = lightboxZoom;
+        lightboxZoomWrap.style.transform = 'translate(' + t.x + 'px, ' + t.y + 'px) scale(' + t.scale + ')';
+    }
+    function resetLightboxZoom() {
+        lightboxZoom.scale = 1;
+        lightboxZoom.x = 0;
+        lightboxZoom.y = 0;
+        applyLightboxZoom();
+    }
+    function lightboxZoomInClick() {
+        if (!lightboxZoomWrap) return;
+        lightboxZoom.scale = Math.min(4, lightboxZoom.scale + 0.5);
+        applyLightboxZoom();
+    }
+    function lightboxZoomOutClick() {
+        if (!lightboxZoomWrap) return;
+        lightboxZoom.scale = Math.max(0.5, lightboxZoom.scale - 0.5);
+        if (lightboxZoom.scale === 1) { lightboxZoom.x = 0; lightboxZoom.y = 0; }
+        applyLightboxZoom();
+    }
 
     function openLightbox(index) {
         if (!lightbox || !lightboxMedia || productMediaList.length === 0) return;
         lightboxCurrentIndex = Math.max(0, Math.min(index, productMediaList.length - 1));
         var item = productMediaList[lightboxCurrentIndex];
         lightboxMedia.innerHTML = '';
+        resetLightboxZoom();
+        lightboxZoomWrap = null;
+        if (lightboxZoomControls) lightboxZoomControls.classList.remove('show');
+
         if (item.type === 'video') {
             var video = document.createElement('video');
             video.src = item.src;
@@ -516,11 +583,54 @@
             video.className = 'w-100 h-100';
             lightboxMedia.appendChild(video);
         } else {
+            var wrap = document.createElement('div');
+            wrap.className = 'product-media-lightbox-zoom-wrap';
             var img = document.createElement('img');
             img.src = item.src;
             img.alt = 'Tampilan besar';
-            img.className = 'w-100 h-100';
-            lightboxMedia.appendChild(img);
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100vh';
+            img.style.width = 'auto';
+            img.style.height = 'auto';
+            wrap.appendChild(img);
+            lightboxMedia.appendChild(wrap);
+            lightboxZoomWrap = wrap;
+            if (lightboxZoomControls) lightboxZoomControls.classList.add('show');
+
+            wrap.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                if (lightboxZoom.scale > 1) { resetLightboxZoom(); } else { lightboxZoom.scale = 2; applyLightboxZoom(); }
+            });
+            wrap.addEventListener('mousedown', function(e) {
+                if (lightboxZoom.scale <= 1 || e.button !== 0) return;
+                lightboxDrag.active = true;
+                lightboxDrag.startX = e.clientX;
+                lightboxDrag.startY = e.clientY;
+                lightboxDrag.startTx = lightboxZoom.x;
+                lightboxDrag.startTy = lightboxZoom.y;
+                wrap.classList.add('dragging');
+            });
+            wrap.addEventListener('touchstart', function(e) {
+                if (lightboxZoom.scale <= 1 || e.touches.length !== 1) return;
+                e.preventDefault();
+                lightboxDrag.active = true;
+                lightboxDrag.startX = e.touches[0].clientX;
+                lightboxDrag.startY = e.touches[0].clientY;
+                lightboxDrag.startTx = lightboxZoom.x;
+                lightboxDrag.startTy = lightboxZoom.y;
+                wrap.classList.add('dragging');
+            }, { passive: false });
+            wrap.addEventListener('touchmove', function(e) {
+                if (!lightboxDrag.active || e.touches.length !== 1) return;
+                e.preventDefault();
+                lightboxZoom.x = lightboxDrag.startTx + (e.touches[0].clientX - lightboxDrag.startX);
+                lightboxZoom.y = lightboxDrag.startTy + (e.touches[0].clientY - lightboxDrag.startY);
+                applyLightboxZoom();
+            }, { passive: false });
+            wrap.addEventListener('touchend', function() {
+                if (lightboxZoomWrap) lightboxZoomWrap.classList.remove('dragging');
+                lightboxDrag.active = false;
+            });
         }
         lightbox.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -531,6 +641,7 @@
         if (!lightbox) return;
         lightbox.style.display = 'none';
         document.body.style.overflow = '';
+        lightboxZoomWrap = null;
         if (lightboxMedia) {
             var v = lightboxMedia.querySelector('video');
             if (v) v.pause();
@@ -562,6 +673,19 @@
     if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
     if (lightboxPrev) lightboxPrev.addEventListener('click', function(e) { e.stopPropagation(); lightboxShowPrev(); });
     if (lightboxNext) lightboxNext.addEventListener('click', function(e) { e.stopPropagation(); lightboxShowNext(); });
+    if (lightboxZoomIn) lightboxZoomIn.addEventListener('click', function(e) { e.stopPropagation(); lightboxZoomInClick(); });
+    if (lightboxZoomOut) lightboxZoomOut.addEventListener('click', function(e) { e.stopPropagation(); lightboxZoomOutClick(); });
+    if (lightboxZoomReset) lightboxZoomReset.addEventListener('click', function(e) { e.stopPropagation(); resetLightboxZoom(); });
+    document.addEventListener('mousemove', function(e) {
+        if (!lightboxDrag.active || !lightboxZoomWrap) return;
+        lightboxZoom.x = lightboxDrag.startTx + (e.clientX - lightboxDrag.startX);
+        lightboxZoom.y = lightboxDrag.startTy + (e.clientY - lightboxDrag.startY);
+        applyLightboxZoom();
+    });
+    document.addEventListener('mouseup', function() {
+        if (lightboxZoomWrap) lightboxZoomWrap.classList.remove('dragging');
+        lightboxDrag.active = false;
+    });
     document.addEventListener('keydown', function(e) {
         if (!lightbox || lightbox.style.display !== 'flex') return;
         if (e.key === 'Escape') closeLightbox();
