@@ -225,7 +225,7 @@
                         </a>
                     </li>
                     <li class="nav-item me-3">
-                        <a class="nav-link" href="{{ route('home') }}#tentang">
+                        <a class="nav-link {{ request()->routeIs('tentang.*') ? 'active' : '' }}" href="{{ route('tentang.index') }}">
                             <i class="bi bi-info-circle me-1"></i>Tentang
                         </a>
                     </li>
