@@ -162,7 +162,7 @@
                 </p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <!-- Featured products from database -->
             @forelse($featuredProducts as $product)
@@ -188,14 +188,14 @@
                 </div>
             </div>
             @empty
-            <div class="col-12">
-                <div class="alert alert-info text-center">
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
                     <i class="bi bi-info-circle me-2"></i>Belum ada produk tersedia
+                    </div>
                 </div>
-            </div>
             @endforelse
         </div>
-        
+
         <div class="text-center mt-5">
             <a href="{{ route('products.index') }}" class="btn btn-outline-primary btn-lg">
                 <i class="bi bi-arrow-right me-2"></i>Lihat Semua Produk
@@ -257,6 +257,79 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Artikel Kami Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title">Artikel Kami</h2>
+                <p class="section-subtitle">
+                    Dapatkan tips, inspirasi, dan informasi terbaru seputar bumbu dan ungkep
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @forelse($homeArticles as $article)
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-sm border-0">
+                        @if($article->thumbnail)
+                            <a href="{{ route('articles.show', $article) }}">
+                                <img src="{{ storage_url($article->thumbnail) }}"
+                                     class="card-img-top"
+                                     alt="{{ $article->title }}"
+                                     style="height: 200px; object-fit: cover;">
+                            </a>
+                        @endif
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+                                <span class="badge bg-light text-muted border">
+                                    {{ $article->publish_date?->format('d M Y') ?? '' }}
+                                </span>
+                                @if($article->category)
+                                    <span class="badge bg-primary text-white">
+                                        {{ $article->category }}
+                                    </span>
+                                @endif
+                            </div>
+                            <h5 class="card-title mb-2">
+                                <a href="{{ route('articles.show', $article) }}" class="text-decoration-none text-dark">
+                                    {{ $article->title }}
+                                </a>
+                            </h5>
+                            @if($article->excerpt)
+                                <p class="card-text text-muted mb-3" style="min-height: 60px;">
+                                    {{ Str::limit($article->excerpt, 120) }}
+                                </p>
+                            @endif
+                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    {{ $article->author_name ?: 'Admin' }}
+                                </small>
+                                <a href="{{ route('articles.show', $article) }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                    Baca <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle me-2"></i>Belum ada artikel tersedia.
+                    </div>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ route('articles.index') }}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-journal-text me-2"></i>Lihat Semua Artikel
+            </a>
         </div>
     </div>
 </section>

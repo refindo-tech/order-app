@@ -55,6 +55,48 @@ class ProductController extends Controller
     }
 
     /**
+     * Show and manage featured products (max 4).
+     */
+    public function featured()
+    {
+        $products = Product::orderBy('name')->get();
+        $featuredIds = Product::where('is_featured', true)->pluck('id')->toArray();
+
+        return view('admin.products.featured', [
+            'products' => $products,
+            'featuredIds' => $featuredIds,
+        ]);
+    }
+
+    /**
+     * Update featured products selection.
+     */
+    public function updateFeatured(Request $request)
+    {
+        $ids = $request->input('featured_products', []);
+        $ids = is_array($ids) ? $ids : [];
+
+        if (count($ids) > 4) {
+            return redirect()
+                ->back()
+                ->withErrors(['featured_products' => 'Maksimal hanya boleh memilih 4 produk unggulan.'])
+                ->withInput();
+        }
+
+        // Reset all products
+        Product::query()->update(['is_featured' => false]);
+
+        // Mark selected as featured
+        if (!empty($ids)) {
+            Product::whereIn('id', $ids)->update(['is_featured' => true]);
+        }
+
+        return redirect()
+            ->route('admin.products.featured')
+            ->with('success', 'Produk unggulan berhasil diperbarui.');
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

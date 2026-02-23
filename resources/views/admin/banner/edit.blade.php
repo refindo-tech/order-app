@@ -11,7 +11,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h4 class="c-grey-900 mB-0">Banner Beranda</h4>
-                        <p class="mB-0 c-grey-600">Ubah judul dan deskripsi hero di halaman depan.</p>
+                        <p class="mB-0 c-grey-600">Ubah judul dan deskripsi banner di halaman depan.</p>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label class="form-label">Judul Hero (#hero-title) <span class="text-danger">*</span></label>
+                        <label class="form-label">Judul Banner<span class="text-danger">*</span></label>
                         <textarea name="hero_title"
                                   id="hero_title"
                                   class="form-control @error('hero_title') is-invalid @enderror"
@@ -45,7 +45,7 @@
                         @error('hero_title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <small class="text-muted">Teks yang ditampilkan besar di bagian hero. Gunakan Enter untuk baris baru.</small>
+                        <small class="text-muted">Teks yang ditampilkan besar di banner. Gunakan Enter untuk baris baru.</small>
                     </div>
 
                     <div class="mb-3">
@@ -59,7 +59,7 @@
                         @error('hero_description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <small class="text-muted">Paragraf di bawah judul hero (maks. 1000 karakter). Gunakan Enter untuk baris baru.</small>
+                        <small class="text-muted">Teks di bawah judul banner (maks. 1000 karakter). Gunakan Enter untuk baris baru.</small>
                     </div>
 
                     <div class="d-flex gap-2">

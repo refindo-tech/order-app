@@ -28,6 +28,7 @@ class Product extends Model
         'usage',
         'shelf_life',
         'is_active',
+        'is_featured',
     ];
 
     protected $casts = [
@@ -39,6 +40,7 @@ class Product extends Model
         'ingredients' => 'array',
         'extra_categories' => 'array',
         'is_active' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     /**

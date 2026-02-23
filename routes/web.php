@@ -55,11 +55,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('banner', [BannerController::class, 'edit'])->name('banner.edit');
         Route::put('banner', [BannerController::class, 'update'])->name('banner.update');
         
-        // Products Management
-        Route::resource('products', AdminProductController::class);
-        Route::resource('vouchers', VoucherController::class)->names('vouchers');
+        // Products Management (featured must be before resource so /products/featured is not matched as {product})
+        Route::get('products/featured', [AdminProductController::class, 'featured'])->name('products.featured');
+        Route::post('products/featured', [AdminProductController::class, 'updateFeatured'])->name('products.featured.update');
         Route::post('products/{id}/restore', [AdminProductController::class, 'restore'])->name('products.restore');
         Route::delete('products/{id}/force-delete', [AdminProductController::class, 'forceDelete'])->name('products.force-delete');
+        Route::resource('products', AdminProductController::class);
+        Route::resource('vouchers', VoucherController::class)->names('vouchers');
         
         // Articles Management
         Route::resource('articles', ArticleController::class);

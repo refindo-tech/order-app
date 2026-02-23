@@ -91,6 +91,13 @@
                                                 <div class="fw-semibold mb-1 text-dark">
                                                     {{ $rel->title }}
                                                 </div>
+                                                <div class="mb-1 d-flex flex-wrap gap-1 align-items-center">
+                                                    @if($rel->category)
+                                                        <span class="badge bg-primary text-white">
+                                                            {{ $rel->category }}
+                                                        </span>
+                                                    @endif
+                                                </div>
                                                 @if($rel->excerpt)
                                                     <small class="text-muted">
                                                         {{ Str::limit($rel->excerpt, 40, '...') }}

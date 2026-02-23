@@ -162,6 +162,7 @@
                         <ul class="dropdown-menu" style="display: block !important; visibility: visible !important;">
                             <li><a class="sidebar-link" href="{{ route('admin.products.index') }}">Daftar Produk</a></li>
                             <li><a class="sidebar-link" href="{{ route('admin.products.create') }}">Tambah Produk</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.products.featured') }}">Produk Unggulan</a></li>
                         </ul>
                     </li>
 
