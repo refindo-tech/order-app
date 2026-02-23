@@ -20,6 +20,7 @@ class Product extends Model
         'minimal_grosir',
         'harga_grosir',
         'category',
+        'extra_categories',
         'stock',
         'weight',
         'image',
@@ -36,6 +37,7 @@ class Product extends Model
         'stock' => 'integer',
         'weight' => 'integer',
         'ingredients' => 'array',
+        'extra_categories' => 'array',
         'is_active' => 'boolean',
     ];
 

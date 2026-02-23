@@ -42,7 +42,14 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong>Kategori:</strong>
-                        <p class="mT-5"><span class="badge bg-primary">{{ $product->category }}</span></p>
+                        <p class="mT-5 d-flex flex-wrap gap-1">
+                            <span class="badge bg-primary">{{ $product->category }}</span>
+                            @if(is_array($product->extra_categories) && count($product->extra_categories))
+                                @foreach($product->extra_categories as $extra)
+                                    <span class="badge bg-success">{{ $extra }}</span>
+                                @endforeach
+                            @endif
+                        </p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong>Status:</strong>

@@ -82,6 +82,7 @@ class ProductRequest extends FormRequest
             'is_active' => ['nullable', 'boolean'],
             'voucher_ids' => ['nullable', 'array'],
             'voucher_ids.*' => ['integer', 'exists:vouchers,id'],
+            'extra_categories_input' => ['nullable', 'string', 'max:255'],
         ];
     }
 

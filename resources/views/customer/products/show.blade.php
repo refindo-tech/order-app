@@ -74,6 +74,11 @@
                     @if($product->vouchers && $product->vouchers->isNotEmpty())
                         <span class="badge bg-danger fs-6">Diskon</span>
                     @endif
+                    @if(is_array($product->extra_categories) && count($product->extra_categories))
+                        @foreach($product->extra_categories as $extraCategory)
+                            <span class="badge bg-success fs-6">{{ $extraCategory }}</span>
+                        @endforeach
+                    @endif
                 </div>
                 
                 <h1 class="display-5 fw-bold text-dark mb-3">{{ $product->name }}</h1>

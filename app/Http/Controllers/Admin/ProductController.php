@@ -76,6 +76,12 @@ class ProductController extends Controller
             $data['ingredients'] = array_filter($ingredients);
         }
 
+        // Handle extra categories input (semicolon-separated free text -> array)
+        if ($request->has('extra_categories_input') && $request->extra_categories_input) {
+            $extras = array_map('trim', explode(';', $request->extra_categories_input));
+            $data['extra_categories'] = array_values(array_filter($extras));
+        }
+
         // Single image (backward compat) or first of media
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
@@ -107,8 +113,8 @@ class ProductController extends Controller
         $data['minimal_grosir'] = $request->filled('minimal_grosir') ? (int) $data['minimal_grosir'] : null;
         $data['harga_grosir'] = $request->filled('harga_grosir') ? $data['harga_grosir'] : null;
 
-        // Remove media keys from $data so we don't mass-assign
-        unset($data['media'], $data['remove_media']);
+        // Remove media & helper keys from $data so we don't mass-assign
+        unset($data['media'], $data['remove_media'], $data['extra_categories_input']);
 
         $product = Product::create($data);
 
@@ -176,6 +182,12 @@ class ProductController extends Controller
             $data['ingredients'] = array_filter($ingredients);
         }
 
+        // Handle extra categories input (semicolon-separated free text -> array)
+        if ($request->has('extra_categories_input') && $request->extra_categories_input) {
+            $extras = array_map('trim', explode(';', $request->extra_categories_input));
+            $data['extra_categories'] = array_values(array_filter($extras));
+        }
+
         // Remove media: delete selected product_media and their files
         $removeIds = $request->input('remove_media', []);
         if (!empty($removeIds)) {
@@ -229,7 +241,7 @@ class ProductController extends Controller
         $firstImage = $product->media()->where('type', 'image')->orderBy('sort_order')->first();
         $data['image'] = $firstImage ? $firstImage->path : null;
 
-        unset($data['media'], $data['remove_media'], $data['media_order'], $data['voucher_ids']);
+        unset($data['media'], $data['remove_media'], $data['media_order'], $data['voucher_ids'], $data['extra_categories_input']);
 
         // Generate slug if not provided
         if (empty($data['slug'])) {

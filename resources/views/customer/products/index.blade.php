@@ -157,10 +157,15 @@
                                              class="card-img-top product-card-img" 
                                              alt="{{ $product->name }}">
                                         
-                                        <div class="position-absolute top-0 start-0 product-card-badge d-flex gap-1">
+                                        <div class="position-absolute top-0 start-0 product-card-badge d-flex gap-1 flex-wrap">
                                             <span class="badge bg-primary">{{ $product->category }}</span>
                                             @if($product->vouchers && $product->vouchers->isNotEmpty())
                                                 <span class="badge bg-danger">Diskon</span>
+                                            @endif
+                                            @if(is_array($product->extra_categories) && count($product->extra_categories))
+                                                @foreach($product->extra_categories as $extraCategory)
+                                                    <span class="badge bg-success">{{ $extraCategory }}</span>
+                                                @endforeach
                                             @endif
                                         </div>
                                     </div>

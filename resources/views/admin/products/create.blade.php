@@ -223,6 +223,16 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Kategori Tambahan (opsional)</label>
+                                        <input type="text" 
+                                               name="extra_categories_input" 
+                                               class="form-control"
+                                               value="{{ old('extra_categories_input') }}"
+                                               placeholder="Contoh: Pedas; Premium; Best Seller">
+                                        <small class="text-muted">Pisahkan tiap kategori tambahan dengan titik koma (;)</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
