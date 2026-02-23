@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\VoucherController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\ProductController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\TrackingController;
+use App\Http\Controllers\Customer\ArticleController as CustomerArticleController;
 use App\Http\Controllers\StorageController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tentang-kami', [HomeController::class, 'about'])->name('tentang.index');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/artikel', [CustomerArticleController::class, 'index'])->name('articles.index');
+Route::get('/artikel/{article}', [CustomerArticleController::class, 'show'])->name('articles.show');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');
@@ -56,6 +60,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('vouchers', VoucherController::class)->names('vouchers');
         Route::post('products/{id}/restore', [AdminProductController::class, 'restore'])->name('products.restore');
         Route::delete('products/{id}/force-delete', [AdminProductController::class, 'forceDelete'])->name('products.force-delete');
+        
+        // Articles Management
+        Route::resource('articles', ArticleController::class);
+        Route::post('articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
+        Route::post('articles/{article}/draft', [ArticleController::class, 'draft'])->name('articles.draft');
         
         // Orders Management
         Route::get('orders', [OrderController::class, 'index'])->name('orders.index');

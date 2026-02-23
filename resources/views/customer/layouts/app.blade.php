@@ -6,6 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Beranda') - {{ config('app.name') }}</title>
     <meta name="description" content="@yield('description', config('constants.company.full_name') . ' - ' . config('constants.company.tagline'))">
+    @hasSection('og')
+        @yield('og')
+    @else
+        <meta property="og:title" content="@yield('title', 'Beranda') - {{ config('app.name') }}">
+        <meta property="og:description" content="@yield('description', config('constants.company.full_name') . ' - ' . config('constants.company.tagline'))">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:image" content="{{ asset(config('constants.company.logo', 'images/rumah-bumbu-ungkep.png')) }}">
+    @endif
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     
     <!-- PWA -->
@@ -222,6 +231,11 @@
                     <li class="nav-item me-3">
                         <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
                             <i class="bi bi-grid me-1"></i>Produk
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link {{ request()->routeIs('articles.*') ? 'active' : '' }}" href="{{ route('articles.index') }}">
+                            <i class="bi bi-journal-text me-1"></i>Artikel
                         </a>
                     </li>
                     <li class="nav-item me-3">

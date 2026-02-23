@@ -196,6 +196,22 @@
                             <li><a class="sidebar-link" href="{{ route('admin.orders.index', ['status' => 'payment_verification']) }}">Verifikasi Pembayaran</a></li>
                         </ul>
                     </li>
+                    
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.articles.*') ? 'active open' : 'open' }}">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="c-purple-500 ti-write"></i>
+                            </span>
+                            <span class="title">Artikel</span>
+                            <span class="arrow">
+                                <i class="ti-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu" style="display: block !important; visibility: visible !important;">
+                            <li><a class="sidebar-link" href="{{ route('admin.articles.index') }}">Daftar Artikel</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.articles.create') }}">Tambah Artikel</a></li>
+                        </ul>
+                    </li>
 
                     <li class="nav-item {{ request()->routeIs('admin.banner.*') ? 'active' : '' }}">
                         <a class="sidebar-link" href="{{ route('admin.banner.edit') }}">
