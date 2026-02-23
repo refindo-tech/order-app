@@ -286,8 +286,18 @@ document.addEventListener('DOMContentLoaded', function() {
     cart.forEach(item => {
         if (uniqueCart[item.id]) {
             uniqueCart[item.id].quantity += (item.quantity || 1);
+            if (item.minimal_grosir != null && item.harga_grosir != null) {
+                uniqueCart[item.id].minimal_grosir = item.minimal_grosir;
+                uniqueCart[item.id].harga_grosir = item.harga_grosir;
+            }
         } else {
-            uniqueCart[item.id] = { ...item, quantity: item.quantity || 1 };
+            uniqueCart[item.id] = {
+                ...item,
+                quantity: item.quantity || 1,
+                price: parseFloat(item.price) || 0,
+                minimal_grosir: item.minimal_grosir != null ? Number(item.minimal_grosir) : null,
+                harga_grosir: item.harga_grosir != null ? parseFloat(item.harga_grosir) : null
+            };
         }
     });
     const cartItems = Object.values(uniqueCart);
@@ -340,6 +350,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.shipping-method-radio').forEach(function(radio) {
         radio.addEventListener('change', applyShippingMethodUI);
     });
+
+    function getUnitPrice(item) {
+        const qty = Number(item.quantity) || 1;
+        const minG = item.minimal_grosir != null ? Number(item.minimal_grosir) : null;
+        const hG = item.harga_grosir != null ? parseFloat(item.harga_grosir) : null;
+        if (minG != null && hG != null && qty >= minG) return hG;
+        return parseFloat(item.price) || 0;
+    }
 
     if (cartItems.length === 0) {
         emptyAlert.classList.remove('d-none');
@@ -412,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function renderSummary() {
-        const subtotal = cartItems.reduce((s, i) => s + ((i.price || 0) * (i.quantity || 1)), 0);
+        const subtotal = cartItems.reduce((s, i) => s + (getUnitPrice(i) * (i.quantity || 1)), 0);
         const shipping = selectedShipping.price || 0;
         const total = subtotal + shipping;
 
@@ -420,12 +438,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('summary-shipping').textContent = 'Rp ' + shipping.toLocaleString('id-ID');
         document.getElementById('summary-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
 
-        checkoutSummary.innerHTML = cartItems.map(i => `
+        checkoutSummary.innerHTML = cartItems.map(i => {
+            const qty = Number(i.quantity) || 1;
+            const unitPrice = getUnitPrice(i);
+            const lineTotal = unitPrice * qty;
+            const minG = i.minimal_grosir != null ? Number(i.minimal_grosir) : null;
+            const isGrosir = minG != null && i.harga_grosir != null && qty >= minG;
+            return `
             <div class="d-flex justify-content-between py-1">
-                <span>${i.name || 'Produk'} x${i.quantity || 1}</span>
-                <span>Rp ${((i.price || 0) * (i.quantity || 1)).toLocaleString('id-ID')}</span>
+                <span>${i.name || 'Produk'} x${qty} ${isGrosir ? '<span class="badge bg-success btn-sm">Grosir</span>' : ''}</span>
+                <span>Rp ${lineTotal.toLocaleString('id-ID')}</span>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     btnCekOngkir.addEventListener('click', async function() {

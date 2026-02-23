@@ -63,8 +63,9 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => cache.match(request).then((cached) => cached || offlineResponse(request)))
-  ));
+        .catch(() => cache.match(request).then((cached) => cached || offlineResponse(request)));
+    })
+  );
 });
 
 function offlineResponse(request) {

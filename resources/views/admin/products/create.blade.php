@@ -120,6 +120,36 @@
                                             @enderror
                                         </div>
 
+                                        <div class="col-12"><hr class="my-2"><small class="text-muted">Harga Grosir (opsional)</small></div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Minimal Grosir (qty)</label>
+                                            <input type="number"
+                                                   name="minimal_grosir"
+                                                   class="form-control @error('minimal_grosir') is-invalid @enderror"
+                                                   value="{{ old('minimal_grosir') }}"
+                                                   min="2"
+                                                   step="1"
+                                                   placeholder="Contoh: 5">
+                                            @error('minimal_grosir')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="text-muted">Min. 2. Kosongkan untuk non-grosir.</small>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Harga Grosir (Rp/unit)</label>
+                                            <input type="number"
+                                                   name="harga_grosir"
+                                                   class="form-control @error('harga_grosir') is-invalid @enderror"
+                                                   value="{{ old('harga_grosir') }}"
+                                                   min="0"
+                                                   step="100"
+                                                   placeholder="Harus &lt; Harga">
+                                            @error('harga_grosir')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small class="text-muted">Harus lebih rendah dari Harga. Kosongkan untuk non-grosir.</small>
+                                        </div>
+
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Berat (gram) <span class="text-danger">*</span></label>
                                             <input type="number" 

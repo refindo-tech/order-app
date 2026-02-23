@@ -17,6 +17,8 @@ class Product extends Model
         'long_description',
         'price',
         'normal_price',
+        'minimal_grosir',
+        'harga_grosir',
         'category',
         'stock',
         'weight',
@@ -30,6 +32,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'normal_price' => 'decimal:2',
+        'harga_grosir' => 'decimal:2',
         'stock' => 'integer',
         'weight' => 'integer',
         'ingredients' => 'array',
@@ -95,4 +98,36 @@ class Product extends Model
         return $query->where('is_active', true);
     }
 
+    /**
+     * Whether this product has wholesale pricing configured.
+     */
+    public function hasGrosir(): bool
+    {
+        return $this->minimal_grosir !== null
+            && $this->minimal_grosir >= 2
+            && $this->harga_grosir !== null
+            && (float) $this->harga_grosir < (float) $this->price;
+    }
+
+    /**
+     * Get unit price for a given quantity (grosir applies if qty >= minimal_grosir).
+     */
+    public function getUnitPriceForQuantity(int $quantity): float
+    {
+        if ($quantity <= 0) {
+            return (float) $this->price;
+        }
+        if ($this->hasGrosir() && $quantity >= (int) $this->minimal_grosir) {
+            return (float) $this->harga_grosir;
+        }
+        return (float) $this->price;
+    }
+
+    /**
+     * Check if grosir price applies for given quantity.
+     */
+    public function isGrosirAppliedForQuantity(int $quantity): bool
+    {
+        return $this->hasGrosir() && $quantity >= (int) $this->minimal_grosir;
+    }
 }

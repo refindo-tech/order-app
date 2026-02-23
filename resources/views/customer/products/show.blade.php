@@ -80,10 +80,10 @@
                 <!-- Price -->
                 <div class="bg-light rounded p-4 mb-4">
                     <div class="row align-items-center">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             @if($product->normal_price)
                                 <div class="mb-1">
-                                    <span class="text-muted text-decoration-line-through fs-5">
+                                    <span class="text-danger text-decoration-line-through fs-5">
                                         Rp {{ number_format($product->normal_price, 0, ',', '.') }}
                                     </span>
                                 </div>
@@ -91,15 +91,16 @@
                             <div class="d-flex align-items-baseline gap-2">
                                 <span class="display-6 fw-bold text-primary">
                                     Rp {{ number_format($product->price, 0, ',', '.') }}
+                                    <small class="text-muted">/pack</small>
                                 </span>
-                                <small class="text-muted">per pack</small>
                             </div>
-                        </div>
-                        <div class="col-md-6 text-md-end">
-                            <div class="d-flex align-items-center text-muted justify-content-md-end">
-                                <i class="bi bi-weight me-2"></i>
-                                <span>Berat: {{ $product->weight }}g</span>
-                            </div>
+                            @if($product->hasGrosir())
+                                <div class="mt-2">
+                                    <span class="text-success fw-semibold">Harga grosir: Rp {{ number_format($product->harga_grosir, 0, ',', '.') }}</span>
+                                    <span class="text-muted">(pembelian minimal {{ $product->minimal_grosir }} packs)</span>
+                                </div>
+                                <!-- <small class="text-muted d-block mt-1">Harga grosir otomatis saat beli ≥ {{ $product->minimal_grosir }} packs</small> -->
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -135,6 +136,9 @@
                                     <div class="h5 text-primary" id="totalPrice">
                                         Rp {{ number_format($product->price, 0, ',', '.') }}
                                     </div>
+                                    @if($product->hasGrosir())
+                                        <small class="text-muted" id="grosirHint"></small>
+                                    @endif
                                 </div>
                                 
                                 <div class="col-md-4">
@@ -532,6 +536,16 @@
 @push('scripts')
 <script>
     const productPrice = {{ $product->price }};
+    const productMinimalGrosir = {{ $product->minimal_grosir ?? 'null' }};
+    const productHargaGrosir = {{ $product->harga_grosir ?? 'null' }};
+    const productImageUrl = {!! json_encode($product->primary_image ? storage_url($product->primary_image) : '') !!};
+
+    function getUnitPrice(quantity) {
+        if (quantity <= 0) return productPrice;
+        if (productMinimalGrosir != null && productHargaGrosir != null && quantity >= productMinimalGrosir)
+            return productHargaGrosir;
+        return productPrice;
+    }
 
     // Product media gallery: show item by index
     function showProductMediaIndex(idx) {
@@ -762,10 +776,18 @@
     
     // Update total price display
     function updateTotalPrice() {
-        const quantity = parseInt(document.getElementById('quantity').value);
-        const total = productPrice * quantity;
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+        const unitPrice = getUnitPrice(quantity);
+        const total = unitPrice * quantity;
         document.getElementById('totalPrice').textContent = 
             'Rp ' + total.toLocaleString('id-ID');
+        var hint = document.getElementById('grosirHint');
+        if (hint) {
+            if (productMinimalGrosir != null && quantity >= productMinimalGrosir)
+                hint.textContent = 'Harga grosir diterapkan';
+            else
+                hint.textContent = '';
+        }
     }
     
     // Handle quantity input change
@@ -778,19 +800,22 @@
     // Handle add to cart form
     document.getElementById('addToCartForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const quantity = parseInt(document.getElementById('quantity').value);
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+        const unitPrice = getUnitPrice(quantity);
+        const total = unitPrice * quantity;
         
-        // Show success feedback
-        alert(`Ditambahkan ke keranjang!\n{{ $product->name }}\nJumlah: ${quantity}\nTotal: Rp ${({{ $product->price }} * quantity).toLocaleString('id-ID')}`);
+        alert('Ditambahkan ke keranjang!\n{{ $product->name }}\nJumlah: ' + quantity + '\nTotal: Rp ' + total.toLocaleString('id-ID'));
         
-        // Add to localStorage
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push({ 
             id: {{ $product->id }}, 
             name: '{{ addslashes($product->name) }}',
             price: {{ $product->price }},
+            minimal_grosir: productMinimalGrosir,
+            harga_grosir: productHargaGrosir,
             description: '{{ addslashes($product->description) }}',
-            quantity: quantity 
+            quantity: quantity,
+            image: productImageUrl || ''
         });
         localStorage.setItem('cart', JSON.stringify(cart));
         

@@ -51,6 +51,21 @@ class ProductRequest extends FormRequest
             'long_description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'normal_price' => ['nullable', 'numeric', 'min:0'],
+            'minimal_grosir' => ['nullable', 'integer', 'min:2'],
+            'harga_grosir' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if ($value === null || $value === '') {
+                        return;
+                    }
+                    $price = $this->input('price');
+                    if ($price !== null && (float) $value >= (float) $price) {
+                        $fail('Harga grosir harus lebih rendah dari harga normal.');
+                    }
+                },
+            ],
             'category' => ['required', 'string', 'max:100'],
             'weight' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
@@ -78,6 +93,8 @@ class ProductRequest extends FormRequest
             'price.required' => 'Harga produk wajib diisi.',
             'price.numeric' => 'Harga harus berupa angka.',
             'price.min' => 'Harga tidak boleh negatif.',
+            'minimal_grosir.min' => 'Minimal grosir minimal 2.',
+            'harga_grosir.lt' => 'Harga grosir harus lebih rendah dari harga normal.',
             'weight.required' => 'Berat produk wajib diisi.',
             'category.required' => 'Kategori produk wajib diisi.',
             'image.image' => 'File harus berupa gambar.',

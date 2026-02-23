@@ -58,6 +58,9 @@
                             <tr>
                                 <td>
                                     <strong>{{ $item->product_name }}</strong>
+                                    @if($item->is_grosir_applied)
+                                        <span class="badge bg-success ms-1">Harga Grosir</span>
+                                    @endif
                                     @if($item->product)
                                         <br><small class="text-muted">ID: {{ $item->product_id }}</small>
                                     @endif

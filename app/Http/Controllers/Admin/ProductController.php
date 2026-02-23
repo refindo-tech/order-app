@@ -101,6 +101,10 @@ class ProductController extends Controller
         // Set default values
         $data['is_active'] = $request->has('is_active');
 
+        // Normalize wholesale: empty string -> null (disable grosir)
+        $data['minimal_grosir'] = $request->filled('minimal_grosir') ? (int) $data['minimal_grosir'] : null;
+        $data['harga_grosir'] = $request->filled('harga_grosir') ? $data['harga_grosir'] : null;
+
         // Remove media keys from $data so we don't mass-assign
         unset($data['media'], $data['remove_media']);
 
@@ -238,6 +242,10 @@ class ProductController extends Controller
 
         // Set default values
         $data['is_active'] = $request->has('is_active');
+
+        // Normalize wholesale: empty string -> null (disable grosir)
+        $data['minimal_grosir'] = $request->filled('minimal_grosir') ? (int) $data['minimal_grosir'] : null;
+        $data['harga_grosir'] = $request->filled('harga_grosir') ? $data['harga_grosir'] : null;
 
         $product->update($data);
 

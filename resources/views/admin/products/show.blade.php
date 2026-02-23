@@ -75,6 +75,11 @@
                             <p class="mT-5 text-muted text-decoration-line-through">Rp {{ number_format($product->normal_price, 0, ',', '.') }} <small>(Harga Normal)</small></p>
                         @endif
                         <p class="mT-5 h4 text-primary">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        @if($product->hasGrosir())
+                            <p class="mT-5 text-success">
+                                <strong>Harga grosir:</strong> Rp {{ number_format($product->harga_grosir, 0, ',', '.') }} <small>(min. {{ $product->minimal_grosir }} pcs)</small>
+                            </p>
+                        @endif
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong>Berat:</strong>

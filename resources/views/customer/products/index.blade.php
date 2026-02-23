@@ -173,6 +173,11 @@
                                                 </span>
                                                 <small class="text-muted product-card-weight d-none d-md-inline">{{ $product->weight }}g</small>
                                             </div>
+                                            @if($product->hasGrosir())
+                                                <div class="mt-1 small text-success">
+                                                    Grosir: Rp {{ number_format($product->harga_grosir, 0, ',', '.') }} <span class="text-muted">(min. {{ $product->minimal_grosir }})</span>
+                                                </div>
+                                            @endif
                                         </div>
 
                                         <!-- Action Buttons -->
@@ -182,8 +187,12 @@
                                                    class="btn btn-outline-primary btn-sm flex-grow-1 product-card-btn">
                                                     <i class="bi bi-eye product-card-btn-icon me-2"></i><span class="product-card-btn-text">Detail</span>
                                                 </a>
+                                                @php
+                                                    $productImageUrl = ($product->primary_image ?? $product->image) ? storage_url($product->primary_image ?? $product->image) : '';
+                                                @endphp
                                                 <button type="button" class="btn btn-primary btn-sm flex-grow-1 product-card-btn" 
-                                                        onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}')">
+                                                        data-image-url="{{ $productImageUrl }}"
+                                                        onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}', {{ $product->minimal_grosir ?? 'null' }}, {{ $product->harga_grosir ?? 'null' }}, this.getAttribute('data-image-url') || '')">
                                                     <i class="bi bi-cart-plus product-card-btn-icon me-2"></i><span class="product-card-btn-text">Keranjang</span>
                                                 </button>
                                             </div>
@@ -409,22 +418,21 @@
 <script>
     // Product data now comes from database via Blade
 
-    // Add to cart function
-    function addToCart(productId, productName, productPrice, productDescription) {
-        alert(`Ditambahkan ke keranjang!\n${productName}\nRp ${productPrice.toLocaleString('id-ID')}`);
-        
-        // Add to localStorage with proper structure
+    // Add to cart function (minimalGrosir, hargaGrosir, imageUrl optional)
+    function addToCart(productId, productName, productPrice, productDescription, minimalGrosir, hargaGrosir, imageUrl) {
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push({ 
             id: productId, 
             name: productName,
             price: productPrice,
+            minimal_grosir: minimalGrosir ?? null,
+            harga_grosir: hargaGrosir ?? null,
             description: productDescription,
-            quantity: 1 
+            quantity: 1,
+            image: imageUrl || ''
         });
         localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // Trigger cart update
+        alert('Ditambahkan ke keranjang!\n' + productName + '\nRp ' + productPrice.toLocaleString('id-ID'));
         window.dispatchEvent(new Event('cart-updated'));
     }
     

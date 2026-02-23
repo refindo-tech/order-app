@@ -113,10 +113,26 @@ class CartController extends Controller
                 ->withInput();
         }
 
-        // Calculate totals
-        $subtotal = collect($cartData)->sum(function ($item) {
-            return ($item['price'] ?? 0) * ($item['quantity'] ?? 0);
-        });
+        // Resolve unit price and grosir from Product (server-side source of truth)
+        $resolvedItems = [];
+        foreach ($cartData as $item) {
+            $product = \App\Models\Product::find($item['id'] ?? 0);
+            $qty = (int) ($item['quantity'] ?? 1);
+            $unitPrice = $product
+                ? $product->getUnitPriceForQuantity($qty)
+                : (float) ($item['price'] ?? 0);
+            $resolvedItems[] = [
+                'id' => $item['id'] ?? 0,
+                'name' => $item['name'] ?? ($product ? $product->name : 'Produk'),
+                'quantity' => $qty,
+                'unit_price' => $unitPrice,
+                'subtotal' => $unitPrice * $qty,
+                'product' => $product,
+                'is_grosir_applied' => $product ? $product->isGrosirAppliedForQuantity($qty) : false,
+            ];
+        }
+
+        $subtotal = collect($resolvedItems)->sum('subtotal');
 
         $shippingCost = $isPickup ? 0 : (float) ($request->shipping_cost ?? 0);
         $total = $subtotal + $shippingCost;
@@ -169,17 +185,19 @@ class CartController extends Controller
             'notes' => $request->notes,
         ]);
 
-        // Create order items
-        foreach ($cartData as $item) {
-            $product = \App\Models\Product::find($item['id']);
-            
+        // Create order items (with wholesale snapshot)
+        foreach ($resolvedItems as $resolved) {
+            $product = $resolved['product'];
             \App\Models\OrderItem::create([
                 'order_id' => $order->id,
-                'product_id' => $item['id'],
-                'product_name' => $item['name'] ?? ($product ? $product->name : 'Produk'),
-                'product_price' => $item['price'] ?? 0,
-                'quantity' => $item['quantity'] ?? 1,
-                'subtotal' => ($item['price'] ?? 0) * ($item['quantity'] ?? 1),
+                'product_id' => $resolved['id'],
+                'product_name' => $resolved['name'],
+                'product_price' => $resolved['unit_price'],
+                'product_normal_price' => $product ? $product->price : null,
+                'product_grosir_price' => $resolved['is_grosir_applied'] && $product ? $product->harga_grosir : null,
+                'is_grosir_applied' => $resolved['is_grosir_applied'],
+                'quantity' => $resolved['quantity'],
+                'subtotal' => $resolved['subtotal'],
             ]);
         }
 

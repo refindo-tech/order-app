@@ -111,7 +111,7 @@
                 <!-- Continue Shopping -->
                 <div class="mt-4">
                     <a href="{{ route('products.index') }}" class="btn btn-outline-primary">
-                        <i class="bi bi-arrow-left me-2"></i>Lanjut Belanja
+                        <i class="bi bi-plus me-2"></i>Tambah Produk Lainnya
                     </a>
                 </div>
             </div>
@@ -195,22 +195,38 @@
             this.bindEvents();
         }
         
+        // Get unit price for item (grosir if qty >= minimal_grosir)
+        getUnitPrice(item) {
+            const qty = Number(item.quantity) || 1;
+            const minG = item.minimal_grosir != null ? Number(item.minimal_grosir) : null;
+            const hG = item.harga_grosir != null ? parseFloat(item.harga_grosir) : null;
+            if (minG != null && hG != null && qty >= minG) return hG;
+            return parseFloat(item.price) || 0;
+        }
+        
         // Get cart items (no duplicates by ID)
         getCartItems() {
             const rawCart = JSON.parse(localStorage.getItem('cart') || '[]');
             const uniqueItems = {};
             
-            // Consolidate duplicate IDs
             rawCart.forEach(item => {
                 if (uniqueItems[item.id]) {
                     uniqueItems[item.id].quantity += (item.quantity || 1);
+                    if (item.minimal_grosir != null && item.harga_grosir != null) {
+                        uniqueItems[item.id].minimal_grosir = item.minimal_grosir;
+                        uniqueItems[item.id].harga_grosir = item.harga_grosir;
+                    }
+                    if (item.image) uniqueItems[item.id].image = item.image;
                 } else {
                     uniqueItems[item.id] = {
                         id: item.id,
                         name: item.name || `Produk ${item.id}`,
-                        price: item.price || 20000,
+                        price: parseFloat(item.price) || 20000,
+                        minimal_grosir: item.minimal_grosir != null ? Number(item.minimal_grosir) : null,
+                        harga_grosir: item.harga_grosir != null ? parseFloat(item.harga_grosir) : null,
                         description: item.description || 'Produk berkualitas premium',
-                        quantity: item.quantity || 1
+                        quantity: item.quantity || 1,
+                        image: item.image || ''
                     };
                 }
             });
@@ -236,22 +252,30 @@
             
             emptyCart.classList.add('d-none');
             
-            // Render cart items (no need to group since cart is already unique)
-            cartList.innerHTML = this.cart.map(item => `
+            // Render cart items (unit price from grosir logic)
+            const placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150' fill='none'%3E%3Crect width='150' height='150' fill='%23f8f9fa' rx='8'/%3E%3Crect x='25' y='40' width='100' height='70' fill='%23dee2e6' rx='5'/%3E%3Ctext x='75' y='80' text-anchor='middle' fill='%236c757d' font-family='Arial' font-size='12'%3ENo Image%3C/text%3E%3C/svg%3E";
+            cartList.innerHTML = this.cart.map(item => {
+                const unitPrice = this.getUnitPrice(item);
+                const qty = Number(item.quantity) || 1;
+                const subtotal = unitPrice * qty;
+                const minG = item.minimal_grosir != null ? Number(item.minimal_grosir) : null;
+                const isGrosir = minG != null && item.harga_grosir != null && qty >= minG;
+                const imgSrc = (item.image && item.image.trim()) ? item.image : placeholderImg;
+                return `
                 <div class="cart-item border-bottom py-3" data-id="${item.id}">
                     <div class="row align-items-center">
                         <div class="col-md-2">
                             <div class="ratio ratio-1x1">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150' fill='none'%3E%3Crect width='150' height='150' fill='%23f8f9fa' rx='8'/%3E%3Crect x='25' y='40' width='100' height='70' fill='%23dc3545' fill-opacity='0.2' rx='5'/%3E%3Ctext x='75' y='80' text-anchor='middle' fill='%23dc3545' font-family='Arial' font-size='14' font-weight='bold'%3EImg%3C/text%3E%3C/svg%3E" 
-                                     class="img-fluid rounded" alt="${item.name}">
+                                <img src="${imgSrc.replace(/"/g, '&quot;')}" class="img-fluid rounded" alt="${(item.name || 'Produk').replace(/"/g, '&quot;')}" onerror="this.src='${placeholderImg}'">
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <h6 class="mb-1">${item.name || 'Produk'}</h6>
+                            <h6 class="mb-1">${item.name || 'Produk'} ${isGrosir ? '<span class="badge bg-success ms-1">Harga Grosir</span>' : ''}</h6>
                             <p class="text-muted small mb-0">${item.description || 'Produk berkualitas premium'}</p>
                         </div>
                         <div class="col-md-2 text-center">
-                            <span class="fw-bold">Rp ${(item.price || 0).toLocaleString('id-ID')}</span>
+                            <span class="fw-bold">Rp ${unitPrice.toLocaleString('id-ID')}</span>
+                            ${isGrosir ? '<br><small class="text-success">grosir</small>' : ''}
                         </div>
                         <div class="col-md-2">
                             <div class="input-group input-group-sm">
@@ -266,7 +290,7 @@
                         </div>
                         <div class="col-md-2 text-end">
                             <div class="d-flex flex-column">
-                                <span class="fw-bold text-primary">Rp ${((item.price || 0) * item.quantity).toLocaleString('id-ID')}</span>
+                                <span class="fw-bold text-primary">Rp ${subtotal.toLocaleString('id-ID')}</span>
                                 <button class="btn btn-outline-danger btn-sm mt-1" onclick="cart.removeItem(${item.id})">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -274,7 +298,8 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
             
             this.updateSummary();
         }
@@ -305,7 +330,7 @@
         
         updateSummary() {
             const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
-            const subtotal = this.cart.reduce((sum, item) => sum + ((item.price || 0) * item.quantity), 0);
+            const subtotal = this.cart.reduce((sum, item) => sum + (this.getUnitPrice(item) * item.quantity), 0);
             
             document.getElementById('total-items').textContent = totalItems;
             document.getElementById('subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
@@ -336,13 +361,16 @@
                 // Update quantity if item exists
                 this.cart[existingIndex].quantity += (product.quantity || 1);
             } else {
-                // Add new item
+                // Add new item (include grosir + image for recalc/display)
                 this.cart.push({
                     id: product.id,
                     name: product.name || `Produk ${product.id}`,
                     price: product.price || 20000,
+                    minimal_grosir: product.minimal_grosir ?? null,
+                    harga_grosir: product.harga_grosir ?? null,
                     description: product.description || 'Produk berkualitas premium',
-                    quantity: product.quantity || 1
+                    quantity: product.quantity || 1,
+                    image: product.image || ''
                 });
             }
             
