@@ -37,9 +37,9 @@
     <div class="container">
         <div class="row text-center mb-2">
             <div class="col-lg-8 mx-auto">
-                <h2 class="section-title">Mengapa Memilih Kami?</h2>
+                <h2 class="section-title">Kenapa Harus Rumah Bumbu?</h2>
                 <p class="section-subtitle">
-                    Kami berkomitmen memberikan produk berkualitas tinggi dengan pelayanan terbaik
+                    Keuntungan Melimpah, Jualan Mudah Tetap Happy walau di Rumah
                 </p>
             </div>
         </div>
@@ -48,11 +48,11 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
-                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
+                        <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-tag text-danger" style="font-size: 2rem;"></i>
                         </div>
-                        <h5 class="card-title">Kualitas Terjamin</h5>
-                        <p class="card-text">Produk bumbu dan ungkep dengan kualitas premium yang telah terpercaya</p>
+                        <h5 class="card-title">Harga yang Konsisten</h5>
+                        <p class="card-text small">Rumah Bumbu & Ungkep berkomitmen untuk memberikan harga terbaik untuk para konsumen kami, ditengah harga bahan baku yang naik turun di pasaran, Rumah Bumbu & Ungkep memberikan komitmen harga yang stabil sehingga para UMKM tidak khawatir tentang harga Pokok Produk usaha yang di jalani.</p>
                     </div>
                 </div>
             </div>
@@ -61,10 +61,10 @@
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
                         <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-truck text-success" style="font-size: 2rem;"></i>
+                            <i class="bi bi-award text-success" style="font-size: 2rem;"></i>
                         </div>
-                        <h5 class="card-title">Pengiriman Cepat</h5>
-                        <p class="card-text">Bekerja sama dengan Paxel untuk pengiriman yang cepat dan aman</p>
+                        <h5 class="card-title">Kualitas Produk Sesuai Standard</h5>
+                        <p class="card-text small">Rumah Bumbu & Ungkep berkomitmen terhadap Rasa & Ukuran terhadap produk kami untuk menghindari cita rasa yang berubah-ubah. kami memiliki sistem & SOP yang tinggi untuk mempertahankan cita rasa dari produk kami.</p>
                     </div>
                 </div>
             </div>
@@ -72,11 +72,11 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
-                        <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-headset text-info" style="font-size: 2rem;"></i>
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
                         </div>
-                        <h5 class="card-title">Pelayanan 24/7</h5>
-                        <p class="card-text">Tim customer service siap membantu Anda kapan saja</p>
+                        <h5 class="card-title">Kami Terpercaya!</h5>
+                        <p class="card-text small">Kami selalu berkomitmen untuk menjaga hubungan kepada partner-partner kami. Kami sudah bekerjasama dengan beberapa restoran yang sangat kami jaga kepercayaannya, segala bentuk saran&kritik kami selalu terima dan mengusahakan yang terbaik untuk konsumen kami.</p>
                     </div>
                 </div>
             </div>
@@ -85,11 +85,17 @@
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
                         <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-geo-alt text-warning" style="font-size: 2rem;"></i>
+                            <i class="bi bi-gift text-warning" style="font-size: 2rem;"></i>
                         </div>
-                        <h5 class="card-title">Jangkauan Luas</h5>
-                        <p class="card-text">Melayani pengiriman ke Tangerang dan luar Tangerang</p>
+                        <h5 class="card-title">Bonus dan Point Reward</h5>
+                        <p class="card-text small">Setiap transaksi yang dilakukan oleh konsumen kami, akan mendapatkan Point yang dapat ditukarkan menjadi cashback.</p>
                     </div>
+                </div>
+            </div>
+            <!-- Partner Image -->
+            <div class="row justify-content-center my-4">
+                <div class="col-12 col-md-7">
+                    <img src="{{ asset('images/partner.png') }}" alt="Partner Rumah Bumbu & Ungkep" class="img-fluid w-100">
                 </div>
             </div>
         </div>
