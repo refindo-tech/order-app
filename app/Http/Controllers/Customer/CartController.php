@@ -113,7 +113,7 @@ class CartController extends Controller
                 ->withInput();
         }
 
-        // Resolve unit price and grosir from Product (server-side source of truth)
+        // Resolve unit price, grosir, and voucher discount from Product (server-side)
         $resolvedItems = [];
         foreach ($cartData as $item) {
             $product = \App\Models\Product::find($item['id'] ?? 0);
@@ -121,12 +121,33 @@ class CartController extends Controller
             $unitPrice = $product
                 ? $product->getUnitPriceForQuantity($qty)
                 : (float) ($item['price'] ?? 0);
+            $subtotalBeforeVoucher = $unitPrice * $qty;
+
+            $selectedVoucherIds = $item['vouchers_selected'] ?? [];
+            $totalDiscount = 0;
+            if ($product && ! empty($selectedVoucherIds)) {
+                $validVouchers = $product->vouchers()->active()->whereIn('vouchers.id', $selectedVoucherIds)->get();
+                $sumPercent = 0;
+                $sumNominal = 0;
+                foreach ($validVouchers as $v) {
+                    if ($v->discount_type === 'percent') {
+                        $sumPercent += $subtotalBeforeVoucher * ((float) $v->discount_value / 100);
+                    } else {
+                        $sumNominal += (float) $v->discount_value;
+                    }
+                }
+                $totalDiscount = min($subtotalBeforeVoucher, $sumPercent + $sumNominal);
+            }
+
+            $finalPrice = max(0, $subtotalBeforeVoucher - $totalDiscount);
+
             $resolvedItems[] = [
                 'id' => $item['id'] ?? 0,
                 'name' => $item['name'] ?? ($product ? $product->name : 'Produk'),
                 'quantity' => $qty,
                 'unit_price' => $unitPrice,
-                'subtotal' => $unitPrice * $qty,
+                'subtotal' => $finalPrice,
+                'discount_total' => $totalDiscount,
                 'product' => $product,
                 'is_grosir_applied' => $product ? $product->isGrosirAppliedForQuantity($qty) : false,
             ];
@@ -185,7 +206,7 @@ class CartController extends Controller
             'notes' => $request->notes,
         ]);
 
-        // Create order items (with wholesale snapshot)
+        // Create order items (with wholesale snapshot and voucher discount)
         foreach ($resolvedItems as $resolved) {
             $product = $resolved['product'];
             \App\Models\OrderItem::create([
@@ -198,6 +219,7 @@ class CartController extends Controller
                 'is_grosir_applied' => $resolved['is_grosir_applied'],
                 'quantity' => $resolved['quantity'],
                 'subtotal' => $resolved['subtotal'],
+                'discount_total' => $resolved['discount_total'],
             ]);
         }
 

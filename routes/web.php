@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\ProductController;
 use App\Http\Controllers\Customer\CartController;
@@ -52,6 +53,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Products Management
         Route::resource('products', AdminProductController::class);
+        Route::resource('vouchers', VoucherController::class)->names('vouchers');
         Route::post('products/{id}/restore', [AdminProductController::class, 'restore'])->name('products.restore');
         Route::delete('products/{id}/force-delete', [AdminProductController::class, 'forceDelete'])->name('products.force-delete');
         

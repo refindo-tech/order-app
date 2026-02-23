@@ -23,20 +23,40 @@ class ProductController extends Controller
             });
         }
 
-        // Category filter
-        if ($request->has('category') && $request->category) {
-            $query->where('category', $request->category);
+        // Category filter (special category: "Diskon" => produk yang punya voucher aktif)
+        $currentCategory = $request->category;
+        if ($currentCategory) {
+            if ($currentCategory === 'Diskon') {
+                $query->whereHas('vouchers', function ($q) {
+                    $q->active();
+                });
+            } else {
+                $query->where('category', $currentCategory);
+            }
         }
 
-        $products = $query->orderBy('name')->get();
+        $products = $query
+            ->with(['vouchers' => fn ($q) => $q->active()])
+            ->orderBy('name')
+            ->get();
+
+        // Daftar kategori asli dari produk
         $categories = Product::active()->distinct()->pluck('category');
+        // Hitung produk yang punya voucher aktif (kategori virtual \"Diskon\")
+        $discountCategoryCount = Product::active()
+            ->whereHas('vouchers', fn ($q) => $q->active())
+            ->count();
+        if ($discountCategoryCount > 0 && ! $categories->contains('Diskon')) {
+            $categories->push('Diskon');
+        }
 
         return view('customer.products.index', [
             'pageTitle' => 'Katalog Produk',
             'products' => $products,
             'categories' => $categories,
+            'discountCategoryCount' => $discountCategoryCount,
             'currentSearch' => $request->search,
-            'currentCategory' => $request->category,
+            'currentCategory' => $currentCategory,
         ]);
     }
 
@@ -45,7 +65,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // Get related products (same category, exclude current)
+        $product->load(['vouchers' => function ($q) {
+            $q->active();
+        }]);
+
         $relatedProducts = Product::active()
             ->where('category', $product->category)
             ->where('id', '!=', $product->id)

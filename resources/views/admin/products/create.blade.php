@@ -262,6 +262,26 @@
                                 </div>
                             </div>
 
+                            <!-- Voucher (multi select) -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Voucher Diskon</h5>
+                                </div>
+                                <div class="card-body">
+                                    <small class="text-muted d-block mb-2">Pilih voucher yang berlaku untuk produk ini (bisa lebih dari satu).</small>
+                                    @forelse($vouchers ?? [] as $v)
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="voucher_ids[]" value="{{ $v->id }}" id="voucher_{{ $v->id }}" {{ in_array($v->id, old('voucher_ids', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="voucher_{{ $v->id }}">
+                                            <strong>{{ $v->name }}:</strong> {{ $v->discount_label }} ({{ $v->start_date->format('d/m/y') }}-{{ $v->end_date->format('d/m/y') }})
+                                        </label>
+                                    </div>
+                                    @empty
+                                    <p class="text-muted small mb-0">Belum ada voucher. <a href="{{ route('admin.vouchers.create') }}">Buat voucher</a> dulu.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+
                             <!-- Status -->
                             <div class="card mb-3">
                                 <div class="card-header bg-secondary">

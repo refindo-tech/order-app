@@ -80,6 +80,8 @@ class ProductRequest extends FormRequest
             'usage' => ['nullable', 'string', 'max:255'],
             'shelf_life' => ['nullable', 'string', 'max:100'],
             'is_active' => ['nullable', 'boolean'],
+            'voucher_ids' => ['nullable', 'array'],
+            'voucher_ids.*' => ['integer', 'exists:vouchers,id'],
         ];
     }
 

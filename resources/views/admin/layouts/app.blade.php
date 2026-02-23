@@ -165,6 +165,22 @@
                         </ul>
                     </li>
 
+                    <li class="nav-item dropdown {{ request()->routeIs('admin.vouchers.*') ? 'active open' : 'open' }}">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="c-green-500 ti-tag"></i>
+                            </span>
+                            <span class="title">Voucher</span>
+                            <span class="arrow">
+                                <i class="ti-angle-down"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu" style="display: block !important; visibility: visible !important;">
+                            <li><a class="sidebar-link" href="{{ route('admin.vouchers.index') }}">Daftar Voucher</a></li>
+                            <li><a class="sidebar-link" href="{{ route('admin.vouchers.create') }}">Tambah Voucher</a></li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item dropdown {{ request()->routeIs('admin.orders.*') ? 'active open' : 'open' }}">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">

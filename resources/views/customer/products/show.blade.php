@@ -69,8 +69,11 @@
 
             <!-- Product Info -->
             <div class="col-lg-6">
-                <div class="mb-3">
+                <div class="mb-3 d-flex flex-wrap gap-2">
                     <span class="badge bg-primary fs-6">{{ $product->category }}</span>
+                    @if($product->vouchers && $product->vouchers->isNotEmpty())
+                        <span class="badge bg-danger fs-6">Diskon</span>
+                    @endif
                 </div>
                 
                 <h1 class="display-5 fw-bold text-dark mb-3">{{ $product->name }}</h1>
@@ -147,7 +150,20 @@
                                     </button>
                                 </div>
                             </div>
-                        </form>
+                        @if($product->vouchers->isNotEmpty())
+                                <div class="mt-3 pt-3 border-top">
+                                    <label class="form-label mb-2">Voucher tersedia (bisa pilih lebih dari satu)</label>
+                                    @foreach($product->vouchers as $v)
+                                    <div class="form-check">
+                                        <input class="form-check-input product-voucher-cb" type="checkbox" value="{{ $v->id }}" data-voucher-id="{{ $v->id }}" id="voucher_{{ $v->id }}">
+                                        <label class="form-check-label" for="voucher_{{ $v->id }}">
+                                            {{ $v->discount_label }} <small class="text-muted">(berlaku {{ $v->start_date->format('d/m/Y') }} - {{ $v->end_date->format('d/m/Y') }})</small>
+                                        </label>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @endif
+                            </form>
                     </div>
                 </div>
 
@@ -539,6 +555,19 @@
     const productMinimalGrosir = {{ $product->minimal_grosir ?? 'null' }};
     const productHargaGrosir = {{ $product->harga_grosir ?? 'null' }};
     const productImageUrl = {!! json_encode($product->primary_image ? storage_url($product->primary_image) : '') !!};
+    @php
+        $vouchersForJs = $product->vouchers->map(function ($v) {
+            return [
+                'id' => $v->id,
+                'name' => $v->name,
+                'discount_type' => $v->discount_type,
+                'discount_value' => (float) $v->discount_value,
+                'start_date' => $v->start_date->toIso8601String(),
+                'end_date' => $v->end_date->toIso8601String(),
+            ];
+        })->values();
+    @endphp
+    const productVouchersAvailable = @json($vouchersForJs);
 
     function getUnitPrice(quantity) {
         if (quantity <= 0) return productPrice;
@@ -806,6 +835,10 @@
         
         alert('Ditambahkan ke keranjang!\n{{ $product->name }}\nJumlah: ' + quantity + '\nTotal: Rp ' + total.toLocaleString('id-ID'));
         
+        var selectedVoucherIds = [];
+        document.querySelectorAll('.product-voucher-cb:checked').forEach(function(cb) {
+            selectedVoucherIds.push(parseInt(cb.value, 10));
+        });
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push({ 
             id: {{ $product->id }}, 
@@ -815,7 +848,9 @@
             harga_grosir: productHargaGrosir,
             description: '{{ addslashes($product->description) }}',
             quantity: quantity,
-            image: productImageUrl || ''
+            image: productImageUrl || '',
+            vouchers_available: productVouchersAvailable || [],
+            vouchers_selected: selectedVoucherIds
         });
         localStorage.setItem('cart', JSON.stringify(cart));
         

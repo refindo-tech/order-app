@@ -217,6 +217,12 @@
                         uniqueItems[item.id].harga_grosir = item.harga_grosir;
                     }
                     if (item.image) uniqueItems[item.id].image = item.image;
+                    if (item.vouchers_available && item.vouchers_available.length) uniqueItems[item.id].vouchers_available = item.vouchers_available;
+                    if (item.vouchers_selected && item.vouchers_selected.length) {
+                        var existing = uniqueItems[item.id].vouchers_selected || [];
+                        item.vouchers_selected.forEach(function(id) { if (existing.indexOf(id) === -1) existing.push(id); });
+                        uniqueItems[item.id].vouchers_selected = existing;
+                    }
                 } else {
                     uniqueItems[item.id] = {
                         id: item.id,
@@ -226,12 +232,43 @@
                         harga_grosir: item.harga_grosir != null ? parseFloat(item.harga_grosir) : null,
                         description: item.description || 'Produk berkualitas premium',
                         quantity: item.quantity || 1,
-                        image: item.image || ''
+                        image: item.image || '',
+                        vouchers_available: item.vouchers_available || [],
+                        vouchers_selected: item.vouchers_selected || []
                     };
                 }
             });
             
             return Object.values(uniqueItems);
+        }
+        
+        // Calculate voucher discount for one item. Returns { totalDiscount, finalPrice }
+        getDiscountForItem(item) {
+            var subtotal = this.getUnitPrice(item) * (Number(item.quantity) || 1);
+            var available = item.vouchers_available || [];
+            var selected = item.vouchers_selected || [];
+            var sumPercent = 0, sumNominal = 0;
+            selected.forEach(function(vid) {
+                var v = available.find(function(x) { return x.id === vid || x.id === parseInt(vid, 10); });
+                if (!v) return;
+                if (v.discount_type === 'percent') sumPercent += subtotal * (Number(v.discount_value) / 100);
+                else sumNominal += Number(v.discount_value) || 0;
+            });
+            var totalDiscount = Math.min(subtotal, sumPercent + sumNominal);
+            return { totalDiscount: totalDiscount, finalPrice: Math.max(0, subtotal - totalDiscount), subtotal: subtotal };
+        }
+        
+        toggleVoucher(productId, voucherId) {
+            this.cart = this.cart.map(function(item) {
+                if (item.id !== productId) return item;
+                var sel = item.vouchers_selected || [];
+                var idx = sel.indexOf(voucherId);
+                if (idx === -1) sel.push(voucherId);
+                else sel.splice(idx, 1);
+                return { ...item, vouchers_selected: sel };
+            });
+            this.saveCart();
+            this.renderCart();
         }
         
         renderCart() {
@@ -252,18 +289,51 @@
             
             emptyCart.classList.add('d-none');
             
-            // Render cart items (unit price from grosir logic)
+            // Render cart items (unit price, voucher discount)
             const placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150' fill='none'%3E%3Crect width='150' height='150' fill='%23f8f9fa' rx='8'/%3E%3Crect x='25' y='40' width='100' height='70' fill='%23dee2e6' rx='5'/%3E%3Ctext x='75' y='80' text-anchor='middle' fill='%236c757d' font-family='Arial' font-size='12'%3ENo Image%3C/text%3E%3C/svg%3E";
+            const self = this;
             cartList.innerHTML = this.cart.map(item => {
                 const unitPrice = this.getUnitPrice(item);
                 const qty = Number(item.quantity) || 1;
-                const subtotal = unitPrice * qty;
                 const minG = item.minimal_grosir != null ? Number(item.minimal_grosir) : null;
                 const isGrosir = minG != null && item.harga_grosir != null && qty >= minG;
+                const disc = this.getDiscountForItem(item);
                 const imgSrc = (item.image && item.image.trim()) ? item.image : placeholderImg;
+                const vouchersAvailable = item.vouchers_available || [];
+                const vouchersSelected = item.vouchers_selected || [];
+                let voucherHtml = '';
+                if (vouchersAvailable.length > 0) {
+                    voucherHtml = ''
+                        + '<div class="mt-2">'
+                        + '  <div class="card border border-primary bg-primary bg-opacity-10 shadow-sm">'
+                        + '    <div class="card-body py-2 px-3 small">'
+                        + '      <div class="d-flex justify-content-between align-items-center mb-1 text-primary">'
+                        + '        <strong>Pilih Voucher Diskon</strong>'
+                        + '      </div>';
+                    vouchersAvailable.forEach(function(v) {
+                        const discountText = v.discount_type === 'percent'
+                            ? 'Diskon ' + (v.discount_value || 0) + '%'
+                            : 'Diskon Rp ' + (v.discount_value || 0).toLocaleString('id-ID');
+                        const label = (v.name ? v.name + ': ' : '') + discountText;
+                        const checked = vouchersSelected.indexOf(v.id) !== -1 || vouchersSelected.indexOf(parseInt(v.id, 10)) !== -1;
+                        const cbId = 'voucher-cb-' + item.id + '-' + v.id;
+                        voucherHtml += ''
+                            + '<div class="form-check mb-1">'
+                            + '  <input class="form-check-input cart-voucher-cb" type="checkbox" id="' + cbId + '"'
+                            + '         data-product-id="' + item.id + '" data-voucher-id="' + v.id + '"'
+                            +           (checked ? ' checked' : '')
+                            + '         onchange="cart.toggleVoucher(' + item.id + ', ' + v.id + ')">'
+                            + '  <label class="form-check-label cursor-pointer" for="' + cbId + '">' + label + '</label>'
+                            + '</div>';
+                    });
+                    if (disc.totalDiscount > 0) {
+                        voucherHtml += '<div class="mt-1 text-success fw-semibold">Total Potongan: Rp ' + disc.totalDiscount.toLocaleString('id-ID') + '</div>';
+                    }
+                    voucherHtml += '    </div></div></div>';
+                }
                 return `
                 <div class="cart-item border-bottom py-3" data-id="${item.id}">
-                    <div class="row align-items-center">
+                    <div class="row align-items-start">
                         <div class="col-md-2">
                             <div class="ratio ratio-1x1">
                                 <img src="${imgSrc.replace(/"/g, '&quot;')}" class="img-fluid rounded" alt="${(item.name || 'Produk').replace(/"/g, '&quot;')}" onerror="this.src='${placeholderImg}'">
@@ -272,6 +342,8 @@
                         <div class="col-md-4">
                             <h6 class="mb-1">${item.name || 'Produk'} ${isGrosir ? '<span class="badge bg-success ms-1">Harga Grosir</span>' : ''}</h6>
                             <p class="text-muted small mb-0">${item.description || 'Produk berkualitas premium'}</p>
+                            <div class="small mt-1">Rp ${unitPrice.toLocaleString('id-ID')} × ${qty} = Rp ${disc.subtotal.toLocaleString('id-ID')}</div>
+                            ${voucherHtml}
                         </div>
                         <div class="col-md-2 text-center">
                             <span class="fw-bold">Rp ${unitPrice.toLocaleString('id-ID')}</span>
@@ -290,7 +362,8 @@
                         </div>
                         <div class="col-md-2 text-end">
                             <div class="d-flex flex-column">
-                                <span class="fw-bold text-primary">Rp ${subtotal.toLocaleString('id-ID')}</span>
+                                <span class="fw-bold text-primary">Rp ${disc.finalPrice.toLocaleString('id-ID')}</span>
+                                ${disc.totalDiscount > 0 ? '<small class="text-success">- Rp ' + disc.totalDiscount.toLocaleString('id-ID') + '</small>' : ''}
                                 <button class="btn btn-outline-danger btn-sm mt-1" onclick="cart.removeItem(${item.id})">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -330,7 +403,10 @@
         
         updateSummary() {
             const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
-            const subtotal = this.cart.reduce((sum, item) => sum + (this.getUnitPrice(item) * item.quantity), 0);
+            const subtotal = this.cart.reduce((sum, item) => {
+                const d = this.getDiscountForItem(item);
+                return sum + d.finalPrice;
+            }, 0);
             
             document.getElementById('total-items').textContent = totalItems;
             document.getElementById('subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
@@ -361,7 +437,7 @@
                 // Update quantity if item exists
                 this.cart[existingIndex].quantity += (product.quantity || 1);
             } else {
-                // Add new item (include grosir + image for recalc/display)
+                // Add new item (include grosir, image, vouchers)
                 this.cart.push({
                     id: product.id,
                     name: product.name || `Produk ${product.id}`,
@@ -370,7 +446,9 @@
                     harga_grosir: product.harga_grosir ?? null,
                     description: product.description || 'Produk berkualitas premium',
                     quantity: product.quantity || 1,
-                    image: product.image || ''
+                    image: product.image || '',
+                    vouchers_available: product.vouchers_available || [],
+                    vouchers_selected: product.vouchers_selected || []
                 });
             }
             
@@ -416,6 +494,9 @@
 <style>
     .cart-item:last-child {
         border-bottom: none !important;
+    }
+    .cart-item .form-check-label {
+        cursor: pointer;
     }
     
     .input-group-sm .form-control {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductMedia;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -58,7 +59,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('admin.products.create');
+        $vouchers = Voucher::orderBy('name')->get();
+        return view('admin.products.create', compact('vouchers'));
     }
 
     /**
@@ -154,8 +156,10 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $vouchers = Voucher::orderBy('name')->get();
         return view('admin.products.edit', [
             'product' => $product,
+            'vouchers' => $vouchers,
         ]);
     }
 
@@ -225,7 +229,7 @@ class ProductController extends Controller
         $firstImage = $product->media()->where('type', 'image')->orderBy('sort_order')->first();
         $data['image'] = $firstImage ? $firstImage->path : null;
 
-        unset($data['media'], $data['remove_media'], $data['media_order']);
+        unset($data['media'], $data['remove_media'], $data['media_order'], $data['voucher_ids']);
 
         // Generate slug if not provided
         if (empty($data['slug'])) {
@@ -247,7 +251,10 @@ class ProductController extends Controller
         $data['minimal_grosir'] = $request->filled('minimal_grosir') ? (int) $data['minimal_grosir'] : null;
         $data['harga_grosir'] = $request->filled('harga_grosir') ? $data['harga_grosir'] : null;
 
+        unset($data['voucher_ids']);
         $product->update($data);
+
+        $product->vouchers()->sync($request->input('voucher_ids', []));
 
         Log::channel('single')->info('[Product Update] Produk berhasil diperbarui', [
             'product_id' => $product->id,

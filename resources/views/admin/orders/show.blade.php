@@ -67,7 +67,12 @@
                                 </td>
                                 <td>Rp {{ number_format($item->product_price, 0, ',', '.') }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td><strong>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</strong></td>
+                                <td>
+                                    <strong>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</strong>
+                                    @if($item->discount_total > 0)
+                                        <div class="text-success small">Diskon voucher: - Rp {{ number_format($item->discount_total, 0, ',', '.') }}</div>
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

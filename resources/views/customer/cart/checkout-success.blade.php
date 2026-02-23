@@ -50,7 +50,12 @@
                                         <td>{{ $item->product_name }} @if($item->is_grosir_applied)<span class="badge bg-success ms-1">Harga Grosir</span>@endif</td>
                                         <td>Rp {{ number_format($item->product_price, 0, ',', '.') }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                        <td>
+                                            Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                                            @if($item->discount_total > 0)
+                                                <div class="text-success small">Diskon voucher: - Rp {{ number_format($item->discount_total, 0, ',', '.') }}</div>
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>

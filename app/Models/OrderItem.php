@@ -16,6 +16,7 @@ class OrderItem extends Model
         'is_grosir_applied',
         'quantity',
         'subtotal',
+        'discount_total',
     ];
 
     protected $casts = [
@@ -25,6 +26,7 @@ class OrderItem extends Model
         'is_grosir_applied' => 'boolean',
         'quantity' => 'integer',
         'subtotal' => 'decimal:2',
+        'discount_total' => 'decimal:2',
     ];
 
     /**

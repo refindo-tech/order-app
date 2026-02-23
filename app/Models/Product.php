@@ -70,6 +70,14 @@ class Product extends Model
     }
 
     /**
+     * Vouchers assigned to this product (many-to-many).
+     */
+    public function vouchers()
+    {
+        return $this->belongsToMany(Voucher::class, 'product_vouchers');
+    }
+
+    /**
      * Product media (images/videos), up to 4, ordered by sort_order.
      */
     public function media()

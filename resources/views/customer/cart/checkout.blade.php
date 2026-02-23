@@ -290,17 +290,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 uniqueCart[item.id].minimal_grosir = item.minimal_grosir;
                 uniqueCart[item.id].harga_grosir = item.harga_grosir;
             }
+            if (item.vouchers_available && item.vouchers_available.length) uniqueCart[item.id].vouchers_available = item.vouchers_available;
+            if (item.vouchers_selected && item.vouchers_selected.length) {
+                var sel = uniqueCart[item.id].vouchers_selected || [];
+                item.vouchers_selected.forEach(function(id) { if (sel.indexOf(id) === -1) sel.push(id); });
+                uniqueCart[item.id].vouchers_selected = sel;
+            }
         } else {
             uniqueCart[item.id] = {
                 ...item,
                 quantity: item.quantity || 1,
                 price: parseFloat(item.price) || 0,
                 minimal_grosir: item.minimal_grosir != null ? Number(item.minimal_grosir) : null,
-                harga_grosir: item.harga_grosir != null ? parseFloat(item.harga_grosir) : null
+                harga_grosir: item.harga_grosir != null ? parseFloat(item.harga_grosir) : null,
+                vouchers_available: item.vouchers_available || [],
+                vouchers_selected: item.vouchers_selected || []
             };
         }
     });
     const cartItems = Object.values(uniqueCart);
+    
+    function getDiscountForItem(item) {
+        var subtotal = getUnitPrice(item) * (Number(item.quantity) || 1);
+        var available = item.vouchers_available || [];
+        var selected = item.vouchers_selected || [];
+        var sumPercent = 0, sumNominal = 0;
+        selected.forEach(function(vid) {
+            var v = available.find(function(x) { return x.id === vid || x.id === parseInt(vid, 10); });
+            if (!v) return;
+            if (v.discount_type === 'percent') sumPercent += subtotal * (Number(v.discount_value) / 100);
+            else sumNominal += Number(v.discount_value) || 0;
+        });
+        var totalDiscount = Math.min(subtotal, sumPercent + sumNominal);
+        return { totalDiscount: totalDiscount, finalPrice: Math.max(0, subtotal - totalDiscount), subtotal: subtotal };
+    }
 
     const emptyAlert = document.getElementById('empty-cart-alert');
     const form = document.getElementById('checkout-form');
@@ -430,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function renderSummary() {
-        const subtotal = cartItems.reduce((s, i) => s + (getUnitPrice(i) * (i.quantity || 1)), 0);
+        const subtotal = cartItems.reduce((s, i) => s + getDiscountForItem(i).finalPrice, 0);
         const shipping = selectedShipping.price || 0;
         const total = subtotal + shipping;
 
@@ -440,14 +463,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         checkoutSummary.innerHTML = cartItems.map(i => {
             const qty = Number(i.quantity) || 1;
-            const unitPrice = getUnitPrice(i);
-            const lineTotal = unitPrice * qty;
+            const d = getDiscountForItem(i);
             const minG = i.minimal_grosir != null ? Number(i.minimal_grosir) : null;
             const isGrosir = minG != null && i.harga_grosir != null && qty >= minG;
+            const discNote = d.totalDiscount > 0 ? ' <small class="text-success">(- Rp ' + d.totalDiscount.toLocaleString('id-ID') + ')</small>' : '';
             return `
             <div class="d-flex justify-content-between py-1">
                 <span>${i.name || 'Produk'} x${qty} ${isGrosir ? '<span class="badge bg-success btn-sm">Grosir</span>' : ''}</span>
-                <span>Rp ${lineTotal.toLocaleString('id-ID')}</span>
+                <span>Rp ${d.finalPrice.toLocaleString('id-ID')}${discNote}</span>
             </div>
         `;
         }).join('');

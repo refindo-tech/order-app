@@ -77,7 +77,11 @@
                                    class="list-group-item list-group-item-action {{ $currentCategory === $category ? 'active' : '' }}">
                                     <i class="bi bi-tag me-2"></i>{{ $category }}
                                     <span class="badge bg-secondary rounded-pill float-end">
-                                        {{ $products->where('category', $category)->count() }}
+                                        @if($category === 'Diskon')
+                                            {{ $discountCategoryCount ?? 0 }}
+                                        @else
+                                            {{ $products->where('category', $category)->count() }}
+                                        @endif
                                     </span>
                                 </a>
                             @endforeach
@@ -153,8 +157,11 @@
                                              class="card-img-top product-card-img" 
                                              alt="{{ $product->name }}">
                                         
-                                        <div class="position-absolute top-0 start-0 product-card-badge">
+                                        <div class="position-absolute top-0 start-0 product-card-badge d-flex gap-1">
                                             <span class="badge bg-primary">{{ $product->category }}</span>
+                                            @if($product->vouchers && $product->vouchers->isNotEmpty())
+                                                <span class="badge bg-danger">Diskon</span>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -189,10 +196,12 @@
                                                 </a>
                                                 @php
                                                     $productImageUrl = ($product->primary_image ?? $product->image) ? storage_url($product->primary_image ?? $product->image) : '';
+                                                    $productVouchersJson = $product->vouchers ? $product->vouchers->map(fn($v) => ['id' => $v->id, 'name' => $v->name, 'discount_type' => $v->discount_type, 'discount_value' => (float)$v->discount_value])->values()->toJson() : '[]';
                                                 @endphp
                                                 <button type="button" class="btn btn-primary btn-sm flex-grow-1 product-card-btn" 
                                                         data-image-url="{{ $productImageUrl }}"
-                                                        onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}', {{ $product->minimal_grosir ?? 'null' }}, {{ $product->harga_grosir ?? 'null' }}, this.getAttribute('data-image-url') || '')">
+                                                        data-vouchers="{{ e($productVouchersJson) }}"
+                                                        onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}', {{ $product->minimal_grosir ?? 'null' }}, {{ $product->harga_grosir ?? 'null' }}, this.getAttribute('data-image-url') || '', this.getAttribute('data-vouchers') || '[]')">
                                                     <i class="bi bi-cart-plus product-card-btn-icon me-2"></i><span class="product-card-btn-text">Keranjang</span>
                                                 </button>
                                             </div>
@@ -418,8 +427,10 @@
 <script>
     // Product data now comes from database via Blade
 
-    // Add to cart function (minimalGrosir, hargaGrosir, imageUrl optional)
-    function addToCart(productId, productName, productPrice, productDescription, minimalGrosir, hargaGrosir, imageUrl) {
+    // Add to cart function (minimalGrosir, hargaGrosir, imageUrl, vouchersJson optional)
+    function addToCart(productId, productName, productPrice, productDescription, minimalGrosir, hargaGrosir, imageUrl, vouchersJson) {
+        var vouchersAvailable = [];
+        try { vouchersAvailable = typeof vouchersJson === 'string' ? JSON.parse(vouchersJson || '[]') : (vouchersJson || []); } catch (e) {}
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         cart.push({ 
             id: productId, 
@@ -429,7 +440,9 @@
             harga_grosir: hargaGrosir ?? null,
             description: productDescription,
             quantity: 1,
-            image: imageUrl || ''
+            image: imageUrl || '',
+            vouchers_available: vouchersAvailable,
+            vouchers_selected: []
         });
         localStorage.setItem('cart', JSON.stringify(cart));
         alert('Ditambahkan ke keranjang!\n' + productName + '\nRp ' + productPrice.toLocaleString('id-ID'));
