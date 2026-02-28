@@ -17,6 +17,7 @@ class HomeController extends Controller
     {
         // Get featured products (4 products marked as featured & active)
         $featuredProducts = Product::active()
+            ->with('vouchers')
             ->where('is_featured', true)
             ->orderByDesc('created_at')
             ->limit(4)

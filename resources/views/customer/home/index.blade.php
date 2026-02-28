@@ -169,34 +169,79 @@
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-2 g-md-4 product-grid-row">
             <!-- Featured products from database -->
             @forelse($featuredProducts as $product)
-            <div class="col-lg-3 col-md-6">
-                <div class="card h-100">
-                    <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 300 200\' fill=\'none\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23f8f9fa\'/%3E%3Crect x=\'50\' y=\'50\' width=\'200\' height=\'100\' fill=\'%23dc3545\' fill-opacity=\'0.2\' rx=\'10\'/%3E%3Ctext x=\'150\' y=\'105\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'14\' font-weight=\'bold\'%3ENo%20Image%3C/text%3E%3C/svg%3E' }}" 
-                         class="card-img-top" 
-                         alt="{{ $product->name }}"
-                         style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text">{{ \Str::limit($product->description, 80) }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 text-primary mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                            <small class="text-muted">Per pack</small>
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 product-card position-relative">
+                    <a href="{{ route('products.show', $product->slug) }}" class="product-card-link stretched-link" aria-label="Lihat detail {{ $product->name }}"></a>
+                    <!-- Product Image -->
+                    <div class="position-relative product-card-img-wrap">
+                        <img src="{{ $product->image ? storage_url($product->image) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 250\' fill=\'none\'%3E%3Crect width=\'400\' height=\'250\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'200\' y=\'125\' text-anchor=\'middle\' fill=\'%23dc3545\' font-family=\'Arial\' font-size=\'16\'%3ENo Image%3C/text%3E%3C/svg%3E' }}"
+                             class="card-img-top product-card-img"
+                             alt="{{ $product->name }}">
+
+                        <div class="position-absolute top-0 start-0 product-card-badge d-flex gap-1 flex-wrap">
+                            <span class="badge bg-primary">{{ $product->category }}</span>
+                            @if($product->vouchers && $product->vouchers->isNotEmpty())
+                                <span class="badge bg-danger">Diskon</span>
+                            @endif
+                            @if(is_array($product->extra_categories) && count($product->extra_categories))
+                                @foreach($product->extra_categories as $extraCategory)
+                                    <span class="badge bg-success">{{ $extraCategory }}</span>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent">
-                        <a href="{{ route('products.show', $product->slug) }}" class="btn btn-primary w-100">
-                            <i class="bi bi-eye me-2"></i>Lihat Detail
-                        </a>
+
+                    <!-- Product Info -->
+                    <div class="card-body d-flex flex-column product-card-body">
+                        <h5 class="card-title product-card-title">{{ $product->name }}</h5>
+                        <p class="card-text text-muted flex-grow-1 product-card-desc">
+                            {{ \Str::limit($product->description, 80) }}
+                        </p>
+
+                        <!-- Product Details -->
+                        <div class="mb-2 mb-md-3 product-card-details">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                                <span class="product-card-price text-primary">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </span>
+                                <small class="text-muted product-card-weight d-none d-md-inline">{{ $product->weight }}g</small>
+                            </div>
+                            @if($product->hasGrosir())
+                                <div class="mt-1 small text-success">
+                                    Grosir: Rp {{ number_format($product->harga_grosir, 0, ',', '.') }} <span class="text-muted">(min. {{ $product->minimal_grosir }})</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mt-auto product-card-actions-wrap position-relative">
+                            <div class="d-flex gap-1 gap-md-2 product-card-actions">
+                                <a href="{{ route('products.show', $product->slug) }}"
+                                   class="btn btn-outline-primary btn-sm flex-grow-1 product-card-btn">
+                                    <i class="bi bi-eye product-card-btn-icon me-2"></i><span class="product-card-btn-text">Detail</span>
+                                </a>
+                                @php
+                                    $productImageUrl = ($product->primary_image ?? $product->image) ? storage_url($product->primary_image ?? $product->image) : '';
+                                    $productVouchersJson = $product->vouchers ? $product->vouchers->map(fn($v) => ['id' => $v->id, 'name' => $v->name, 'discount_type' => $v->discount_type, 'discount_value' => (float)$v->discount_value])->values()->toJson() : '[]';
+                                @endphp
+                                <button type="button" class="btn btn-primary btn-sm flex-grow-1 product-card-btn"
+                                        data-image-url="{{ $productImageUrl }}"
+                                        data-vouchers="{{ e($productVouchersJson) }}"
+                                        onclick="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ addslashes($product->description) }}', {{ $product->minimal_grosir ?? 'null' }}, {{ $product->harga_grosir ?? 'null' }}, this.getAttribute('data-image-url') || '', this.getAttribute('data-vouchers') || '[]')">
+                                    <i class="bi bi-cart-plus product-card-btn-icon me-2"></i><span class="product-card-btn-text">Keranjang</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             @empty
                 <div class="col-12">
                     <div class="alert alert-info text-center">
-                    <i class="bi bi-info-circle me-2"></i>Belum ada produk tersedia
+                        <i class="bi bi-info-circle me-2"></i>Belum ada produk tersedia
                     </div>
                 </div>
             @endforelse
@@ -442,38 +487,111 @@
 </section> -->
 @endsection
 
+@push('styles')
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+    .product-card-link { z-index: 1; }
+    .product-card-actions-wrap { z-index: 2; }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .product-card-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        white-space: nowrap;
+        gap: 0.35rem;
+    }
+    .product-card-actions .btn .product-card-btn-icon { flex-shrink: 0; }
+    @media (max-width: 767.98px) {
+        .product-grid-row {
+            gap: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .product-grid-row > [class*="col-"] {
+            flex: 0 0 calc(50% - 0.25rem) !important;
+            max-width: calc(50% - 0.25rem) !important;
+        }
+        .product-card { font-size: 0.7rem; }
+        .product-card-img-wrap { overflow: hidden; }
+        .product-card-img { height: 140px; object-fit: cover; }
+        .product-card-badge .badge { font-size: 0.55rem; padding: 0.15em 0.35em; }
+        .product-card-body { padding: 0.35rem 0.5rem; }
+        .product-card-title {
+            font-size: 0.7rem;
+            line-height: 1.15;
+            margin-bottom: 0.2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .product-card-desc { display: none; }
+        .product-card-details { margin-bottom: 0.1rem !important; }
+        .product-card-body .mt-auto { margin-top: 0.25rem !important; }
+        .product-card-price { font-size: 0.65rem; font-weight: 600; }
+        .product-card-weight { font-size: 0.6rem; }
+        .product-card-actions .btn { padding: 0.2rem 0.3rem; font-size: 0.65rem; display: inline-flex; align-items: center; justify-content: center; }
+        .product-card-btn-text { display: none; }
+        .product-card-actions .btn .product-card-btn-icon { margin: 0 !important; font-size: 0.8rem; }
+    }
+    @media (min-width: 768px) {
+        .product-card-img { height: 200px; object-fit: cover; }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
-    // Smooth scrolling for anchor links
+    function addToCart(productId, productName, productPrice, productDescription, minimalGrosir, hargaGrosir, imageUrl, vouchersJson) {
+        var vouchersAvailable = [];
+        try { vouchersAvailable = typeof vouchersJson === 'string' ? JSON.parse(vouchersJson || '[]') : (vouchersJson || []); } catch (e) {}
+        var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cart.push({
+            id: productId,
+            name: productName,
+            price: productPrice,
+            minimal_grosir: minimalGrosir ?? null,
+            harga_grosir: hargaGrosir ?? null,
+            description: productDescription,
+            quantity: 1,
+            image: imageUrl || '',
+            vouchers_available: vouchersAvailable,
+            vouchers_selected: []
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert('Ditambahkan ke keranjang!\n' + productName + '\nRp ' + productPrice.toLocaleString('id-ID'));
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new Event('cart-updated'));
+        }
+    }
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     });
-    
-    // Handle hash in URL when page loads (e.g., when navigating from other pages)
+
     document.addEventListener('DOMContentLoaded', function() {
         if (window.location.hash) {
             const target = document.querySelector(window.location.hash);
             if (target) {
-                // Small delay to ensure page is fully rendered
-                setTimeout(() => {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                setTimeout(function() {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             }
         }
     });
-    
-    // Note: Add to cart functionality will be handled in product detail page
 </script>
 @endpush

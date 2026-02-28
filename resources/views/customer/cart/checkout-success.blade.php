@@ -91,7 +91,7 @@
                             <h4 class="text-primary mb-0">Rp {{ number_format($order->total, 0, ',', '.') }}</h4>
                         </div>
                         <ol class="mb-0">
-                            <li class="mb-2">Lakukan transfer sebesar <strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong></li>
+                            <li class="mb-2">Lakukan transfer</strong></li>
                             <li class="mb-2">Upload bukti pembayaran di bawah ini</li>
                             <li class="mb-2">Admin akan memverifikasi pembayaran Anda</li>
                         </ol>
@@ -102,7 +102,7 @@
                 <div class="card mb-4">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
-                            <i class="bi bi-cash-coin me-2"></i>Tujuan Pembayaran
+                            <i class="bi bi-cash-coin me-2"></i>Metode Pembayaran
                         </h5>
                     </div>
                     <div class="card-body">
@@ -112,7 +112,7 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingQR">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQR" aria-expanded="false" aria-controls="collapseQR">
-                                        <i class="bi bi-qr-code me-2"></i>QR Code
+                                        <i class="bi bi-qr-code me-2"></i>QRIS
                                     </button>
                                 </h2>
                                 <div id="collapseQR" class="accordion-collapse collapse" aria-labelledby="headingQR" data-bs-parent="#paymentMethodsAccordion">
@@ -121,10 +121,9 @@
                                             @if(file_exists(public_path(config('constants.payment.qr_code.image'))))
                                                 <img src="{{ asset(config('constants.payment.qr_code.image')) }}" 
                                                      alt="QR Code Pembayaran" 
-                                                     class="img-fluid mb-2" 
-                                                     style="max-width: 250px; border: 2px solid #dee2e6; border-radius: 8px;">
+                                                     class="img-fluid mb-2 qr-code-img">
                                             @else
-                                                <div class="bg-light p-4 d-inline-block mb-2" style="width: 250px; height: 250px; border: 2px dashed #dee2e6; border-radius: 8px;">
+                                                <div class="qr-code-placeholder bg-light p-4 d-inline-block mb-2">
                                                     <i class="bi bi-qr-code" style="font-size: 4rem; color: #6c757d;"></i>
                                                     <p class="small text-muted mt-2 mb-0">QR Code akan tersedia</p>
                                                 </div>
@@ -173,7 +172,7 @@
                             </div>
 
                             <!-- E-Wallet -->
-                            <div class="accordion-item">
+                            <!-- <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingEwallet">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEwallet" aria-expanded="false" aria-controls="collapseEwallet">
                                         <i class="bi bi-wallet2 me-2"></i>E-Wallet
@@ -206,7 +205,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -329,6 +328,29 @@
 
 @push('styles')
 <style>
+    /* QR Code: 100% mobile/tablet, 50% desktop */
+    .qr-code-img {
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+    }
+    .qr-code-placeholder {
+        width: 100%;
+        aspect-ratio: 1;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+    }
+    @media (min-width: 992px) {
+        .qr-code-img {
+            width: 50%;
+            max-width: 50%;
+        }
+        .qr-code-placeholder {
+            width: 50%;
+        }
+    }
+
     /* Mobile optimizations for checkout success */
     @media (max-width: 991.98px) {
         .col-lg-8 {

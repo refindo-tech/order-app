@@ -59,23 +59,23 @@ return [
     'payment' => [
         'banks' => [
             [
-                'name' => 'Bank BCA',
-                'account_number' => '1234567890',
-                'account_name' => 'Rumah Bumbu & Ungkep',
+                'name' => 'Bank BSI',
+                'account_number' => '7330964728',
+                'account_name' => 'Muhammad Fajar Ass Shiddiqi',
                 'icon' => 'bi-bank',
             ],
-            [
-                'name' => 'Bank Mandiri',
-                'account_number' => '9876543210',
-                'account_name' => 'Rumah Bumbu & Ungkep',
-                'icon' => 'bi-bank',
-            ],
-            [
-                'name' => 'Bank BRI',
-                'account_number' => '5555555555',
-                'account_name' => 'Rumah Bumbu & Ungkep',
-                'icon' => 'bi-bank',
-            ],
+            // [
+            //     'name' => 'Bank Mandiri',
+            //     'account_number' => '9876543210',
+            //     'account_name' => 'Rumah Bumbu & Ungkep',
+            //     'icon' => 'bi-bank',
+            // ],
+            // [
+            //     'name' => 'Bank BRI',
+            //     'account_number' => '5555555555',
+            //     'account_name' => 'Rumah Bumbu & Ungkep',
+            //     'icon' => 'bi-bank',
+            // ],
         ],
         'ewallets' => [
             [
@@ -105,8 +105,8 @@ return [
         ],
         'qr_code' => [
             'enabled' => true,
-            'image' => 'images/qr-payment.png', // Path ke gambar QR code
-            'description' => 'Scan QR Code untuk pembayaran cepat',
+            'image' => 'images/qris.jpeg', // Path ke gambar QR code (QRIS)
+            // 'description' => 'Scan QR Code untuk pembayaran cepat',
         ],
     ],
 ];
