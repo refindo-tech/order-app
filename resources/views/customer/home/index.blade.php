@@ -72,18 +72,6 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
-                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
-                        </div>
-                        <h5 class="card-title">Kami Terpercaya!</h5>
-                        <p class="card-text small">Kami selalu berkomitmen untuk menjaga hubungan kepada partner-partner kami. Kami sudah bekerjasama dengan beberapa restoran yang sangat kami jaga kepercayaannya, segala bentuk saran&kritik kami selalu terima dan mengusahakan yang terbaik untuk konsumen kami.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6">
-                <div class="card h-100 text-center p-4">
-                    <div class="card-body">
                         <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                             <i class="bi bi-gift text-warning" style="font-size: 2rem;"></i>
                         </div>
@@ -92,10 +80,40 @@
                     </div>
                 </div>
             </div>
-            <!-- Partner Image -->
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Kami Terpercaya!</h5>
+                        <p class="card-text small">Kami selalu berkomitmen untuk menjaga hubungan kepada partner-partner kami. Kami sudah bekerjasama dengan beberapa restoran yang sangat kami jaga kepercayaannya, segala bentuk saran&kritik kami selalu terima dan mengusahakan yang terbaik untuk konsumen kami.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Partner Logos - Auto-slide horizontal -->
             <div class="row justify-content-center my-4">
-                <div class="col-12 col-md-7">
-                    <img src="{{ asset('images/partner.png') }}" alt="Partner Rumah Bumbu & Ungkep" class="img-fluid w-100">
+                <div class="col-12">
+                    <div class="partner-logos-wrap">
+                        <div class="partner-logos-track">
+                            @php
+                                $partnerLogos = [
+                                    ['file' => 'Logo Abbas.png', 'alt' => 'Logo Abbas'],
+                                    ['file' => 'Logo Abl.png', 'alt' => 'Logo Abl'],
+                                    ['file' => 'Logo Bete.png', 'alt' => 'Logo Bete'],
+                                    ['file' => 'Logo Betunak.png', 'alt' => 'Logo Betunak'],
+                                    ['file' => 'Logo Sambak.png', 'alt' => 'Logo Sambak'],
+                                    ['file' => 'LOGO TOAST JADIAN.PNG', 'alt' => 'Logo Toast Jadian'],
+                                ];
+                            @endphp
+                            @foreach(array_merge($partnerLogos, $partnerLogos) as $logo)
+                                <div class="partner-logo-item">
+                                    <img src="{{ asset('images/' . $logo['file']) }}" alt="{{ $logo['alt'] }}" class="img-fluid">
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -489,6 +507,45 @@
 
 @push('styles')
 <style>
+    /* Partner logos horizontal auto-scroll - full viewport width */
+    .partner-logos-wrap {
+        overflow: hidden;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        margin-left: -50vw;
+        padding: 0.5rem 1rem;
+    }
+    .partner-logos-track {
+        display: flex;
+        width: max-content;
+        animation: partner-logos-scroll 18s linear infinite;
+        gap: 1rem;
+    }
+    .partner-logo-item {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 160px;
+        padding: 0 0.5rem;
+    }
+    .partner-logo-item img {
+        max-height: 100%;
+        width: auto;
+        max-width: 320px;
+        object-fit: contain;
+    }
+    @keyframes partner-logos-scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    @media (max-width: 767.98px) {
+        .partner-logo-item { height: 110px; }
+        .partner-logo-item img { max-width: 220px; }
+        .partner-logos-track { gap: 0.75rem; }
+    }
+
     .product-card {
         transition: all 0.3s ease;
         border: none;
