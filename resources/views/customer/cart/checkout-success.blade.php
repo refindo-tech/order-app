@@ -149,8 +149,12 @@
                                             <div class="col-md-6">
                                                 <div class="border rounded p-3 h-100">
                                                     <div class="d-flex align-items-center mb-2">
-                                                        <i class="{{ $bank['icon'] }} me-2 text-primary" style="font-size: 1.5rem;"></i>
-                                                        <strong>{{ $bank['name'] }}</strong>
+                                                        @if(str_contains(strtoupper($bank['name'] ?? ''), 'BSI'))
+                                                            <img src="{{ asset('images/BSI.svg') }}" alt="Bank Syariah Indonesia (BSI)" class="me-2" style="height: auto; width: 50%;">
+                                                        @else
+                                                            <i class="{{ $bank['icon'] }} me-2 text-primary" style="font-size: 1.5rem;"></i>
+                                                        @endif
+                                                        <!-- <strong>{{ $bank['name'] }}</strong> -->
                                                     </div>
                                                     <div class="mb-2">
                                                         <small class="text-muted d-block">No. Rekening:</small>
