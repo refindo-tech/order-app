@@ -215,6 +215,101 @@
                 font-size: 1rem;
             }
         }
+
+        /* Floating action cards (dua card terpisah dengan jarak) */
+        .floating-action-card {
+            position: fixed;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            z-index: 1020;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+        .floating-action-card .floating-card-item {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0 0 0 1rem;
+            height: 50px;
+            min-height: 50px;
+            width: 300px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            background: #fff;
+            border: none;
+            text-decoration: none;
+            color: inherit;
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+        .floating-action-card .floating-card-item:hover {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+            color: inherit;
+        }
+        .floating-action-card .floating-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .floating-action-card .floating-card-icon.cart {
+            background: rgba(212, 49, 40, 0.12);
+            color: var(--primary-color);
+        }
+        .floating-action-card .floating-card-icon.whatsapp {
+            background: rgba(37, 211, 102, 0.2);
+            color: #25d366;
+        }
+        .floating-action-card .floating-card-text {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            line-height: 1.2;
+            text-align: left;
+        }
+        .floating-action-card .floating-card-text--row {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.35rem;
+            flex-wrap: nowrap;
+        }
+        .floating-action-card .floating-card-label {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+        .floating-action-card .floating-card-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .floating-action-card .floating-card-value#floating-cart-count:empty::before,
+        .floating-action-card .floating-card-value#floating-cart-count[data-count="0"]::before {
+            content: '0 item';
+        }
+        .floating-action-card .floating-card-item--fit {
+            width: fit-content;
+        }
+        @media (max-width: 768px) {
+            .floating-action-card {
+                left: 0;
+                right: 0;
+                width: 100%;
+                padding: 0 1rem;
+                bottom: 1rem;
+            }
+            .floating-action-card .floating-card-item--full-width-mobile {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
     </style>
     
     @stack('styles')
@@ -274,6 +369,30 @@
             </div>
         </div>
     </nav>
+
+    <!-- Floating action cards: Keranjang + Tanya Admin (sembunyikan di halaman Keranjang, Checkout, Pembayaran) -->
+    @unless(request()->routeIs('cart.index', 'cart.checkout', 'cart.checkout-success'))
+    <div class="floating-action-card" aria-label="Aksi cepat">
+        <a href="{{ config('constants.social_media.whatsapp') }}?text={{ urlencode('Halo, saya ingin bertanya.') }}" target="_blank" rel="noopener noreferrer" class="floating-card-item floating-card-item--fit" aria-label="Tanya admin via WhatsApp">
+            <span class="floating-card-icon whatsapp">
+                <i class="bi bi-whatsapp"></i>
+            </span>
+            <span class="floating-card-text">
+                <span class="floating-card-label">Butuh bantuan?</span>
+                <!-- <span class="floating-card-value">Tanya Admin</span> -->
+            </span>
+        </a>
+        <a href="{{ route('cart.index') }}" class="floating-card-item floating-card-item--full-width-mobile" aria-label="Lihat keranjang">
+            <span class="floating-card-icon cart">
+                <i class="bi bi-cart3"></i>
+            </span>
+            <span class="floating-card-text floating-card-text--row">
+                <span class="floating-card-value" id="floating-cart-count" data-count="0"></span>
+                <span class="floating-card-label">ditambahkan ke keranjang</span>
+            </span>
+        </a>
+    </div>
+    @endunless
 
     <!-- Toast: PWA install success (hidden by default) -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3 pb-5">
@@ -401,12 +520,19 @@
             
             const totalItems = Object.values(uniqueItems).reduce((sum, item) => sum + item.quantity, 0);
             const cartBadge = document.getElementById('cart-count');
+            const floatingCartCount = document.getElementById('floating-cart-count');
             
-            if (totalItems > 0) {
-                cartBadge.textContent = totalItems;
-                cartBadge.classList.remove('d-none');
-            } else {
-                cartBadge.classList.add('d-none');
+            if (cartBadge) {
+                if (totalItems > 0) {
+                    cartBadge.textContent = totalItems;
+                    cartBadge.classList.remove('d-none');
+                } else {
+                    cartBadge.classList.add('d-none');
+                }
+            }
+            if (floatingCartCount) {
+                floatingCartCount.setAttribute('data-count', totalItems);
+                floatingCartCount.textContent = totalItems === 0 ? '' : (totalItems === 1 ? '1 item' : totalItems + ' item');
             }
         }
         
