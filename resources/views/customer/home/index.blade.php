@@ -48,7 +48,7 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
-                        <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="background-color: #ffd3d1; width: 80px; height: 80px;">
                             <i class="bi bi-tag text-danger" style="font-size: 2rem;"></i>
                         </div>
                         <h5 class="card-title">Harga yang Konsisten</h5>

@@ -61,6 +61,16 @@
     <script defer="defer" src="{{ asset('adminator/main.js') }}"></script>
     @stack('styles')
     <style>
+        /* Override Bootstrap danger color ke #D43128 */
+        .btn-danger, .bg-danger { background-color: #D43128 !important; border-color: #D43128 !important; }
+        .btn-danger:hover { background-color: #B42922 !important; border-color: #B42922 !important; }
+        .text-danger { color: #D43128 !important; }
+        .border-danger { border-color: #D43128 !important; }
+        .btn-outline-danger { color: #D43128; border-color: #D43128; }
+        .btn-outline-danger:hover { background-color: #D43128; border-color: #D43128; color: #fff; }
+        .alert-danger { color: #6b1915; background-color: #fde2e1; border-color: #fcc5c3; }
+        .badge.bg-danger { background-color: #D43128 !important; }
+        
         /* Custom dropdown behavior - allow multiple dropdowns open */
         /* Force dropdown menus to be visible when parent has 'open' class */
         .sidebar-menu .nav-item.dropdown.open .dropdown-menu,

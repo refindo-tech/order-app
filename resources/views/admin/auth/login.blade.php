@@ -97,14 +97,14 @@
     /* Custom styles for better UX */
     .invalid-feedback {
         display: block;
-        color: #dc3545;
+        color: #D43128;
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
     
     .form-control.is-invalid {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        border-color: #D43128;
+        box-shadow: 0 0 0 0.2rem rgba(212, 49, 40, 0.25);
     }
     
     .alert {
@@ -114,9 +114,9 @@
     }
     
     .alert-danger {
-        color: #721c24;
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
+        color: #6b1915;
+        background-color: #fde2e1;
+        border-color: #fcc5c3;
     }
     
     .btn-color:hover {

@@ -19,7 +19,7 @@
     
     <!-- PWA -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <meta name="theme-color" content="#dc3545">
+    <meta name="theme-color" content="#D43128">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Rumah Bumbu">
@@ -34,7 +34,8 @@
     
     <style>
         :root {
-            --primary-color: #dc3545;
+            --primary-color: #D43128;
+            --danger-color: #D43128;
             --secondary-color: #6c757d;
             --success-color: #198754;
             --warning-color: #fd7e14;
@@ -42,6 +43,16 @@
             --dark-color: #212529;
             --light-color: #f8f9fa;
         }
+        
+        /* Override Bootstrap danger color ke #D43128 */
+        .btn-danger, .bg-danger { background-color: #D43128 !important; border-color: #D43128 !important; }
+        .btn-danger:hover { background-color: #B42922 !important; border-color: #B42922 !important; }
+        .text-danger { color: #D43128 !important; }
+        .border-danger { border-color: #D43128 !important; }
+        .btn-outline-danger { color: #D43128; border-color: #D43128; }
+        .btn-outline-danger:hover { background-color: #D43128; border-color: #D43128; color: #fff; }
+        .alert-danger { color: #6b1915; background-color: #fde2e1; border-color: #fcc5c3; }
+        .badge.bg-danger { background-color: #D43128 !important; }
         
         body {
             line-height: 1.6;
@@ -82,10 +93,10 @@
         }
         
         .btn-primary:hover {
-            background-color: #b02a2a;
-            border-color: #b02a2a;
+            background-color: #B42922;
+            border-color: #B42922;
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+            box-shadow: 0 4px 15px rgba(212, 49, 40, 0.3);
         }
         
         .btn-outline-primary {
@@ -106,7 +117,7 @@
         .hero-section {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            background: linear-gradient(135deg, #D43128 0%, #fd7e14 100%);
             color: white;
             margin-top: -100px;
             min-height: 100vh;

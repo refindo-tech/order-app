@@ -297,7 +297,7 @@
                                                  style="max-height: 200px;">
                                         @else
                                             <div class="border rounded p-3 text-center" style="max-width: 200px;">
-                                                <i class="bi bi-file-pdf" style="font-size: 3rem; color: #dc3545;"></i>
+                                                <i class="bi bi-file-pdf" style="font-size: 3rem; color: #D43128;"></i>
                                                 <p class="mb-0 mt-2 small">Klik untuk melihat PDF</p>
                                             </div>
                                         @endif

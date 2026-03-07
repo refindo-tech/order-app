@@ -128,7 +128,7 @@
                                              alt="{{ $article->title }}"
                                              style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
                                     @else
-                                        <div style="width:60px;height:60px;border-radius:4px;background:#f8f9fa;display:flex;align-items:center;justify-content:center;color:#dc3545;font-size:11px;">
+                                        <div style="width:60px;height:60px;border-radius:4px;background:#f8f9fa;display:flex;align-items:center;justify-content:center;color:#D43128;font-size:11px;">
                                             No Image
                                         </div>
                                     @endif

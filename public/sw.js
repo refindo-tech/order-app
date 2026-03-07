@@ -71,7 +71,7 @@ self.addEventListener('fetch', (event) => {
 function offlineResponse(request) {
   if (request.mode === 'navigate') {
     return new Response(
-      `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline - Rumah Bumbu & Ungkep</title><style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f8f9fa;color:#333;text-align:center;padding:1rem;} .box{max-width:360px;} h1{color:#dc3545;} a{color:#dc3545;}</style></head><body><div class="box"><h1>Anda sedang offline</h1><p>Periksa koneksi internet lalu refresh halaman.</p><p><a href="/">Coba lagi</a></p></div></body></html>`,
+      `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline - Rumah Bumbu & Ungkep</title><style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f8f9fa;color:#333;text-align:center;padding:1rem;} .box{max-width:360px;} h1{color:#D43128;} a{color:#D43128;}</style></head><body><div class="box"><h1>Anda sedang offline</h1><p>Periksa koneksi internet lalu refresh halaman.</p><p><a href="/">Coba lagi</a></p></div></body></html>`,
       { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     );
   }
