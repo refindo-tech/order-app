@@ -415,7 +415,7 @@
             </div>
         </div>
         
-        <div class="row g-4 row-cols-2 row-cols-md-3 row-cols-lg-5">
+        <div class="row g-4 row-cols-5 row-cols-md-5 row-cols-lg-5">
             <div class="col text-center">
                 <a href="{{ config('constants.social_media.whatsapp') }}" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none d-block">
                     <div class="bg-white bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
