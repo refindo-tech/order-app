@@ -474,6 +474,94 @@ class PaxelService
     }
 
     /**
+     * Cancel a shipment in Paxel (before pickup by courier).
+     * Used for UAT scenario CCS (Customer Cancel Shipment).
+     *
+     * @param  Order  $order  Order that has paxel_waybill
+     * @param  string  $cancellationReason  Reason for cancellation (max 150 chars)
+     * @return array{success: bool, error?: string}
+     */
+    public function cancelShipment(Order $order, string $cancellationReason = 'Dibatalkan oleh partner'): array
+    {
+        if (!$this->isConfigured()) {
+            Log::warning('[PaxelService] cancelShipment: API not configured');
+            return ['success' => false, 'error' => 'Paxel API not configured'];
+        }
+
+        $waybill = $order->paxel_waybill;
+        if (!$waybill) {
+            Log::warning('[PaxelService] cancelShipment: order has no waybill', ['order_id' => $order->id]);
+            return ['success' => false, 'error' => 'Pesanan belum memiliki nomor resi Paxel'];
+        }
+
+        $reason = mb_substr(trim($cancellationReason) ?: 'Dibatalkan oleh partner', 0, 150);
+        $signature = $this->generateCancelShipmentSignature($waybill, $reason);
+
+        $url = "{$this->baseUrl}/v1/shipments/" . urlencode($waybill) . '/cancel';
+        Log::info('[PaxelService] cancelShipment request', [
+            'order_id' => $order->id,
+            'waybill' => $waybill,
+            'url' => $url,
+        ]);
+
+        try {
+            $response = Http::withHeaders([
+                'X-Paxel-API-Key' => $this->apiKey,
+                'X-Paxel-Signature' => $signature,
+                'Content-Type' => 'application/json',
+            ])->timeout(30)->post($url, [
+                'cancellation_reason' => $reason,
+            ]);
+
+            $body = $response->json();
+
+            if (!$response->successful()) {
+                $errorMessage = $body['message'] ?? $body['error'] ?? 'Gagal membatalkan shipment';
+                Log::warning('[PaxelService] cancelShipment failed', [
+                    'order_id' => $order->id,
+                    'status_code' => $response->status(),
+                    'error' => $errorMessage,
+                ]);
+                return ['success' => false, 'error' => $errorMessage];
+            }
+
+            $tracking = $order->paxel_tracking ?? [];
+            $tracking[] = [
+                'status' => 'CCS',
+                'status_label' => 'Shipment dibatalkan',
+                'description' => 'Dibatalkan oleh partner: ' . $reason,
+                'datetime' => now()->toIso8601String(),
+            ];
+
+            $order->update([
+                'status' => 'cancelled',
+                'paxel_tracking' => $tracking,
+            ]);
+
+            Log::info('[PaxelService] cancelShipment success', ['order_id' => $order->id, 'waybill' => $waybill]);
+            return ['success' => true];
+        } catch (\Throwable $e) {
+            Log::error('[PaxelService] cancelShipment exception', [
+                'order_id' => $order->id,
+                'message' => $e->getMessage(),
+            ]);
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Generate signature for Cancel Shipment
+     * Formula: last 6 chars of airwaybill_code + first 2 chars of cancellation_reason + API secret
+     */
+    protected function generateCancelShipmentSignature(string $airwaybillCode, string $cancellationReason): string
+    {
+        $airwaybillPart = strlen($airwaybillCode) >= 6 ? substr($airwaybillCode, -6) : $airwaybillCode;
+        $reasonPart = mb_substr($cancellationReason, 0, 2);
+        $str = $airwaybillPart . $reasonPart . $this->apiSecret;
+        return hash('sha256', $str);
+    }
+
+    /**
      * Generate signature for Webhook verification
      * Formula: last 6 chars of airwaybill_code + first 2 chars of latest_status + API secret
      */

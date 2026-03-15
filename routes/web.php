@@ -74,6 +74,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::post('orders/{order}/verify-payment', [OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
         Route::post('orders/{order}/create-paxel-shipment', [OrderController::class, 'createPaxelShipment'])->name('orders.create-paxel-shipment');
+        Route::post('orders/{order}/cancel-paxel-shipment', [OrderController::class, 'cancelPaxelShipment'])->name('orders.cancel-paxel-shipment');
         Route::post('orders/{order}/refresh-paxel-tracking', [OrderController::class, 'refreshPaxelTracking'])->name('orders.refresh-paxel-tracking');
     });
 });

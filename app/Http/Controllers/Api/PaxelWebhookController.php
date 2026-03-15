@@ -58,6 +58,9 @@ class PaxelWebhookController extends Controller
         if (in_array($latestStatus, ['POD', 'PDO'])) {
             $updates['status'] = 'delivered';
         }
+        if ($latestStatus === 'CCS') {
+            $updates['status'] = 'cancelled';
+        }
 
         $order->update($updates);
 
@@ -83,6 +86,12 @@ class PaxelWebhookController extends Controller
             'POD' => 'Kurir dalam perjalanan ke alamat tujuan',
             'COD' => 'Kurir tiba di alamat tujuan',
             'PDO' => 'Paket telah diterima',
+            'UNDLM' => 'Pengiriman tidak tersampaikan',
+            'HAPH' => 'Ditahan di Paxel Home',
+            'CCS' => 'Shipment dibatalkan',
+            'RTN' => 'Paket dikembalikan ke pengirim',
+            'POLXL' => 'Paket dalam perjalanan (Paxel Big)',
+            'ODLXL' => 'Paket tiba di lokasi tujuan (Paxel Big)',
             default => $code,
         };
     }

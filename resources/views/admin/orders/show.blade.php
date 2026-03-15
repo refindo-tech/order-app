@@ -253,6 +253,21 @@
                         <i class="ti-link mR-5"></i><span>Cek di Paxel</span>
                     </a>
                 </div>
+                @if($order->status !== 'cancelled' && $order->status !== 'delivered')
+                <div class="mt-3 pt-3 border-top">
+                    <form action="{{ route('admin.orders.cancel-paxel-shipment', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan pengiriman Paxel untuk resi ini? Status pesanan akan diubah menjadi Dibatalkan.');">
+                        @csrf
+                        <div class="mb-2">
+                            <label for="cancellation_reason" class="form-label small text-muted">Alasan pembatalan (opsional, max 150 karakter):</label>
+                            <input type="text" name="cancellation_reason" id="cancellation_reason" class="form-control form-control-sm" maxlength="150" placeholder="Contoh: Dibatalkan oleh partner (UAT)" value="{{ old('cancellation_reason', 'Dibatalkan oleh partner (UAT/testing)') }}">
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="ti-close me-2"></i>Batalkan Pengiriman Paxel
+                        </button>
+                    </form>
+                    <p class="text-muted small mt-2 mb-0">Untuk skenario UAT CCS: batalkan shipment setelah dapat resi. Hanya bisa dibatalkan sebelum paket dijemput kurir.</p>
+                </div>
+                @endif
                 @if(!empty($order->paxel_tracking))
                 <div class="mt-3">
                     <strong>Riwayat Tracking</strong>

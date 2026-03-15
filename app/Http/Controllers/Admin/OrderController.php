@@ -363,4 +363,66 @@ class OrderController extends Controller
                 ->with('tracking_error', $e->getMessage());
         }
     }
+
+    /**
+     * Cancel Paxel shipment (for UAT scenario CCS - Customer Cancel Shipment).
+     * Only allowed when order has waybill and is not already cancelled/delivered.
+     */
+    public function cancelPaxelShipment(PaxelService $paxelService, Order $order)
+    {
+        if (!$order->paxel_waybill) {
+            return redirect()->back()
+                ->with('error', 'Pesanan ini belum memiliki nomor resi Paxel.');
+        }
+
+        if ($order->status === 'cancelled') {
+            return redirect()->back()
+                ->with('error', 'Pesanan sudah dibatalkan.');
+        }
+
+        if ($order->status === 'delivered') {
+            return redirect()->back()
+                ->with('error', 'Pesanan sudah selesai diterima. Shipment tidak dapat dibatalkan.');
+        }
+
+        $request = request();
+        $reason = $request->input('cancellation_reason', 'Dibatalkan oleh partner (UAT/testing)');
+        $reason = mb_substr(trim($reason), 0, 150) ?: 'Dibatalkan oleh partner';
+
+        Log::info('[Paxel Cancel] Cancel shipment started', [
+            'order_id' => $order->id,
+            'order_code' => $order->order_code,
+            'waybill' => $order->paxel_waybill,
+            'admin_id' => auth()->id(),
+        ]);
+
+        try {
+            $result = $paxelService->cancelShipment($order, $reason);
+
+            if ($result['success']) {
+                Log::info('[Paxel Cancel] Shipment cancelled successfully', [
+                    'order_id' => $order->id,
+                    'admin_id' => auth()->id(),
+                ]);
+                return redirect()->back()
+                    ->with('success', 'Pengiriman Paxel berhasil dibatalkan. Status pesanan diubah menjadi Dibatalkan.');
+            }
+
+            Log::warning('[Paxel Cancel] Cancel failed', [
+                'order_id' => $order->id,
+                'error' => $result['error'] ?? 'Unknown error',
+            ]);
+            return redirect()->back()
+                ->with('error', 'Gagal membatalkan pengiriman Paxel.')
+                ->with('paxel_error', $result['error'] ?? 'Unknown error');
+        } catch (\Exception $e) {
+            Log::error('[Paxel Cancel] Exception', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat membatalkan pengiriman Paxel.')
+                ->with('paxel_error', $e->getMessage());
+        }
+    }
 }
