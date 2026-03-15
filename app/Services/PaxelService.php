@@ -188,7 +188,7 @@ class PaxelService
             $itemData = [
                 'code' => 'SKU-' . ($product?->id ?? $item->product_id) . '-' . ($index + 1),
                 'name' => $item->product_name,
-                'category' => $product?->category ?? 'Makanan',
+                'category' => 'frozen food',
                 'is_fragile' => false,
                 'price' => (float) $item->product_price * $item->quantity,
                 'quantity' => $item->quantity,
