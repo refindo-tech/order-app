@@ -280,7 +280,7 @@
                                     </div>
                                 </div>
                                 <button type="submit" id="upload-btn" class="btn btn-success w-100">
-                                    <i class="bi bi-upload me-2"></i>Upload Bukti Pembayaran
+                                    <i class="bi bi-upload me-2"></i>Klik untuk Upload Bukti
                                 </button>
                             </form>
                         @endif
