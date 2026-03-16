@@ -148,7 +148,7 @@
                 @if($products->isNotEmpty())
                     <div class="row g-2 g-md-4 product-grid-row">
                         @foreach($products as $product)
-                            <div class="col-6 col-md-6 col-lg-3">
+                            <div class="col-6 col-md-6 col-lg-6 col-xl-4">
                                 <div class="card h-100 product-card position-relative">
                                     <a href="{{ route('products.show', $product->slug) }}" class="product-card-link stretched-link" aria-label="Lihat detail {{ $product->name }}"></a>
                                     <!-- Product Image -->
