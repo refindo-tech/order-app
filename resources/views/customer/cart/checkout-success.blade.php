@@ -287,7 +287,7 @@
 
                         @if($order->payment && $order->payment->payment_proof)
                             <div class="mt-4">
-                                <strong>Bukti Pembayaran yang Diupload:</strong>
+                                <strong>Bukti Pembayaran Berhasil Diupload:</strong>
                                 <div class="mt-2">
                                     @php
                                         $filePath = storage_url($order->payment->payment_proof);
