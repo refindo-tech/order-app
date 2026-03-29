@@ -380,6 +380,9 @@ class PaxelService
 
             $geo = $this->geocodeAddressForShipment($destination);
             if ($geo === null) {
+                $geo = $this->geocodeDestinationFallbackForShipment($destination);
+            }
+            if ($geo === null) {
                 Log::warning('[PaxelService] createShipment Instant: geocode failed', ['order_id' => $order->id]);
                 return [
                     'success' => false,
@@ -737,7 +740,7 @@ class PaxelService
 
     /**
      * Resolve destination coordinates for Paxel Instant create shipment (requires non-zero lat/lon).
-     * Same approach as cek ongkir (OpenStreetMap Nominatim).
+     * Same primary query as cek ongkir (OpenStreetMap Nominatim).
      *
      * @return array{longitude: float, latitude: float}|null
      */
@@ -751,6 +754,33 @@ class PaxelService
             $destination['province'] ?? '',
             'Indonesia',
         ])));
+
+        return $this->nominatimSearchDestinationQuery($q);
+    }
+
+    /**
+     * Second Nominatim attempt — mirrors ShippingController::geocodeDestinationFallbackForRates.
+     *
+     * @return array{longitude: float, latitude: float}|null
+     */
+    private function geocodeDestinationFallbackForShipment(array $destination): ?array
+    {
+        $q = trim(implode(', ', array_filter([
+            $destination['city'] ?? '',
+            $destination['district'] ?? '',
+            $destination['village'] ?? '',
+            $destination['province'] ?? '',
+            'Indonesia',
+        ])));
+
+        return $this->nominatimSearchDestinationQuery($q);
+    }
+
+    /**
+     * @return array{longitude: float, latitude: float}|null
+     */
+    private function nominatimSearchDestinationQuery(string $q): ?array
+    {
         if ($q === '' || $q === 'Indonesia') {
             return null;
         }
