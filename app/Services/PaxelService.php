@@ -28,6 +28,20 @@ class PaxelService
     }
 
     /**
+     * Paxel exposes different rate endpoints per product; city rates are not valid for all service_type values.
+     *
+     * @see Business App Document/paxel-ecommerce-api.md (REGULAR/SAMEDAY use /v1/rates/city; PAXEL BIG and INSTANT GOSEND have dedicated paths)
+     */
+    protected function ratesPathForServiceType(string $serviceType): string
+    {
+        return match ($serviceType) {
+            'PAXEL BIG' => '/v1/rates/paxelbig',
+            'INSTANT GOSEND' => '/v1/rates/instant',
+            default => '/v1/rates/city',
+        };
+    }
+
+    /**
      * Get shipping rates from origin to destination
      *
      * @param array $destination ['address', 'province', 'city', 'district', 'village', 'zip_code', 'longitude', 'latitude']
@@ -74,8 +88,12 @@ class PaxelService
             'service_type' => $serviceType,
         ];
 
+        $ratesPath = $this->ratesPathForServiceType($serviceType);
+        $ratesUrl = "{$this->baseUrl}{$ratesPath}";
+
         Log::channel('single')->info('[PaxelService] getRates request', [
-            'url' => "{$this->baseUrl}/v1/rates/city",
+            'url' => $ratesUrl,
+            'rates_path' => $ratesPath,
             'origin_city' => $origin['city'] ?? null,
             'origin_province' => $origin['province'] ?? null,
             'destination_city' => $destination['city'] ?? null,
@@ -89,7 +107,7 @@ class PaxelService
             $response = Http::withHeaders([
                 'X-Paxel-API-Key' => $this->apiKey,
                 'Content-Type' => 'application/json',
-            ])->post("{$this->baseUrl}/v1/rates/city", $payload);
+            ])->post($ratesUrl, $payload);
 
             $body = $response->json();
 
@@ -98,6 +116,7 @@ class PaxelService
                     'status' => $response->status(),
                     'body' => $body,
                     'service_type' => $serviceType,
+                    'rates_path' => $ratesPath,
                 ]);
                 return [
                     'success' => false,
@@ -107,6 +126,7 @@ class PaxelService
 
             Log::channel('single')->info('[PaxelService] getRates HTTP success', [
                 'service_type' => $serviceType,
+                'rates_path' => $ratesPath,
                 'body_keys' => is_array($body) ? array_keys($body) : 'non-array',
             ]);
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Services\PaxelService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ShippingController extends Controller
@@ -33,6 +34,8 @@ class ShippingController extends Controller
             'district' => 'nullable|string|max:50',
             'village' => 'nullable|string|max:50',
             'zip_code' => 'nullable|string|max:10',
+            'destination_longitude' => 'nullable|numeric',
+            'destination_latitude' => 'nullable|numeric',
             'weight' => 'nullable|integer|min:1',
             'cart_data' => 'required|json',
         ]);
@@ -64,7 +67,18 @@ class ShippingController extends Controller
             'district' => $request->district ?? $request->city,
             'village' => $request->village ?? '',
             'zip_code' => $request->zip_code ?? '',
+            'longitude' => $request->filled('destination_longitude') ? (float) $request->destination_longitude : null,
+            'latitude' => $request->filled('destination_latitude') ? (float) $request->destination_latitude : null,
         ];
+
+        // Paxel /v1/rates/instant requires destination longitude & latitude (docs). Geocode if missing.
+        if ($destination['longitude'] === null || $destination['latitude'] === null) {
+            $geo = $this->geocodeDestinationForRates($destination);
+            if ($geo !== null) {
+                $destination['longitude'] = $geo['longitude'];
+                $destination['latitude'] = $geo['latitude'];
+            }
+        }
 
         $dimension = config('paxel.default_dimension', '30x25x15');
         $serviceDefs = config('paxel.services', []);
@@ -120,6 +134,9 @@ class ShippingController extends Controller
                     $unavailableReason = 'Tarif tidak tersedia untuk area ini';
                 } else {
                     $unavailableReason = $result['error'] ?? 'Belum tersedia';
+                    if ($serviceType === 'PAXEL BIG' && is_string($unavailableReason) && str_contains($unavailableReason, 'Origin not found')) {
+                        $unavailableReason = 'Lokasi asal tidak tersedia untuk Paxel Big. Hubungi Paxel untuk aktivasi gudang/coverage.';
+                    }
                 }
             }
 
@@ -204,5 +221,57 @@ class ShippingController extends Controller
             'success' => true,
             'rates' => $rates,
         ]);
+    }
+
+    /**
+     * Resolve destination coordinates for Paxel Instant rate API (requires lat/lon).
+     * Uses OpenStreetMap Nominatim; respect usage policy (one request per cek ongkir).
+     *
+     * @return array{longitude: float, latitude: float}|null
+     */
+    private function geocodeDestinationForRates(array $destination): ?array
+    {
+        $q = trim(implode(', ', array_filter([
+            $destination['address'] ?? '',
+            $destination['district'] ?? '',
+            $destination['city'] ?? '',
+            $destination['province'] ?? '',
+            'Indonesia',
+        ])));
+        if ($q === '' || $q === 'Indonesia') {
+            return null;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => config('app.name', 'OrderApp') . '/1.0 (shipping rates)',
+                'Accept-Language' => 'id',
+            ])->timeout(12)->get('https://nominatim.openstreetmap.org/search', [
+                'q' => $q,
+                'format' => 'json',
+                'limit' => 1,
+            ]);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $rows = $response->json();
+            if (!is_array($rows) || empty($rows[0])) {
+                return null;
+            }
+
+            $lon = (float) ($rows[0]['lon'] ?? 0);
+            $lat = (float) ($rows[0]['lat'] ?? 0);
+            if ($lon === 0.0 && $lat === 0.0) {
+                return null;
+            }
+
+            return ['longitude' => $lon, 'latitude' => $lat];
+        } catch (\Throwable $e) {
+            Log::channel('single')->warning('[Cek Ongkir] Geocode failed', ['message' => $e->getMessage()]);
+
+            return null;
+        }
     }
 }
