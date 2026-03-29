@@ -42,6 +42,72 @@ class PaxelService
     }
 
     /**
+     * Create shipment API expects different service_type strings than the rates API in some cases.
+     * Rates use "INSTANT GOSEND"; POST /v1/shipments expects "INSTANT" (see paxel-ecommerce-api.md INSTANT section).
+     */
+    protected function mapServiceTypeForCreateShipmentApi(string $stored): string
+    {
+        return match ($stored) {
+            'INSTANT GOSEND' => 'INSTANT',
+            default => $stored,
+        };
+    }
+
+    /**
+     * Unit volume (cm³) from default package dimensions — same parsing as createShipment.
+     *
+     * @return array{l: int, w: int, h: int, unit_cm3: int}
+     */
+    public function getDefaultPackageVolumeCm3(): array
+    {
+        $defaultDimension = config('paxel.default_dimension', '30x25x15');
+        $dimParts = explode('x', strtolower(str_replace(' ', '', $defaultDimension)));
+        $l = (int) ($dimParts[0] ?? 20);
+        $w = (int) ($dimParts[1] ?? 15);
+        $h = (int) ($dimParts[2] ?? 10);
+
+        return [
+            'l' => $l,
+            'w' => $w,
+            'h' => $h,
+            'unit_cm3' => $l * $w * $h,
+        ];
+    }
+
+    /**
+     * Total volumetric (cm³) for checkout cart: sum per line of (L×W×H × quantity) using default dimensions.
+     *
+     * @param  array<int, array<string, mixed>>  $cartData
+     */
+    public function estimateTotalVolumetricCm3FromCart(array $cartData): int
+    {
+        $unit = $this->getDefaultPackageVolumeCm3()['unit_cm3'];
+        $total = 0;
+        foreach ($cartData as $item) {
+            $qty = max(1, (int) ($item['quantity'] ?? 1));
+            $total += $unit * $qty;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Same as estimateTotalVolumetricCm3FromCart but for persisted order lines.
+     *
+     * @param  iterable<int, \App\Models\OrderItem>  $orderItems
+     */
+    public function estimateTotalVolumetricCm3FromOrderItems(iterable $orderItems): int
+    {
+        $unit = $this->getDefaultPackageVolumeCm3()['unit_cm3'];
+        $total = 0;
+        foreach ($orderItems as $item) {
+            $total += $unit * max(1, (int) $item->quantity);
+        }
+
+        return $total;
+    }
+
+    /**
      * Get shipping rates from origin to destination
      *
      * @param array $destination ['address', 'province', 'city', 'district', 'village', 'zip_code', 'longitude', 'latitude']
@@ -261,12 +327,55 @@ class PaxelService
             'zip_code' => $order->shipping_postal_code ?? $origin['zip_code'],
         ];
 
+        $storedServiceType = $order->paxel_service_type ?? config('paxel.default_service_type', 'REGULAR');
+        $serviceType = $this->mapServiceTypeForCreateShipmentApi($storedServiceType);
+
+        if ($serviceType === 'INSTANT') {
+            $maxVol = (int) config('paxel.instant_max_volumetric_cm3', 125000);
+            $totalVol = $this->estimateTotalVolumetricCm3FromOrderItems($order->items);
+            if ($totalVol > $maxVol) {
+                Log::warning('[PaxelService] createShipment Instant: volumetric exceeds limit', [
+                    'order_id' => $order->id,
+                    'total_volumetric_cm3' => $totalVol,
+                    'max_cm3' => $maxVol,
+                ]);
+                return [
+                    'success' => false,
+                    'error' => 'Total volumetrik paket melebihi batas Paxel Instant (maks. '.number_format($maxVol, 0, ',', '.').' cm³). Kurangi jumlah barang atau gunakan layanan pengiriman lain.',
+                ];
+            }
+
+            $originLon = (float) ($origin['longitude'] ?? 0);
+            $originLat = (float) ($origin['latitude'] ?? 0);
+            if ($originLon === 0.0 || $originLat === 0.0) {
+                Log::warning('[PaxelService] createShipment Instant: origin coordinates missing or zero', [
+                    'order_id' => $order->id,
+                ]);
+                return [
+                    'success' => false,
+                    'error' => 'Koordinat asal gudang (longitude/latitude) wajib diisi untuk Paxel Instant. Periksa PAXEL_ORIGIN_LONGITUDE dan PAXEL_ORIGIN_LATITUDE di konfigurasi.',
+                ];
+            }
+
+            $geo = $this->geocodeAddressForShipment($destination);
+            if ($geo === null) {
+                Log::warning('[PaxelService] createShipment Instant: geocode failed', ['order_id' => $order->id]);
+                return [
+                    'success' => false,
+                    'error' => 'Tidak dapat menentukan koordinat alamat tujuan untuk Paxel Instant. Pastikan alamat, kota, dan provinsi lengkap lalu coba lagi.',
+                ];
+            }
+            $destination['longitude'] = $geo['longitude'];
+            $destination['latitude'] = $geo['latitude'];
+        }
+
         Log::info('[PaxelService] Destination data prepared', [
             'order_id' => $order->id,
             'destination_name' => $destination['name'],
             'destination_city' => $destination['city'],
             'destination_province' => $destination['province'],
             'destination_phone' => substr($destination['phone'], 0, 4) . '****' . substr($destination['phone'], -4), // Mask phone for privacy
+            'service_type_for_api' => $serviceType,
         ]);
 
         // Prepare payload
@@ -276,7 +385,6 @@ class PaxelService
         $currentTime = now();
         $pickupMoment = $currentTime->copy()->addDay()->setTime(9, 0, 0);
         $pickupDatetime = $pickupMoment->format('Y-m-d H:i:s');
-        $serviceType = $order->paxel_service_type ?? config('paxel.default_service_type', 'REGULAR');
 
         Log::info('[PaxelService] Pickup datetime calculated', [
             'order_id' => $order->id,
@@ -284,6 +392,8 @@ class PaxelService
             'current_timezone' => $currentTime->timezone->getName(),
             'pickup_datetime' => $pickupDatetime,
             'pickup_timezone' => $pickupMoment->timezone->getName(),
+            'paxel_service_type_stored' => $storedServiceType,
+            'paxel_service_type_for_api' => $serviceType,
         ]);
 
         $payload = [
@@ -318,6 +428,7 @@ class PaxelService
             'invoice_number' => $payload['invoice_number'],
             'invoice_value' => $payload['invoice_value'],
             'service_type' => $serviceType,
+            'service_type_stored' => $storedServiceType,
             'pickup_datetime' => $pickupDatetime,
             'items_count' => count($items),
             'origin_city' => $origin['city'],
@@ -601,5 +712,57 @@ class PaxelService
     {
         $expected = $this->generateWebhookSignature($airwaybillCode, $latestStatus);
         return hash_equals($expected, $receivedSignature);
+    }
+
+    /**
+     * Resolve destination coordinates for Paxel Instant create shipment (requires non-zero lat/lon).
+     * Same approach as cek ongkir (OpenStreetMap Nominatim).
+     *
+     * @return array{longitude: float, latitude: float}|null
+     */
+    private function geocodeAddressForShipment(array $destination): ?array
+    {
+        $q = trim(implode(', ', array_filter([
+            $destination['address'] ?? '',
+            $destination['district'] ?? '',
+            $destination['city'] ?? '',
+            $destination['province'] ?? '',
+            'Indonesia',
+        ])));
+        if ($q === '' || $q === 'Indonesia') {
+            return null;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => config('app.name', 'OrderApp') . '/1.0 (paxel shipment)',
+                'Accept-Language' => 'id',
+            ])->timeout(12)->get('https://nominatim.openstreetmap.org/search', [
+                'q' => $q,
+                'format' => 'json',
+                'limit' => 1,
+            ]);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $rows = $response->json();
+            if (!is_array($rows) || empty($rows[0])) {
+                return null;
+            }
+
+            $lon = (float) ($rows[0]['lon'] ?? 0);
+            $lat = (float) ($rows[0]['lat'] ?? 0);
+            if ($lon === 0.0 && $lat === 0.0) {
+                return null;
+            }
+
+            return ['longitude' => $lon, 'latitude' => $lat];
+        } catch (\Throwable $e) {
+            Log::channel('single')->warning('[PaxelService] Geocode failed', ['message' => $e->getMessage()]);
+
+            return null;
+        }
     }
 }

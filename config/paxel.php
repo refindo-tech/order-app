@@ -61,7 +61,7 @@ return [
         ],
         'INSTANT GOSEND' => [
             'label' => 'Paxel Instant (GoSend)',
-            'description' => 'Pengiriman instan setiap waktu, paket sampai di hari yang sama dalam beberapa jam.',
+            'description' => 'Pengiriman instan setiap waktu, paket sampai di hari yang sama dalam beberapa jam. Terdapat batas volumetrik total paket (estimasi dari dimensi default × jumlah barang).',
             'etd' => '1 sampai 4 jam',
         ],
     ],
@@ -106,6 +106,16 @@ return [
     */
 
     'default_dimension' => env('PAXEL_DEFAULT_DIMENSION', '30x25x15'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Instant (GoSend) — max volumetric (cm³)
+    |--------------------------------------------------------------------------
+    | Paxel create shipment rejects Instant if total volumetric exceeds this
+    | (default per Paxel: 125000). Estimated as sum of (L×W×H × qty) per line
+    | using default_dimension, matching createShipment item packing.
+    */
+    'instant_max_volumetric_cm3' => (int) env('PAXEL_INSTANT_MAX_VOLUMETRIC_CM3', 125000),
 
     /*
     |--------------------------------------------------------------------------

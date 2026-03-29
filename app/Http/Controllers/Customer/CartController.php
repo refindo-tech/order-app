@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Services\PaxelService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
+    public function __construct(
+        protected PaxelService $paxelService
+    ) {}
     /**
      * Display shopping cart
      */
@@ -184,6 +188,16 @@ class CartController extends Controller
             $shippingDistrict = $request->shipping_district;
             $shippingVillage = $request->shipping_village;
             $paxelServiceType = $request->paxel_service_type;
+
+            if ($paxelServiceType === 'INSTANT GOSEND') {
+                $maxVol = (int) config('paxel.instant_max_volumetric_cm3', 125000);
+                $vol = $this->paxelService->estimateTotalVolumetricCm3FromCart($cartData);
+                if ($vol > $maxVol) {
+                    return redirect()->back()
+                        ->with('error', 'Paxel Instant tidak tersedia: total volumetrik paket melebihi batas (maks. '.number_format($maxVol, 0, ',', '.').' cm³). Kurangi jumlah barang atau pilih layanan pengiriman lain.')
+                        ->withInput();
+                }
+            }
         }
 
         // Create order

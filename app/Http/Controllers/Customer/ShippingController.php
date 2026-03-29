@@ -84,6 +84,8 @@ class ShippingController extends Controller
         $serviceDefs = config('paxel.services', []);
         $disabledServices = config('paxel.disabled_services', []);
         $serviceTypes = array_keys($serviceDefs);
+        $instantMaxVol = (int) config('paxel.instant_max_volumetric_cm3', 125000);
+        $totalVolumetricCm3 = $this->paxelService->estimateTotalVolumetricCm3FromCart($cartData);
 
         $rates = [];
         foreach ($serviceTypes as $serviceType) {
@@ -92,6 +94,24 @@ class ShippingController extends Controller
             $description = $def['description'] ?? '';
             $defaultEtd = $def['etd'] ?? '2-3 hari';
             $isForcedDisabled = in_array($serviceType, $disabledServices, true);
+            $instantVolBlocked = $serviceType === 'INSTANT GOSEND' && $totalVolumetricCm3 > $instantMaxVol;
+
+            if ($instantVolBlocked) {
+                $rates[] = [
+                    'service_type' => $serviceType,
+                    'label' => $label,
+                    'description' => $description,
+                    'etd' => $defaultEtd,
+                    'price' => null,
+                    'enabled' => false,
+                    'unavailable_reason' => 'Melebihi batas volumetrik Instant (maks. '.number_format($instantMaxVol, 0, ',', '.').' cm³). Kurangi jumlah barang atau pilih layanan lain.',
+                ];
+                Log::channel('single')->warning('[Cek Ongkir] Instant skipped: volumetric limit', [
+                    'total_volumetric_cm3' => $totalVolumetricCm3,
+                    'max_cm3' => $instantMaxVol,
+                ]);
+                continue;
+            }
 
             $result = $this->paxelService->getRates(
                 $destination,

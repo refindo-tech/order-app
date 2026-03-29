@@ -3,6 +3,10 @@
 @section('title', 'Checkout')
 
 @section('content')
+@php
+    $paxelCheckoutDim = config('paxel.default_dimension', '30x25x15');
+    $paxelInstantMaxVol = (int) config('paxel.instant_max_volumetric_cm3', 125000);
+@endphp
 <section class="bg-light py-4">
     <div class="container">
         <h1 class="display-5 fw-bold text-dark">2. Checkout</h1>
@@ -59,6 +63,10 @@
         <div id="empty-cart-alert" class="alert alert-warning d-none">
             <i class="bi bi-cart-x me-2"></i>Keranjang kosong. <a href="{{ route('products.index') }}">Mulai belanja</a>
         </div>
+
+        @if(session('error'))
+        <div class="alert alert-danger mb-4"><i class="bi bi-exclamation-circle me-2"></i>{{ session('error') }}</div>
+        @endif
 
         <form id="checkout-form" class="d-none" action="{{ route('cart.checkout') }}" method="POST">
             @csrf
@@ -173,6 +181,10 @@
                         </div>
                         <div class="card-body">
                             <p class="text-muted small">Isi alamat pengiriman lalu klik "Cek Ongkir"</p>
+                            <div id="instant-volumetric-alert" class="alert alert-warning small d-none mb-3" role="alert">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                <strong>Paxel Instant tidak tersedia</strong> untuk keranjang ini: estimasi volumetrik melebihi {{ number_format($paxelInstantMaxVol, 0, ',', '.') }} cm³ (sesuai dimensi default pengemasan). Kurangi jumlah barang atau gunakan layanan lain setelah cek ongkir.
+                            </div>
                             <div id="shipping-options-list"></div>
                         </div>
                     </div>
@@ -279,6 +291,17 @@
 <script>
 // API Wilayah Indonesia - via proxy Laravel (bypass CORS)
 const WILAYAH_API = '{{ url("/api/wilayah") }}';
+const PAXEL_DEFAULT_DIMENSION = @json($paxelCheckoutDim ?? '30x25x15');
+const INSTANT_MAX_VOLUMETRIC_CM3 = {{ $paxelInstantMaxVol }};
+
+function computeCartVolumetricCm3(items) {
+    const parts = String(PAXEL_DEFAULT_DIMENSION).toLowerCase().replace(/\s/g, '').split('x');
+    const l = parseInt(parts[0], 10) || 20;
+    const w = parseInt(parts[1], 10) || 15;
+    const h = parseInt(parts[2], 10) || 10;
+    const unit = l * w * h;
+    return items.reduce(function(sum, i) { return sum + unit * (Number(i.quantity) || 1); }, 0);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -340,8 +363,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputShippingAddress = document.getElementById('input-shipping-address');
     const shippingProvince = document.getElementById('shipping-province');
     const shippingCity = document.getElementById('shipping-city');
+    const instantVolumetricAlert = document.getElementById('instant-volumetric-alert');
 
     let selectedShipping = { price: 0, service_type: 'REGULAR' };
+
+    function updateInstantVolumetricWarning() {
+        if (!instantVolumetricAlert) return;
+        const over = !isPickupMode() && computeCartVolumetricCm3(cartItems) > INSTANT_MAX_VOLUMETRIC_CM3;
+        instantVolumetricAlert.classList.toggle('d-none', !over);
+    }
 
     function isPickupMode() {
         const radio = document.querySelector('input[name="shipping_method_ui"]:checked');
@@ -367,6 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             btnSubmit.disabled = true;
         }
+        updateInstantVolumetricWarning();
         renderSummary();
     }
 
@@ -388,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.classList.remove('d-none');
         cartDataInput.value = JSON.stringify(cartItems);
         applyShippingMethodUI();
+        updateInstantVolumetricWarning();
         renderSummary();
         loadProvinces();
     }
@@ -575,6 +607,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isPickupMode()) {
             btnSubmit.disabled = true;
             return;
+        }
+        if (paxelServiceInput.value === 'INSTANT GOSEND' && computeCartVolumetricCm3(cartItems) > INSTANT_MAX_VOLUMETRIC_CM3) {
+            e.preventDefault();
+            alert('Paxel Instant tidak tersedia untuk keranjang ini: estimasi volumetrik melebihi batas. Kurangi jumlah barang atau pilih layanan pengiriman lain.');
+            btnSubmit.disabled = false;
+            return false;
         }
         if (!selectedShipping && parseInt(shippingCostInput.value, 10) === 0) {
             if (!confirm('Anda belum memilih pengiriman. Lanjutkan dengan ongkir Rp 0?')) {
