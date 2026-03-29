@@ -142,8 +142,14 @@
                     {{ $order->isPickup() ? 'Lokasi Pengambilan' : 'Alamat Pengiriman' }}
                 </h5>
                 <p>{{ $order->shipping_address }}</p>
-                @if($order->shipping_city || $order->shipping_postal_code || $order->shipping_province)
+                @if($order->shipping_district || $order->shipping_village || $order->shipping_city || $order->shipping_postal_code || $order->shipping_province)
                     <p class="text-muted">
+                        @if($order->shipping_village)
+                            <span class="d-block">Kelurahan/Desa: {{ $order->shipping_village }}</span>
+                        @endif
+                        @if($order->shipping_district)
+                            <span class="d-block">{{ $order->shipping_district }}</span>
+                        @endif
                         {{ $order->shipping_city }}{{ $order->shipping_postal_code ? ', ' . $order->shipping_postal_code : '' }}
                         @if($order->shipping_province)
                             <br>{{ $order->shipping_province }}
