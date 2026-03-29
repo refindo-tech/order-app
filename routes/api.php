@@ -15,3 +15,4 @@ Route::post('shipping/rates', [ShippingController::class, 'getRates'])->name('sh
 Route::get('wilayah/provinces', [WilayahController::class, 'provinces']);
 Route::get('wilayah/regencies/{provinceId}', [WilayahController::class, 'regencies']);
 Route::get('wilayah/districts/{regencyId}', [WilayahController::class, 'districts']);
+Route::get('wilayah/villages/{districtId}', [WilayahController::class, 'villages']);

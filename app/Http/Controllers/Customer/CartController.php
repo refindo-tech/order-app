@@ -104,7 +104,7 @@ class CartController extends Controller
             $rules['shipping_postal_code'] = 'required|string|max:10';
             $rules['shipping_province'] = 'required|string|max:100';
             $rules['shipping_district'] = 'required|string|max:100';
-            $rules['shipping_village'] = 'nullable|string|max:100';
+            $rules['shipping_village'] = 'required|string|max:100';
         }
 
         $request->validate($rules);

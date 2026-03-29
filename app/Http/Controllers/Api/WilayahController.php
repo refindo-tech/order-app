@@ -36,4 +36,13 @@ class WilayahController extends Controller
         $response = Http::get($this->baseUrl . '/districts/' . $regencyId . '.json');
         return response()->json($response->successful() ? $response->json() : []);
     }
+
+    /**
+     * Get villages (kelurahan/desa) by district (kecamatan) ID
+     */
+    public function villages(string $districtId)
+    {
+        $response = Http::get($this->baseUrl . '/villages/' . $districtId . '.json');
+        return response()->json($response->successful() ? $response->json() : []);
+    }
 }

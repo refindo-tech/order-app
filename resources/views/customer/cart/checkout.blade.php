@@ -161,6 +161,15 @@
                                     @error('shipping_district')<small class="text-danger d-block">{{ $message }}</small>@enderror
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label">Kelurahan/Desa <span class="text-danger">*</span></label>
+                                    <div id="shipping-village-wrap">
+                                        <select name="shipping_village" id="shipping-village" class="form-select" disabled>
+                                            <option value="">Pilih Kelurahan/Desa</option>
+                                        </select>
+                                    </div>
+                                    @error('shipping_village')<small class="text-danger d-block">{{ $message }}</small>@enderror
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label">Kode Pos <span class="text-danger">*</span></label>
                                     <input type="text" name="shipping_postal_code" id="shipping-postal-code" class="form-control" placeholder="Contoh: 12210" maxlength="10" inputmode="numeric" autocomplete="postal-code">
                                     @error('shipping_postal_code')<small class="text-danger d-block">{{ $message }}</small>@enderror
@@ -364,10 +373,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const deliveryFieldsWrap = document.getElementById('delivery-fields-wrap');
     const inputShippingAddress = document.getElementById('input-shipping-address');
     const shippingProvince = document.getElementById('shipping-province');
-        const shippingCity = document.getElementById('shipping-city');
-        const shippingDistrict = document.getElementById('shipping-district');
-        const shippingPostalCode = document.getElementById('shipping-postal-code');
-        const instantVolumetricAlert = document.getElementById('instant-volumetric-alert');
+    const shippingCity = document.getElementById('shipping-city');
+    const shippingDistrict = document.getElementById('shipping-district');
+    const shippingPostalCode = document.getElementById('shipping-postal-code');
+    const instantVolumetricAlert = document.getElementById('instant-volumetric-alert');
+
+    function resetVillageToSelect() {
+        const wrap = document.getElementById('shipping-village-wrap');
+        if (!wrap) return;
+        wrap.innerHTML = '<select name="shipping_village" id="shipping-village" class="form-select" disabled>' +
+            '<option value="">Pilih Kelurahan/Desa</option></select>';
+        syncVillageRequired();
+    }
+
+    function syncVillageRequired() {
+        const el = document.getElementById('shipping-village');
+        if (!el) return;
+        el.required = !isPickupMode();
+    }
+
+    function setVillageTextFallback(placeholder) {
+        const wrap = document.getElementById('shipping-village-wrap');
+        if (!wrap) return;
+        const ph = placeholder || 'Nama kelurahan/desa';
+        wrap.innerHTML = '<input type="text" name="shipping_village" id="shipping-village" class="form-control" maxlength="100" placeholder="' + ph.replace(/"/g, '&quot;') + '" />';
+        syncVillageRequired();
+    }
 
     let selectedShipping = { price: 0, service_type: 'REGULAR' };
 
@@ -395,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (shippingCity) shippingCity.required = !pickup;
         if (shippingDistrict) shippingDistrict.required = !pickup;
         if (shippingPostalCode) shippingPostalCode.required = !pickup;
+        syncVillageRequired();
         if (pickup) {
             selectedShipping = { price: 0, service_type: '' };
             shippingCostInput.value = '0';
@@ -458,6 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
         citySel.disabled = true;
         districtSel.innerHTML = '<option value="">Pilih Kecamatan</option>';
         districtSel.disabled = true;
+        resetVillageToSelect();
         if (!this.value || !opt?.dataset?.id) return;
         fetch(WILAYAH_API + '/regencies/' + opt.dataset.id)
             .then(r => r.json())
@@ -474,6 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const districtSel = document.getElementById('shipping-district');
         districtSel.innerHTML = '<option value="">Pilih Kecamatan</option>';
         districtSel.disabled = true;
+        resetVillageToSelect();
         if (!this.value) return;
         for (let i = 0; i < opts.length; i++) {
             if (opts[i].value === this.value && opts[i].dataset?.id) {
@@ -481,10 +515,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(r => r.json())
                     .then(data => {
                         districtSel.innerHTML = '<option value="">Pilih Kecamatan</option>' +
-                            data.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
+                            data.map(d => `<option value="${d.name}" data-id="${d.id}">${d.name}</option>`).join('');
                         districtSel.disabled = false;
                     })
                     .catch(() => { districtSel.disabled = false; });
+                break;
+            }
+        }
+    });
+
+    document.getElementById('shipping-district').addEventListener('change', function() {
+        resetVillageToSelect();
+        if (!this.value) return;
+        const villageSel = document.getElementById('shipping-village');
+        if (!villageSel) return;
+        const opts = this.options;
+        for (let i = 0; i < opts.length; i++) {
+            if (opts[i].value === this.value && opts[i].dataset?.id) {
+                fetch(WILAYAH_API + '/villages/' + opts[i].dataset.id)
+                    .then(r => r.json())
+                    .then(data => {
+                        const el = document.getElementById('shipping-village');
+                        if (!el || el.tagName !== 'SELECT') return;
+                        if (!Array.isArray(data) || data.length === 0) {
+                            setVillageTextFallback('Nama kelurahan/desa (ketik manual)');
+                            return;
+                        }
+                        el.innerHTML = '<option value="">Pilih Kelurahan/Desa</option>' +
+                            data.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+                        el.disabled = false;
+                        syncVillageRequired();
+                    })
+                    .catch(function() {
+                        setVillageTextFallback('Nama kelurahan/desa (ketik manual)');
+                    });
                 break;
             }
         }
@@ -533,6 +597,11 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Mohon isi kode pos terlebih dahulu.');
             return;
         }
+        const village = form.querySelector('[name="shipping_village"]')?.value?.trim();
+        if (!village) {
+            alert('Mohon pilih atau isi kelurahan/desa terlebih dahulu.');
+            return;
+        }
 
         btnCekOngkir.disabled = true;
         ongkirLoading.classList.remove('d-none');
@@ -547,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     province,
                     city: city,
                     district: district,
-                    village: form.querySelector('[name="shipping_village"]')?.value || '',
+                    village: village,
                     zip_code: zipCode,
                     cart_data: cartDataInput.value
                 })
