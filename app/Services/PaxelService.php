@@ -745,6 +745,7 @@ class PaxelService
     {
         $q = trim(implode(', ', array_filter([
             $destination['address'] ?? '',
+            $destination['village'] ?? '',
             $destination['district'] ?? '',
             $destination['city'] ?? '',
             $destination['province'] ?? '',

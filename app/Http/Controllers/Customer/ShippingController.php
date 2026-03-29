@@ -269,6 +269,7 @@ class ShippingController extends Controller
     {
         $q = trim(implode(', ', array_filter([
             $destination['address'] ?? '',
+            $destination['village'] ?? '',
             $destination['district'] ?? '',
             $destination['city'] ?? '',
             $destination['province'] ?? '',
@@ -279,7 +280,7 @@ class ShippingController extends Controller
     }
 
     /**
-     * Second attempt: city / kecamatan / provinsi only (when full address query returns no hit).
+     * Second attempt: kota, kecamatan, kelurahan (jika ada), provinsi (when full address query returns no hit).
      *
      * @return array{longitude: float, latitude: float}|null
      */
@@ -288,6 +289,7 @@ class ShippingController extends Controller
         $q = trim(implode(', ', array_filter([
             $destination['city'] ?? '',
             $destination['district'] ?? '',
+            $destination['village'] ?? '',
             $destination['province'] ?? '',
             'Indonesia',
         ])));
