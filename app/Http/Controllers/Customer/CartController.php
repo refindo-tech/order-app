@@ -101,9 +101,9 @@ class CartController extends Controller
         } else {
             $rules['shipping_address'] = 'required|string|max:500';
             $rules['shipping_city'] = 'required|string|max:100';
-            $rules['shipping_postal_code'] = 'nullable|string|max:10';
+            $rules['shipping_postal_code'] = 'required|string|max:10';
             $rules['shipping_province'] = 'required|string|max:100';
-            $rules['shipping_district'] = 'nullable|string|max:100';
+            $rules['shipping_district'] = 'required|string|max:100';
             $rules['shipping_village'] = 'nullable|string|max:100';
         }
 

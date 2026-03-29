@@ -154,14 +154,16 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Kecamatan</label>
+                                    <label class="form-label">Kecamatan <span class="text-danger">*</span></label>
                                     <select name="shipping_district" id="shipping-district" class="form-select" disabled>
                                         <option value="">Pilih Kecamatan</option>
                                     </select>
+                                    @error('shipping_district')<small class="text-danger d-block">{{ $message }}</small>@enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Kode Pos</label>
-                                    <input type="text" name="shipping_postal_code" class="form-control" placeholder="Contoh: 12210">
+                                    <label class="form-label">Kode Pos <span class="text-danger">*</span></label>
+                                    <input type="text" name="shipping_postal_code" id="shipping-postal-code" class="form-control" placeholder="Contoh: 12210" maxlength="10" inputmode="numeric" autocomplete="postal-code">
+                                    @error('shipping_postal_code')<small class="text-danger d-block">{{ $message }}</small>@enderror
                                 </div>
                             </div>
                             <div class="mt-3">
@@ -362,8 +364,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const deliveryFieldsWrap = document.getElementById('delivery-fields-wrap');
     const inputShippingAddress = document.getElementById('input-shipping-address');
     const shippingProvince = document.getElementById('shipping-province');
-    const shippingCity = document.getElementById('shipping-city');
-    const instantVolumetricAlert = document.getElementById('instant-volumetric-alert');
+        const shippingCity = document.getElementById('shipping-city');
+        const shippingDistrict = document.getElementById('shipping-district');
+        const shippingPostalCode = document.getElementById('shipping-postal-code');
+        const instantVolumetricAlert = document.getElementById('instant-volumetric-alert');
 
     let selectedShipping = { price: 0, service_type: 'REGULAR' };
 
@@ -389,6 +393,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (shippingProvince) shippingProvince.required = !pickup;
         if (shippingCity) shippingCity.required = !pickup;
+        if (shippingDistrict) shippingDistrict.required = !pickup;
+        if (shippingPostalCode) shippingPostalCode.required = !pickup;
         if (pickup) {
             selectedShipping = { price: 0, service_type: '' };
             shippingCostInput.value = '0';
@@ -512,9 +518,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const address = form.querySelector('[name="shipping_address"]').value?.trim();
         const province = form.querySelector('[name="shipping_province"]').value?.trim();
         const city = form.querySelector('[name="shipping_city"]').value?.trim();
+        const district = form.querySelector('[name="shipping_district"]')?.value?.trim();
+        const zipCode = form.querySelector('[name="shipping_postal_code"]')?.value?.trim();
 
         if (!address || !province || !city) {
             alert('Mohon isi alamat lengkap, provinsi, dan kota terlebih dahulu.');
+            return;
+        }
+        if (!district) {
+            alert('Mohon pilih kecamatan terlebih dahulu.');
+            return;
+        }
+        if (!zipCode) {
+            alert('Mohon isi kode pos terlebih dahulu.');
             return;
         }
 
@@ -530,9 +546,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     address,
                     province,
                     city: city,
-                    district: form.querySelector('[name="shipping_district"]')?.value || city,
+                    district: district,
                     village: form.querySelector('[name="shipping_village"]')?.value || '',
-                    zip_code: form.querySelector('[name="shipping_postal_code"]').value || '',
+                    zip_code: zipCode,
                     cart_data: cartDataInput.value
                 })
             });
