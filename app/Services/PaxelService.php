@@ -128,6 +128,27 @@ class PaxelService
 
         $origin = config('paxel.origin');
 
+        // Paxel POST /v1/rates/instant requires BOTH origin and destination longitude & latitude (see paxel-ecommerce-api.md).
+        if ($serviceType === 'INSTANT GOSEND') {
+            $originLon = (float) ($origin['longitude'] ?? 0);
+            $originLat = (float) ($origin['latitude'] ?? 0);
+            if ($originLon === 0.0 || $originLat === 0.0) {
+                return [
+                    'success' => false,
+                    'error' => 'Koordinat asal gudang belum valid (wajib untuk Paxel Instant). Isi PAXEL_ORIGIN_LONGITUDE dan PAXEL_ORIGIN_LATITUDE di .env dengan angka koordinat yang benar (bukan kosong atau 0).',
+                ];
+            }
+
+            $destLon = $destination['longitude'] ?? null;
+            $destLat = $destination['latitude'] ?? null;
+            if ($destLon === null || $destLat === null || (float) $destLon === 0.0 || (float) $destLat === 0.0) {
+                return [
+                    'success' => false,
+                    'error' => 'Koordinat tujuan belum tersedia (wajib untuk Paxel Instant). Perjelas alamat, kecamatan, kota, dan provinsi lalu coba Cek Ongkir lagi.',
+                ];
+            }
+        }
+
         $payload = [
             'origin' => [
                 'address' => $origin['address'] ?? '',

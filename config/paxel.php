@@ -49,11 +49,6 @@ return [
             'description' => 'Layanan standar nasional yang ekonomis serta dapat diandalkan.',
             'etd' => '2 sampai 3 hari',
         ],
-        'PAXEL AMPLOP' => [
-            'label' => 'Paxel Amplop',
-            'description' => 'Dikhususkan untuk dokumen dan surat, cocok untuk kiriman kecil yang ringan.',
-            'etd' => '1 sampai 3 hari',
-        ],
         'PAXEL BIG' => [
             'label' => 'Paxel Big',
             'description' => 'Diperuntukkan bagi paket berukuran besar atau berat dengan dimensi dan bobot lebih tinggi.',
@@ -94,8 +89,9 @@ return [
         'district' => env('PAXEL_ORIGIN_DISTRICT', 'Rajeg'),
         'village' => env('PAXEL_ORIGIN_VILLAGE', 'Rajeg Mulya'),
         'zip_code' => env('PAXEL_ORIGIN_ZIP_CODE', '15540'),
-        'longitude' => (float) env('PAXEL_ORIGIN_LONGITUDE', 106.5274704),
-        'latitude' => (float) env('PAXEL_ORIGIN_LATITUDE', -6.1120778),
+        // Empty .env value must not become (float) '' => 0 (breaks Paxel Instant rates/shipment).
+        'longitude' => (($lon = env('PAXEL_ORIGIN_LONGITUDE')) !== null && $lon !== '') ? (float) $lon : 106.5274704,
+        'latitude' => (($lat = env('PAXEL_ORIGIN_LATITUDE')) !== null && $lat !== '') ? (float) $lat : -6.1120778,
     ],
 
     /*

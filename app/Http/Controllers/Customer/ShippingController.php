@@ -77,7 +77,23 @@ class ShippingController extends Controller
             if ($geo !== null) {
                 $destination['longitude'] = $geo['longitude'];
                 $destination['latitude'] = $geo['latitude'];
+            } else {
+                $geoFallback = $this->geocodeDestinationFallbackForRates($destination);
+                if ($geoFallback !== null) {
+                    $destination['longitude'] = $geoFallback['longitude'];
+                    $destination['latitude'] = $geoFallback['latitude'];
+                    Log::channel('single')->info('[Cek Ongkir] Geocode fallback (kota/kecamatan/provinsi)', [
+                        'city' => $destination['city'] ?? null,
+                    ]);
+                }
             }
+        }
+
+        if ($destination['longitude'] === null || $destination['latitude'] === null) {
+            Log::channel('single')->warning('[Cek Ongkir] Destination coordinates still missing after geocode', [
+                'city' => $destination['city'] ?? null,
+                'province' => $destination['province'] ?? null,
+            ]);
         }
 
         $dimension = config('paxel.default_dimension', '30x25x15');
@@ -258,6 +274,32 @@ class ShippingController extends Controller
             $destination['province'] ?? '',
             'Indonesia',
         ])));
+
+        return $this->nominatimSearchByQuery($q);
+    }
+
+    /**
+     * Second attempt: city / kecamatan / provinsi only (when full address query returns no hit).
+     *
+     * @return array{longitude: float, latitude: float}|null
+     */
+    private function geocodeDestinationFallbackForRates(array $destination): ?array
+    {
+        $q = trim(implode(', ', array_filter([
+            $destination['city'] ?? '',
+            $destination['district'] ?? '',
+            $destination['province'] ?? '',
+            'Indonesia',
+        ])));
+
+        return $this->nominatimSearchByQuery($q);
+    }
+
+    /**
+     * @return array{longitude: float, latitude: float}|null
+     */
+    private function nominatimSearchByQuery(string $q): ?array
+    {
         if ($q === '' || $q === 'Indonesia') {
             return null;
         }
@@ -289,7 +331,7 @@ class ShippingController extends Controller
 
             return ['longitude' => $lon, 'latitude' => $lat];
         } catch (\Throwable $e) {
-            Log::channel('single')->warning('[Cek Ongkir] Geocode failed', ['message' => $e->getMessage()]);
+            Log::channel('single')->warning('[Cek Ongkir] Geocode failed', ['message' => $e->getMessage(), 'q' => $q]);
 
             return null;
         }
